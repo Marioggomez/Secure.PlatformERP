@@ -39,6 +39,18 @@ Artefactos generados:
 - `database/schema-snapshots/schema-report.md`
 - `database/stored-procedures/<schema>/usp_<tabla>_crud.sql`
 
+## Versionado de Base de Datos
+
+El versionado SQL esta en:
+
+- `database/migrations`
+- `tools/db-migrate.ps1` (status/up/down/rollback)
+- `tools/new-db-migration.ps1` (scaffold de nuevas migraciones)
+
+Guia:
+
+- `database/migrations/README.md`
+
 ## Build
 
 API y capas C#:
