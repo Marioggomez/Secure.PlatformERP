@@ -1,0 +1,5 @@
+{
+  "provider": "sqlserver",
+  "connectionString": "Server=YOUR_SERVER,1433;Database=Secure;User Id=YOUR_USER;Password=YOUR_PASSWORD;TrustServerCertificate=True"
+}
+

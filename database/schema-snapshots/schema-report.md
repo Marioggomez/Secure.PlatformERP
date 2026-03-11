@@ -1,0 +1,274 @@
+﻿# Reporte de Esquema Secure
+
+Generado UTC: 2026-03-11 17:06:24
+Origen: INFORMATION_SCHEMA.TABLES, INFORMATION_SCHEMA.COLUMNS, sys.foreign_keys
+
+Total tablas: 95
+Total relaciones FK: 153
+
+## Tablas detectadas
+
+### Schema `catalogo`
+- catalogo.accion_aprobacion
+- catalogo.alcance_asignacion
+- catalogo.canal_notificacion
+- catalogo.efecto_permiso
+- catalogo.estado_aprobacion
+- catalogo.estado_empresa
+- catalogo.estado_registro
+- catalogo.estado_usuario
+- catalogo.modo_filtro_dato
+- catalogo.proposito_desafio_mfa
+- catalogo.severidad_sod
+- catalogo.tipo_empresa
+- catalogo.tipo_evento_seguridad
+- catalogo.tipo_factor_mfa
+- catalogo.tipo_identificador_usuario
+- catalogo.tipo_origen_autenticacion
+- catalogo.tipo_recurso_ui
+- catalogo.tipo_relacion_empresa
+- catalogo.tipo_unidad_organizativa
+- catalogo.tipo_verificacion_restablecimiento
+
+### Schema `cumplimiento`
+- cumplimiento.accion_instancia_aprobacion
+- cumplimiento.auditoria_operacion
+- cumplimiento.excepcion_sod
+- cumplimiento.instancia_aprobacion
+- cumplimiento.paso_instancia_aprobacion
+- cumplimiento.paso_perfil_aprobacion
+- cumplimiento.perfil_aprobacion
+- cumplimiento.regla_sod
+
+### Schema `dbo`
+- dbo.sysdiagrams
+
+### Schema `observabilidad`
+- observabilidad.auditoria_autorizacion
+- observabilidad.auditoria_evento_seguridad
+- observabilidad.auditoria_reinicio_mesa_ayuda
+- observabilidad.error_aplicacion
+- observabilidad.error_log
+- observabilidad.evento_sistema
+- observabilidad.operacion_api_log
+
+### Schema `organizacion`
+- organizacion.empresa
+- organizacion.grupo_empresarial
+- organizacion.grupo_empresarial_empresa
+- organizacion.relacion_empresa
+- organizacion.unidad_organizativa
+
+### Schema `plataforma`
+- plataforma.bitacora_instalacion
+- plataforma.categoria_configuracion
+- plataforma.configuracion_empresa
+- plataforma.feature_flag
+- plataforma.integracion_externa
+- plataforma.job_sistema
+- plataforma.job_sistema_ejecucion
+- plataforma.modulo
+- plataforma.notificacion
+- plataforma.parametro_configuracion
+- plataforma.tenant
+- plataforma.tenant_feature
+- plataforma.version_esquema
+- plataforma.version_sistema
+
+### Schema `seguridad`
+- seguridad.asignacion_rol_usuario
+- seguridad.configuracion_canal_notificacion
+- seguridad.contador_rate_limit
+- seguridad.control_intentos_login
+- seguridad.credencial_local_usuario
+- seguridad.deber
+- seguridad.deber_privilegio
+- seguridad.desafio_mfa
+- seguridad.dispositivo_usuario
+- seguridad.entidad_alcance_dato
+- seguridad.excepcion_permiso_usuario
+- seguridad.factor_mfa_usuario
+- seguridad.filtro_dato_usuario
+- seguridad.flujo_autenticacion
+- seguridad.flujo_restablecimiento_clave
+- seguridad.historial_clave_usuario
+- seguridad.ip_bloqueada
+- seguridad.modulo_permiso
+- seguridad.operacion_api
+- seguridad.permiso
+- seguridad.politica_empresa_override
+- seguridad.politica_ip
+- seguridad.politica_operacion_api
+- seguridad.politica_tenant
+- seguridad.privilegio
+- seguridad.privilegio_permiso
+- seguridad.recurso_ui
+- seguridad.recurso_ui_permiso
+- seguridad.rol
+- seguridad.rol_deber
+- seguridad.sesion_usuario
+- seguridad.sesion_usuario_historial
+- seguridad.token_restablecimiento_clave
+- seguridad.usuario
+- seguridad.usuario_empresa
+- seguridad.usuario_identificador
+- seguridad.usuario_scope_empresa
+- seguridad.usuario_scope_unidad
+- seguridad.usuario_tenant
+- seguridad.usuario_unidad_organizativa
+
+## Relaciones FK confirmadas
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+- .. -> .. ()
+

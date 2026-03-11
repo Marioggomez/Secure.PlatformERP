@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>Secure.Platform.WinForms</RootNamespace>
+    <StartupObject>Sub Main</StartupObject>
+    <UseWindowsForms>true</UseWindowsForms>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v25.1" />
+    <Reference Include="DevExpress.Images.v25.1" />
+    <Reference Include="DevExpress.Utils.v25.1" />
+    <Reference Include="DevExpress.XtraBars.v25.1" />
+    <Reference Include="DevExpress.XtraEditors.v25.1" />
+    <Reference Include="DevExpress.XtraGrid.v25.1" />
+    <Reference Include="DevExpress.XtraLayout.v25.1" />
+    <Reference Include="DevExpress.XtraNavBar.v25.1" />
+    <Reference Include="DevExpress.XtraRibbon.v25.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Secure.Contracts\Secure.Contracts.csproj" />
+    <ProjectReference Include="..\Secure.Common\Secure.Common.csproj" />
+  </ItemGroup>
+
+</Project>

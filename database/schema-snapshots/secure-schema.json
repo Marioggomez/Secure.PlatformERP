@@ -1,0 +1,1768 @@
+﻿{
+    "foreignKeyCount":  153,
+    "generated_utc":  "2026-03-11T16:54:15Z",
+    "source":  "INFORMATION_SCHEMA.TABLES | INFORMATION_SCHEMA.COLUMNS | sys.foreign_keys",
+    "columnCount":  891,
+    "tables":  [
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "accion_aprobacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "alcance_asignacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "canal_notificacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "efecto_permiso"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "estado_aprobacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "estado_empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "estado_registro"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "estado_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "modo_filtro_dato"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "proposito_desafio_mfa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "severidad_sod"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_evento_seguridad"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_factor_mfa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_identificador_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_origen_autenticacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_recurso_ui"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_relacion_empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_unidad_organizativa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "catalogo",
+                       "TABLE_NAME":  "tipo_verificacion_restablecimiento"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "cumplimiento",
+                       "TABLE_NAME":  "accion_instancia_aprobacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "cumplimiento",
+                       "TABLE_NAME":  "auditoria_operacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "cumplimiento",
+                       "TABLE_NAME":  "excepcion_sod"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "cumplimiento",
+                       "TABLE_NAME":  "instancia_aprobacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "cumplimiento",
+                       "TABLE_NAME":  "paso_instancia_aprobacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "cumplimiento",
+                       "TABLE_NAME":  "paso_perfil_aprobacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "cumplimiento",
+                       "TABLE_NAME":  "perfil_aprobacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "cumplimiento",
+                       "TABLE_NAME":  "regla_sod"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "dbo",
+                       "TABLE_NAME":  "sysdiagrams"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "observabilidad",
+                       "TABLE_NAME":  "auditoria_autorizacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "observabilidad",
+                       "TABLE_NAME":  "auditoria_evento_seguridad"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "observabilidad",
+                       "TABLE_NAME":  "auditoria_reinicio_mesa_ayuda"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "observabilidad",
+                       "TABLE_NAME":  "error_aplicacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "observabilidad",
+                       "TABLE_NAME":  "error_log"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "observabilidad",
+                       "TABLE_NAME":  "evento_sistema"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "observabilidad",
+                       "TABLE_NAME":  "operacion_api_log"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "organizacion",
+                       "TABLE_NAME":  "empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "organizacion",
+                       "TABLE_NAME":  "grupo_empresarial"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "organizacion",
+                       "TABLE_NAME":  "grupo_empresarial_empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "organizacion",
+                       "TABLE_NAME":  "relacion_empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "organizacion",
+                       "TABLE_NAME":  "unidad_organizativa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "bitacora_instalacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "categoria_configuracion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "configuracion_empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "feature_flag"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "integracion_externa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "job_sistema"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "job_sistema_ejecucion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "modulo"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "notificacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "parametro_configuracion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "tenant"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "tenant_feature"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "version_esquema"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "plataforma",
+                       "TABLE_NAME":  "version_sistema"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "asignacion_rol_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "configuracion_canal_notificacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "contador_rate_limit"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "control_intentos_login"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "credencial_local_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "deber"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "deber_privilegio"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "desafio_mfa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "dispositivo_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "entidad_alcance_dato"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "excepcion_permiso_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "factor_mfa_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "filtro_dato_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "flujo_autenticacion"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "flujo_restablecimiento_clave"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "historial_clave_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "ip_bloqueada"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "modulo_permiso"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "operacion_api"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "permiso"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "politica_empresa_override"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "politica_ip"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "politica_operacion_api"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "politica_tenant"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "privilegio"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "privilegio_permiso"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "recurso_ui"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "recurso_ui_permiso"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "rol"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "rol_deber"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "sesion_usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "sesion_usuario_historial"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "token_restablecimiento_clave"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "usuario"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "usuario_empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "usuario_identificador"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "usuario_scope_empresa"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "usuario_scope_unidad"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "usuario_tenant"
+                   },
+                   {
+                       "TABLE_SCHEMA":  "seguridad",
+                       "TABLE_NAME":  "usuario_unidad_organizativa"
+                   }
+               ],
+    "foreignKeys":  [
+                        {
+                            "FK_NAME":  "FK_cumplimiento_accion_instancia_aprobacion_catalogo_accion_aprobacion_id_accion_aprobacion",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "accion_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_accion_aprobacion",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "accion_aprobacion",
+                            "REFERENCED_COLUMN":  "id_accion_aprobacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_accion_instancia_aprobacion_cumplimiento_instancia_aprobacion_id_instancia_aprobacion",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "accion_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_instancia_aprobacion",
+                            "REFERENCED_SCHEMA":  "cumplimiento",
+                            "REFERENCED_TABLE":  "instancia_aprobacion",
+                            "REFERENCED_COLUMN":  "id_instancia_aprobacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_accion_instancia_aprobacion_cumplimiento_paso_instancia_aprobacion_id_paso_instancia_aprobacion",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "accion_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_paso_instancia_aprobacion",
+                            "REFERENCED_SCHEMA":  "cumplimiento",
+                            "REFERENCED_TABLE":  "paso_instancia_aprobacion",
+                            "REFERENCED_COLUMN":  "id_paso_instancia_aprobacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_accion_instancia_aprobacion_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "accion_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_accion_instancia_aprobacion_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "accion_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_accion_instancia_aprobacion_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "accion_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_unidad_organizativa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_unidad_organizativa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_accion_instancia_aprobacion_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "accion_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_excepcion_sod_cumplimiento_regla_sod_id_regla_sod",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "excepcion_sod",
+                            "PARENT_COLUMN":  "id_regla_sod",
+                            "REFERENCED_SCHEMA":  "cumplimiento",
+                            "REFERENCED_TABLE":  "regla_sod",
+                            "REFERENCED_COLUMN":  "id_regla_sod"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_excepcion_sod_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "excepcion_sod",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_excepcion_sod_seguridad_usuario_aprobado_por",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "excepcion_sod",
+                            "PARENT_COLUMN":  "aprobado_por",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_excepcion_sod_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "excepcion_sod",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_instancia_aprobacion_catalogo_estado_aprobacion_id_estado_aprobacion",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_estado_aprobacion",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "estado_aprobacion",
+                            "REFERENCED_COLUMN":  "id_estado_aprobacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_instancia_aprobacion_cumplimiento_perfil_aprobacion_id_perfil_aprobacion",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_perfil_aprobacion",
+                            "REFERENCED_SCHEMA":  "cumplimiento",
+                            "REFERENCED_TABLE":  "perfil_aprobacion",
+                            "REFERENCED_COLUMN":  "id_perfil_aprobacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_instancia_aprobacion_organizacion_empresa_id_tenant_id_empresa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_instancia_aprobacion_organizacion_empresa_id_tenant_id_empresa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_instancia_aprobacion_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_instancia_aprobacion_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_unidad_organizativa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_unidad_organizativa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_instancia_aprobacion_seguridad_entidad_alcance_dato_codigo_entidad",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "instancia_aprobacion",
+                            "PARENT_COLUMN":  "codigo_entidad",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "entidad_alcance_dato",
+                            "REFERENCED_COLUMN":  "codigo_entidad"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_instancia_aprobacion_seguridad_usuario_solicitado_por",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "instancia_aprobacion",
+                            "PARENT_COLUMN":  "solicitado_por",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_paso_instancia_aprobacion_catalogo_estado_aprobacion_id_estado_aprobacion",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "paso_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_estado_aprobacion",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "estado_aprobacion",
+                            "REFERENCED_COLUMN":  "id_estado_aprobacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_paso_instancia_aprobacion_cumplimiento_instancia_aprobacion_id_instancia_aprobacion",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "paso_instancia_aprobacion",
+                            "PARENT_COLUMN":  "id_instancia_aprobacion",
+                            "REFERENCED_SCHEMA":  "cumplimiento",
+                            "REFERENCED_TABLE":  "instancia_aprobacion",
+                            "REFERENCED_COLUMN":  "id_instancia_aprobacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_paso_perfil_aprobacion_catalogo_alcance_asignacion_id_alcance_asignacion_requerido",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "paso_perfil_aprobacion",
+                            "PARENT_COLUMN":  "id_alcance_asignacion_requerido",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "alcance_asignacion",
+                            "REFERENCED_COLUMN":  "id_alcance_asignacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_paso_perfil_aprobacion_cumplimiento_perfil_aprobacion_id_perfil_aprobacion",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "paso_perfil_aprobacion",
+                            "PARENT_COLUMN":  "id_perfil_aprobacion",
+                            "REFERENCED_SCHEMA":  "cumplimiento",
+                            "REFERENCED_TABLE":  "perfil_aprobacion",
+                            "REFERENCED_COLUMN":  "id_perfil_aprobacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_paso_perfil_aprobacion_seguridad_privilegio_id_privilegio_requerido",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "paso_perfil_aprobacion",
+                            "PARENT_COLUMN":  "id_privilegio_requerido",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "privilegio",
+                            "REFERENCED_COLUMN":  "id_privilegio"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_paso_perfil_aprobacion_seguridad_rol_id_rol_requerido",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "paso_perfil_aprobacion",
+                            "PARENT_COLUMN":  "id_rol_requerido",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "rol",
+                            "REFERENCED_COLUMN":  "id_rol"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_perfil_aprobacion_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "perfil_aprobacion",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_perfil_aprobacion_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "perfil_aprobacion",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_perfil_aprobacion_seguridad_entidad_alcance_dato_codigo_entidad",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "perfil_aprobacion",
+                            "PARENT_COLUMN":  "codigo_entidad",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "entidad_alcance_dato",
+                            "REFERENCED_COLUMN":  "codigo_entidad"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_regla_sod_catalogo_severidad_sod_id_severidad_sod",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "regla_sod",
+                            "PARENT_COLUMN":  "id_severidad_sod",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "severidad_sod",
+                            "REFERENCED_COLUMN":  "id_severidad_sod"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_regla_sod_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "regla_sod",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_regla_sod_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "regla_sod",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_regla_sod_seguridad_entidad_alcance_dato_codigo_entidad",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "regla_sod",
+                            "PARENT_COLUMN":  "codigo_entidad",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "entidad_alcance_dato",
+                            "REFERENCED_COLUMN":  "codigo_entidad"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_regla_sod_seguridad_permiso_id_permiso_a",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "regla_sod",
+                            "PARENT_COLUMN":  "id_permiso_a",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "permiso",
+                            "REFERENCED_COLUMN":  "id_permiso"
+                        },
+                        {
+                            "FK_NAME":  "FK_cumplimiento_regla_sod_seguridad_permiso_id_permiso_b",
+                            "PARENT_SCHEMA":  "cumplimiento",
+                            "PARENT_TABLE":  "regla_sod",
+                            "PARENT_COLUMN":  "id_permiso_b",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "permiso",
+                            "REFERENCED_COLUMN":  "id_permiso"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_autorizacion_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_autorizacion",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_autorizacion_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_autorizacion",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_autorizacion_seguridad_sesion_usuario_id_sesion_usuario",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_autorizacion",
+                            "PARENT_COLUMN":  "id_sesion_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "sesion_usuario",
+                            "REFERENCED_COLUMN":  "id_sesion_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_autorizacion_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_autorizacion",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_evento_seguridad_catalogo_tipo_evento_seguridad_id_tipo_evento_seguridad",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_evento_seguridad",
+                            "PARENT_COLUMN":  "id_tipo_evento_seguridad",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "tipo_evento_seguridad",
+                            "REFERENCED_COLUMN":  "id_tipo_evento_seguridad"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_evento_seguridad_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_evento_seguridad",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_evento_seguridad_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_evento_seguridad",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_evento_seguridad_seguridad_sesion_usuario_id_sesion_usuario",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_evento_seguridad",
+                            "PARENT_COLUMN":  "id_sesion_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "sesion_usuario",
+                            "REFERENCED_COLUMN":  "id_sesion_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_evento_seguridad_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_evento_seguridad",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_reinicio_mesa_ayuda_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_reinicio_mesa_ayuda",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_reinicio_mesa_ayuda_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_reinicio_mesa_ayuda",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_reinicio_mesa_ayuda_seguridad_usuario_id_usuario_administrador",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_reinicio_mesa_ayuda",
+                            "PARENT_COLUMN":  "id_usuario_administrador",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_auditoria_reinicio_mesa_ayuda_seguridad_usuario_id_usuario_afectado",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "auditoria_reinicio_mesa_ayuda",
+                            "PARENT_COLUMN":  "id_usuario_afectado",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_error_aplicacion_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "error_aplicacion",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_error_aplicacion_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "error_aplicacion",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_error_aplicacion_seguridad_sesion_usuario_id_sesion_usuario",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "error_aplicacion",
+                            "PARENT_COLUMN":  "id_sesion_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "sesion_usuario",
+                            "REFERENCED_COLUMN":  "id_sesion_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_observabilidad_error_aplicacion_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "observabilidad",
+                            "PARENT_TABLE":  "error_aplicacion",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_empresa_tenant",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "empresa",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_empresa_catalogo_estado_empresa_id_estado_empresa",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "empresa",
+                            "PARENT_COLUMN":  "id_estado_empresa",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "estado_empresa",
+                            "REFERENCED_COLUMN":  "id_estado_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_empresa_catalogo_tipo_empresa_id_tipo_empresa",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "empresa",
+                            "PARENT_COLUMN":  "id_tipo_empresa",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "tipo_empresa",
+                            "REFERENCED_COLUMN":  "id_tipo_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_empresa_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "empresa",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_grupo_empresarial_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "grupo_empresarial",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_grupo_empresarial_empresa_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "grupo_empresarial_empresa",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_grupo_empresarial_empresa_organizacion_grupo_empresarial_id_grupo_empresarial",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "grupo_empresarial_empresa",
+                            "PARENT_COLUMN":  "id_grupo_empresarial",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "grupo_empresarial",
+                            "REFERENCED_COLUMN":  "id_grupo_empresarial"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_relacion_empresa_catalogo_tipo_relacion_empresa_id_tipo_relacion_empresa",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "relacion_empresa",
+                            "PARENT_COLUMN":  "id_tipo_relacion_empresa",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "tipo_relacion_empresa",
+                            "REFERENCED_COLUMN":  "id_tipo_relacion_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_relacion_empresa_organizacion_empresa_id_empresa_destino",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "relacion_empresa",
+                            "PARENT_COLUMN":  "id_empresa_destino",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_relacion_empresa_organizacion_empresa_id_empresa_origen",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "relacion_empresa",
+                            "PARENT_COLUMN":  "id_empresa_origen",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_relacion_empresa_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "relacion_empresa",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_unidad_organizativa_catalogo_tipo_unidad_organizativa_id_tipo_unidad_organizativa",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "unidad_organizativa",
+                            "PARENT_COLUMN":  "id_tipo_unidad_organizativa",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "tipo_unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_tipo_unidad_organizativa"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_unidad_organizativa_organizacion_empresa_id_tenant_id_empresa",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "unidad_organizativa",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_unidad_organizativa_organizacion_empresa_id_tenant_id_empresa",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "unidad_organizativa",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_organizacion_unidad_organizativa_organizacion_unidad_organizativa_id_unidad_padre",
+                            "PARENT_SCHEMA":  "organizacion",
+                            "PARENT_TABLE":  "unidad_organizativa",
+                            "PARENT_COLUMN":  "id_unidad_padre",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_unidad_organizativa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_catalogo_alcance_asignacion_id_alcance_asignacion",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "id_alcance_asignacion",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "alcance_asignacion",
+                            "REFERENCED_COLUMN":  "id_alcance_asignacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_organizacion_grupo_empresarial_id_grupo_empresarial",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "id_grupo_empresarial",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "grupo_empresarial",
+                            "REFERENCED_COLUMN":  "id_grupo_empresarial"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "id_unidad_organizativa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_unidad_organizativa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_seguridad_rol_id_rol",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "id_rol",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "rol",
+                            "REFERENCED_COLUMN":  "id_rol"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_seguridad_usuario_concedido_por",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "concedido_por",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_asignacion_rol_usuario_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "asignacion_rol_usuario",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_configuracion_canal_notificacion_catalogo_canal_notificacion_id_canal_notificacion",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "configuracion_canal_notificacion",
+                            "PARENT_COLUMN":  "id_canal_notificacion",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "canal_notificacion",
+                            "REFERENCED_COLUMN":  "id_canal_notificacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_configuracion_canal_notificacion_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "configuracion_canal_notificacion",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_configuracion_canal_notificacion_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "configuracion_canal_notificacion",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_contador_rate_limit_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "contador_rate_limit",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_contador_rate_limit_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "contador_rate_limit",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_credencial_local_usuario_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "credencial_local_usuario",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_deber_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "deber",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_deber_privilegio_seguridad_deber_id_deber",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "deber_privilegio",
+                            "PARENT_COLUMN":  "id_deber",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "deber",
+                            "REFERENCED_COLUMN":  "id_deber"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_deber_privilegio_seguridad_privilegio_id_privilegio",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "deber_privilegio",
+                            "PARENT_COLUMN":  "id_privilegio",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "privilegio",
+                            "REFERENCED_COLUMN":  "id_privilegio"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_desafio_mfa_catalogo_canal_notificacion_id_canal_notificacion",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "desafio_mfa",
+                            "PARENT_COLUMN":  "id_canal_notificacion",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "canal_notificacion",
+                            "REFERENCED_COLUMN":  "id_canal_notificacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_desafio_mfa_catalogo_proposito_desafio_mfa_id_proposito_desafio_mfa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "desafio_mfa",
+                            "PARENT_COLUMN":  "id_proposito_desafio_mfa",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "proposito_desafio_mfa",
+                            "REFERENCED_COLUMN":  "id_proposito_desafio_mfa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_desafio_mfa_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "desafio_mfa",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_desafio_mfa_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "desafio_mfa",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_desafio_mfa_seguridad_flujo_autenticacion_id_flujo_autenticacion",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "desafio_mfa",
+                            "PARENT_COLUMN":  "id_flujo_autenticacion",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "flujo_autenticacion",
+                            "REFERENCED_COLUMN":  "id_flujo_autenticacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_desafio_mfa_seguridad_sesion_usuario_id_sesion_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "desafio_mfa",
+                            "PARENT_COLUMN":  "id_sesion_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "sesion_usuario",
+                            "REFERENCED_COLUMN":  "id_sesion_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_desafio_mfa_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "desafio_mfa",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_catalogo_alcance_asignacion_id_alcance_asignacion",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_alcance_asignacion",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "alcance_asignacion",
+                            "REFERENCED_COLUMN":  "id_alcance_asignacion"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_catalogo_efecto_permiso_id_efecto_permiso",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_efecto_permiso",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "efecto_permiso",
+                            "REFERENCED_COLUMN":  "id_efecto_permiso"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_organizacion_grupo_empresarial_id_grupo_empresarial",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_grupo_empresarial",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "grupo_empresarial",
+                            "REFERENCED_COLUMN":  "id_grupo_empresarial"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_unidad_organizativa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_unidad_organizativa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_seguridad_permiso_id_permiso",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_permiso",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "permiso",
+                            "REFERENCED_COLUMN":  "id_permiso"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_seguridad_usuario_concedido_por",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "concedido_por",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_excepcion_permiso_usuario_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "excepcion_permiso_usuario",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_factor_mfa_usuario_catalogo_tipo_factor_mfa_id_tipo_factor_mfa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "factor_mfa_usuario",
+                            "PARENT_COLUMN":  "id_tipo_factor_mfa",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "tipo_factor_mfa",
+                            "REFERENCED_COLUMN":  "id_tipo_factor_mfa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_factor_mfa_usuario_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "factor_mfa_usuario",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_filtro_dato_usuario_catalogo_modo_filtro_dato_id_modo_filtro_dato",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "filtro_dato_usuario",
+                            "PARENT_COLUMN":  "id_modo_filtro_dato",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "modo_filtro_dato",
+                            "REFERENCED_COLUMN":  "id_modo_filtro_dato"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_filtro_dato_usuario_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "filtro_dato_usuario",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_filtro_dato_usuario_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "filtro_dato_usuario",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_filtro_dato_usuario_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "filtro_dato_usuario",
+                            "PARENT_COLUMN":  "id_unidad_organizativa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_unidad_organizativa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_filtro_dato_usuario_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "filtro_dato_usuario",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_filtro_dato_usuario_seguridad_entidad_alcance_dato_codigo_entidad",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "filtro_dato_usuario",
+                            "PARENT_COLUMN":  "codigo_entidad",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "entidad_alcance_dato",
+                            "REFERENCED_COLUMN":  "codigo_entidad"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_filtro_dato_usuario_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "filtro_dato_usuario",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_flujo_autenticacion_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "flujo_autenticacion",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_flujo_autenticacion_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "flujo_autenticacion",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_flujo_restablecimiento_clave_catalogo_tipo_verificacion_restablecimiento_id_tipo_verificacion_restablecimie",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "flujo_restablecimiento_clave",
+                            "PARENT_COLUMN":  "id_tipo_verificacion_restablecimiento",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "tipo_verificacion_restablecimiento",
+                            "REFERENCED_COLUMN":  "id_tipo_verificacion_restablecimiento"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_flujo_restablecimiento_clave_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "flujo_restablecimiento_clave",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_historial_clave_usuario_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "historial_clave_usuario",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_politica_empresa_override_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "politica_empresa_override",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_politica_ip_organizacion_empresa_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "politica_ip",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_politica_ip_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "politica_ip",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_politica_operacion_api_seguridad_entidad_alcance_dato_codigo_entidad",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "politica_operacion_api",
+                            "PARENT_COLUMN":  "codigo_entidad",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "entidad_alcance_dato",
+                            "REFERENCED_COLUMN":  "codigo_entidad"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_politica_operacion_api_seguridad_operacion_api_id_operacion_api",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "politica_operacion_api",
+                            "PARENT_COLUMN":  "id_operacion_api",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "operacion_api",
+                            "REFERENCED_COLUMN":  "id_operacion_api"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_politica_operacion_api_seguridad_permiso_id_permiso",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "politica_operacion_api",
+                            "PARENT_COLUMN":  "id_permiso",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "permiso",
+                            "REFERENCED_COLUMN":  "id_permiso"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_politica_tenant_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "politica_tenant",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_privilegio_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "privilegio",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_privilegio_permiso_seguridad_permiso_id_permiso",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "privilegio_permiso",
+                            "PARENT_COLUMN":  "id_permiso",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "permiso",
+                            "REFERENCED_COLUMN":  "id_permiso"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_privilegio_permiso_seguridad_privilegio_id_privilegio",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "privilegio_permiso",
+                            "PARENT_COLUMN":  "id_privilegio",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "privilegio",
+                            "REFERENCED_COLUMN":  "id_privilegio"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_recurso_ui_catalogo_tipo_recurso_ui_id_tipo_recurso_ui",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "recurso_ui",
+                            "PARENT_COLUMN":  "id_tipo_recurso_ui",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "tipo_recurso_ui",
+                            "REFERENCED_COLUMN":  "id_tipo_recurso_ui"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_recurso_ui_seguridad_recurso_ui_id_recurso_ui_padre",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "recurso_ui",
+                            "PARENT_COLUMN":  "id_recurso_ui_padre",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "recurso_ui",
+                            "REFERENCED_COLUMN":  "id_recurso_ui"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_recurso_ui_permiso_seguridad_permiso_id_permiso",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "recurso_ui_permiso",
+                            "PARENT_COLUMN":  "id_permiso",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "permiso",
+                            "REFERENCED_COLUMN":  "id_permiso"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_recurso_ui_permiso_seguridad_recurso_ui_id_recurso_ui",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "recurso_ui_permiso",
+                            "PARENT_COLUMN":  "id_recurso_ui",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "recurso_ui",
+                            "REFERENCED_COLUMN":  "id_recurso_ui"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_rol_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "rol",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_rol_deber_seguridad_deber_id_deber",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "rol_deber",
+                            "PARENT_COLUMN":  "id_deber",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "deber",
+                            "REFERENCED_COLUMN":  "id_deber"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_rol_deber_seguridad_rol_id_rol",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "rol_deber",
+                            "PARENT_COLUMN":  "id_rol",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "rol",
+                            "REFERENCED_COLUMN":  "id_rol"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_sesion_usuario_organizacion_empresa_id_tenant_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "sesion_usuario",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_sesion_usuario_organizacion_empresa_id_tenant_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "sesion_usuario",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_sesion_usuario_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "sesion_usuario",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_sesion_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "sesion_usuario",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_token_restablecimiento_clave_seguridad_flujo_restablecimiento_clave_id_flujo_restablecimiento_clave",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "token_restablecimiento_clave",
+                            "PARENT_COLUMN":  "id_flujo_restablecimiento_clave",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "flujo_restablecimiento_clave",
+                            "REFERENCED_COLUMN":  "id_flujo_restablecimiento_clave"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_token_restablecimiento_clave_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "token_restablecimiento_clave",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_catalogo_estado_usuario_id_estado_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario",
+                            "PARENT_COLUMN":  "id_estado_usuario",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "estado_usuario",
+                            "REFERENCED_COLUMN":  "id_estado_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_seguridad_usuario_actualizado_por",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario",
+                            "PARENT_COLUMN":  "actualizado_por",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_seguridad_usuario_creado_por",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario",
+                            "PARENT_COLUMN":  "creado_por",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_empresa_organizacion_empresa_id_tenant_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_empresa",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_empresa_organizacion_empresa_id_tenant_id_empresa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_empresa",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "empresa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_empresa_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_empresa",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_identificador_catalogo_tipo_identificador_usuario_id_tipo_identificador_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_identificador",
+                            "PARENT_COLUMN":  "id_tipo_identificador_usuario",
+                            "REFERENCED_SCHEMA":  "catalogo",
+                            "REFERENCED_TABLE":  "tipo_identificador_usuario",
+                            "REFERENCED_COLUMN":  "id_tipo_identificador_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_identificador_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_identificador",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_tenant_plataforma_tenant_id_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_tenant",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_tenant_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_tenant",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_usuario_tenant_tenant",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_tenant",
+                            "PARENT_COLUMN":  "id_tenant",
+                            "REFERENCED_SCHEMA":  "plataforma",
+                            "REFERENCED_TABLE":  "tenant",
+                            "REFERENCED_COLUMN":  "id_tenant"
+                        },
+                        {
+                            "FK_NAME":  "FK_usuario_tenant_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_tenant",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_unidad_organizativa_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_unidad_organizativa",
+                            "PARENT_COLUMN":  "id_empresa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_empresa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_unidad_organizativa_organizacion_unidad_organizativa_id_empresa_id_unidad_organizativa",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_unidad_organizativa",
+                            "PARENT_COLUMN":  "id_unidad_organizativa",
+                            "REFERENCED_SCHEMA":  "organizacion",
+                            "REFERENCED_TABLE":  "unidad_organizativa",
+                            "REFERENCED_COLUMN":  "id_unidad_organizativa"
+                        },
+                        {
+                            "FK_NAME":  "FK_seguridad_usuario_unidad_organizativa_seguridad_usuario_id_usuario",
+                            "PARENT_SCHEMA":  "seguridad",
+                            "PARENT_TABLE":  "usuario_unidad_organizativa",
+                            "PARENT_COLUMN":  "id_usuario",
+                            "REFERENCED_SCHEMA":  "seguridad",
+                            "REFERENCED_TABLE":  "usuario",
+                            "REFERENCED_COLUMN":  "id_usuario"
+                        }
+                    ],
+    "tableCount":  95
+}

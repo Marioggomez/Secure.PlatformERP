@@ -1,0 +1,75 @@
+﻿CREATE OR ALTER PROCEDURE catalogo.usp_alcance_asignacion_listar
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT [id_alcance_asignacion], [codigo], [nombre], [descripcion], [orden_visual], [activo], [creado_utc], [actualizado_utc], [version_fila]
+    FROM catalogo.alcance_asignacion;
+END
+GO
+
+CREATE OR ALTER PROCEDURE catalogo.usp_alcance_asignacion_obtener
+    @id_alcance_asignacion smallint
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT [id_alcance_asignacion], [codigo], [nombre], [descripcion], [orden_visual], [activo], [creado_utc], [actualizado_utc], [version_fila]
+    FROM catalogo.alcance_asignacion
+    WHERE [id_alcance_asignacion] = @id_alcance_asignacion;
+END
+GO
+
+CREATE OR ALTER PROCEDURE catalogo.usp_alcance_asignacion_crear
+    @codigo varchar(30),
+    @nombre nvarchar(120),
+    @descripcion nvarchar(300),
+    @orden_visual smallint,
+    @activo bit,
+    @creado_utc datetime2,
+    @actualizado_utc datetime2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO catalogo.alcance_asignacion ([codigo], [nombre], [descripcion], [orden_visual], [activo], [creado_utc], [actualizado_utc])
+    VALUES (@codigo, @nombre, @descripcion, @orden_visual, @activo, @creado_utc, @actualizado_utc);
+    SELECT CAST(SCOPE_IDENTITY() AS smallint) AS id;
+END
+GO
+
+CREATE OR ALTER PROCEDURE catalogo.usp_alcance_asignacion_actualizar
+    @id_alcance_asignacion smallint,
+    @codigo varchar(30),
+    @nombre nvarchar(120),
+    @descripcion nvarchar(300),
+    @orden_visual smallint,
+    @activo bit,
+    @creado_utc datetime2,
+    @actualizado_utc datetime2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE catalogo.alcance_asignacion
+    SET [codigo] = @codigo,
+        [nombre] = @nombre,
+        [descripcion] = @descripcion,
+        [orden_visual] = @orden_visual,
+        [activo] = @activo,
+        [creado_utc] = @creado_utc,
+        [actualizado_utc] = @actualizado_utc
+    WHERE [id_alcance_asignacion] = @id_alcance_asignacion;
+    SELECT @@ROWCOUNT AS filas_afectadas;
+END
+GO
+
+CREATE OR ALTER PROCEDURE catalogo.usp_alcance_asignacion_desactivar
+    @id_alcance_asignacion smallint,
+    @usuario varchar(180) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE catalogo.alcance_asignacion
+    SET [activo] = 0,
+        [actualizado_utc] = SYSUTCDATETIME()
+    WHERE [id_alcance_asignacion] = @id_alcance_asignacion;
+    SELECT @@ROWCOUNT AS filas_afectadas;
+END
+GO

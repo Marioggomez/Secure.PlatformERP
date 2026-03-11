@@ -1,0 +1,62 @@
+﻿CREATE OR ALTER PROCEDURE seguridad.usp_recurso_ui_permiso_listar
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT [id_recurso_ui], [id_permiso], [activo], [creado_utc]
+    FROM seguridad.recurso_ui_permiso;
+END
+GO
+
+CREATE OR ALTER PROCEDURE seguridad.usp_recurso_ui_permiso_obtener
+    @id_recurso_ui bigint
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT [id_recurso_ui], [id_permiso], [activo], [creado_utc]
+    FROM seguridad.recurso_ui_permiso
+    WHERE [id_recurso_ui] = @id_recurso_ui;
+END
+GO
+
+CREATE OR ALTER PROCEDURE seguridad.usp_recurso_ui_permiso_crear
+    @id_permiso int,
+    @activo bit,
+    @creado_utc datetime2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO seguridad.recurso_ui_permiso ([id_permiso], [activo], [creado_utc])
+    VALUES (@id_permiso, @activo, @creado_utc);
+    SELECT CAST(SCOPE_IDENTITY() AS bigint) AS id;
+END
+GO
+
+CREATE OR ALTER PROCEDURE seguridad.usp_recurso_ui_permiso_actualizar
+    @id_recurso_ui bigint,
+    @id_permiso int,
+    @activo bit,
+    @creado_utc datetime2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE seguridad.recurso_ui_permiso
+    SET [id_permiso] = @id_permiso,
+        [activo] = @activo,
+        [creado_utc] = @creado_utc
+    WHERE [id_recurso_ui] = @id_recurso_ui;
+    SELECT @@ROWCOUNT AS filas_afectadas;
+END
+GO
+
+CREATE OR ALTER PROCEDURE seguridad.usp_recurso_ui_permiso_desactivar
+    @id_recurso_ui bigint,
+    @usuario varchar(180) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE seguridad.recurso_ui_permiso
+    SET [activo] = 0
+    WHERE [id_recurso_ui] = @id_recurso_ui;
+    SELECT @@ROWCOUNT AS filas_afectadas;
+END
+GO
