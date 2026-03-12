@@ -1,6 +1,7 @@
 Imports System.ComponentModel
 Imports System.Data
 Imports System.Drawing
+Imports System.Drawing.Drawing2D
 Imports System.Drawing.Printing
 Imports System.IO
 Imports System.IO.Compression
@@ -448,36 +449,184 @@ Namespace Forms.Base
 
         Private Shared Function BuildFallbackBitmap(ByVal iconKeys As String) As Image
             Dim normalized = If(iconKeys, String.Empty).ToLowerInvariant()
-            Dim icon As Icon
+            Dim action = ResolveFallbackAction(normalized)
+            Dim bmp As New Bitmap(16, 16)
 
-            If normalized.Contains("add") Then
-                icon = SystemIcons.Information
-            ElseIf normalized.Contains("edit") Then
-                icon = SystemIcons.Application
-            ElseIf normalized.Contains("refresh") Then
-                icon = SystemIcons.Shield
-            ElseIf normalized.Contains("close") OrElse normalized.Contains("cancel") Then
-                icon = SystemIcons.Error
-            ElseIf normalized.Contains("save") Then
-                icon = SystemIcons.Information
-            ElseIf normalized.Contains("export") Then
-                icon = SystemIcons.Shield
-            ElseIf normalized.Contains("reset") OrElse normalized.Contains("undo") OrElse normalized.Contains("clear") Then
-                icon = SystemIcons.Warning
-            ElseIf normalized.Contains("find") OrElse normalized.Contains("search") OrElse normalized.Contains("filter") Then
-                icon = SystemIcons.Question
-            ElseIf normalized.Contains("first") OrElse normalized.Contains("back") OrElse normalized.Contains("previous") Then
-                icon = SystemIcons.Asterisk
-            ElseIf normalized.Contains("next") OrElse normalized.Contains("forward") OrElse normalized.Contains("last") Then
-                icon = SystemIcons.Asterisk
-            ElseIf normalized.Contains("print") OrElse normalized.Contains("page") Then
-                icon = SystemIcons.Application
-            Else
-                icon = SystemIcons.Application
-            End If
+            Using g = Graphics.FromImage(bmp)
+                g.SmoothingMode = SmoothingMode.AntiAlias
+                g.Clear(Color.Transparent)
 
-            Return icon.ToBitmap()
+                Select Case action
+                    Case "add"
+                        DrawPlusIcon(g, Color.ForestGreen)
+                    Case "edit"
+                        DrawPencilIcon(g, Color.DarkOrange)
+                    Case "refresh"
+                        DrawRefreshIcon(g, Color.DodgerBlue)
+                    Case "close"
+                        DrawCloseIcon(g, Color.Crimson)
+                    Case "save"
+                        DrawSaveIcon(g, Color.SteelBlue)
+                    Case "export"
+                        DrawExportIcon(g, Color.SeaGreen)
+                    Case "reset"
+                        DrawUndoIcon(g, Color.DarkGoldenrod)
+                    Case "search"
+                        DrawSearchIcon(g, Color.MidnightBlue)
+                    Case "filter"
+                        DrawFilterIcon(g, Color.Purple)
+                    Case "first"
+                        DrawFirstIcon(g, Color.DimGray)
+                    Case "previous"
+                        DrawArrowIcon(g, True, Color.DimGray)
+                    Case "next"
+                        DrawArrowIcon(g, False, Color.DimGray)
+                    Case "last"
+                        DrawLastIcon(g, Color.DimGray)
+                    Case "page"
+                        DrawPageIcon(g, Color.SlateBlue)
+                    Case Else
+                        DrawDotIcon(g, Color.Gray)
+                End Select
+            End Using
+
+            Return bmp
         End Function
+
+        Private Shared Function ResolveFallbackAction(ByVal normalizedKeys As String) As String
+            If normalizedKeys.Contains("add") Then Return "add"
+            If normalizedKeys.Contains("edit") Then Return "edit"
+            If normalizedKeys.Contains("refresh") Then Return "refresh"
+            If normalizedKeys.Contains("close") OrElse normalizedKeys.Contains("cancel") Then Return "close"
+            If normalizedKeys.Contains("save") Then Return "save"
+            If normalizedKeys.Contains("export") Then Return "export"
+            If normalizedKeys.Contains("reset") OrElse normalizedKeys.Contains("undo") OrElse normalizedKeys.Contains("clear") Then Return "reset"
+            If normalizedKeys.Contains("filter") Then Return "filter"
+            If normalizedKeys.Contains("find") OrElse normalizedKeys.Contains("search") Then Return "search"
+            If normalizedKeys.Contains("first") Then Return "first"
+            If normalizedKeys.Contains("last") Then Return "last"
+            If normalizedKeys.Contains("back") OrElse normalizedKeys.Contains("previous") Then Return "previous"
+            If normalizedKeys.Contains("next") OrElse normalizedKeys.Contains("forward") Then Return "next"
+            If normalizedKeys.Contains("page") OrElse normalizedKeys.Contains("print") Then Return "page"
+            Return "unknown"
+        End Function
+
+        Private Shared Sub DrawPlusIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 2.0F)
+                g.DrawLine(p, 8, 3, 8, 13)
+                g.DrawLine(p, 3, 8, 13, 8)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawPencilIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 2.0F)
+                g.DrawLine(p, 3, 12, 10, 5)
+                g.DrawLine(p, 5, 13, 12, 6)
+            End Using
+            Using b As New SolidBrush(color)
+                g.FillPolygon(b, New Point() {New Point(11, 4), New Point(13, 2), New Point(14, 5)})
+            End Using
+        End Sub
+
+        Private Shared Sub DrawRefreshIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 2.0F)
+                g.DrawArc(p, 3, 3, 10, 10, 35, 280)
+                g.DrawLine(p, 10, 2, 13, 2)
+                g.DrawLine(p, 13, 2, 13, 5)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawCloseIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 2.4F)
+                g.DrawLine(p, 3, 3, 13, 13)
+                g.DrawLine(p, 13, 3, 3, 13)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawSaveIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 1.8F)
+                g.DrawRectangle(p, 3, 3, 10, 10)
+                g.DrawLine(p, 5, 3, 11, 3)
+                g.DrawRectangle(p, 5, 8, 6, 5)
+            End Using
+            Using b As New SolidBrush(color)
+                g.FillRectangle(b, 5, 5, 5, 2)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawExportIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 1.8F)
+                g.DrawRectangle(p, 2, 4, 8, 8)
+                g.DrawLine(p, 8, 8, 14, 8)
+                g.DrawLine(p, 11, 5, 14, 8)
+                g.DrawLine(p, 11, 11, 14, 8)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawUndoIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 2.0F)
+                g.DrawArc(p, 3, 4, 10, 8, 200, 250)
+                g.DrawLine(p, 3, 6, 6, 4)
+                g.DrawLine(p, 3, 6, 6, 8)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawSearchIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 2.0F)
+                g.DrawEllipse(p, 3, 3, 7, 7)
+                g.DrawLine(p, 9, 9, 13, 13)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawFilterIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 1.8F)
+                g.DrawLine(p, 2, 3, 14, 3)
+                g.DrawLine(p, 2, 3, 8, 8)
+                g.DrawLine(p, 14, 3, 8, 8)
+                g.DrawLine(p, 8, 8, 8, 13)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawArrowIcon(ByVal g As Graphics, ByVal left As Boolean, ByVal color As Color)
+            Using p As New Pen(color, 2.0F)
+                If left Then
+                    g.DrawLine(p, 11, 3, 5, 8)
+                    g.DrawLine(p, 5, 8, 11, 13)
+                Else
+                    g.DrawLine(p, 5, 3, 11, 8)
+                    g.DrawLine(p, 11, 8, 5, 13)
+                End If
+            End Using
+        End Sub
+
+        Private Shared Sub DrawFirstIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 2.0F)
+                g.DrawLine(p, 4, 3, 4, 13)
+            End Using
+            DrawArrowIcon(g, True, color)
+        End Sub
+
+        Private Shared Sub DrawLastIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 2.0F)
+                g.DrawLine(p, 12, 3, 12, 13)
+            End Using
+            DrawArrowIcon(g, False, color)
+        End Sub
+
+        Private Shared Sub DrawPageIcon(ByVal g As Graphics, ByVal color As Color)
+            Using p As New Pen(color, 1.8F)
+                g.DrawRectangle(p, 3, 2, 10, 12)
+                g.DrawLine(p, 6, 5, 10, 5)
+                g.DrawLine(p, 6, 8, 10, 8)
+                g.DrawLine(p, 6, 11, 10, 11)
+            End Using
+        End Sub
+
+        Private Shared Sub DrawDotIcon(ByVal g As Graphics, ByVal color As Color)
+            Using b As New SolidBrush(color)
+                g.FillEllipse(b, 6, 6, 4, 4)
+            End Using
+        End Sub
 
         Private Shared Sub ApplyRibbonButtonVisual(ByVal item As BarButtonItem)
             item.PaintStyle = BarItemPaintStyle.CaptionGlyph
