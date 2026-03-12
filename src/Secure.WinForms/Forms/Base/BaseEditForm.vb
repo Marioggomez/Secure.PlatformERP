@@ -2,6 +2,8 @@
 Imports DevExpress.XtraBars.Ribbon
 Imports DevExpress.XtraEditors
 Imports DevExpress.XtraLayout
+Imports DevExpress.Utils.Svg
+Imports Secure.Platform.WinForms.Infrastructure
 
 Namespace Forms.Base
     ''' <summary>
@@ -80,9 +82,17 @@ Namespace Forms.Base
             Dim btnGuardarCerrar As New BarButtonItem() With {.Caption = "Guardar y cerrar"}
             Dim btnCancelar As New BarButtonItem() With {.Caption = "Cancelar"}
 
+            AssignIcon(btnGuardar, "Save.Save")
+            AssignIcon(btnGuardarCerrar, "Save.SaveAndClose")
+            AssignIcon(btnCancelar, "Actions.Cancel")
+            btnGuardar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnGuardarCerrar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnCancelar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+
             Ribbon.Items.AddRange(New BarItem() {btnGuardar, btnGuardarCerrar, btnCancelar, _statusInfo})
 
-            Dim page As New RibbonPage("Mantenimiento")
+            Dim page As New RibbonPage("Inicio")
+            page.Name = "rpInicio"
             Dim group As New RibbonPageGroup("Acciones")
             group.ItemLinks.Add(btnGuardar)
             group.ItemLinks.Add(btnGuardarCerrar)
@@ -93,6 +103,12 @@ Namespace Forms.Base
             AddHandler btnGuardar.ItemClick, AddressOf OnGuardarClick
             AddHandler btnGuardarCerrar.ItemClick, AddressOf OnGuardarCerrarClick
             AddHandler btnCancelar.ItemClick, AddressOf OnCancelarClick
+        End Sub
+
+        Private Shared Sub AssignIcon(ByVal item As BarButtonItem, ByVal iconKey As String)
+            Dim svg = TryCast(IconService.GetIcon(iconKey), SvgImage)
+            If svg Is Nothing Then Return
+            item.ImageOptions.SvgImage = svg
         End Sub
 
         Private Sub ConfigureLayout()

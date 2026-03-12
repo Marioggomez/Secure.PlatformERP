@@ -172,6 +172,9 @@ Namespace Forms.Shell
             Dim pageInicio As New RibbonPage("Inicio")
             Dim pageVista As New RibbonPage("Vista")
             Dim pageSesion As New RibbonPage("Sesion")
+            pageInicio.Name = "rpInicio"
+            pageVista.Name = "rpVista"
+            pageSesion.Name = "rpSesion"
 
             Dim groupNavegacion As New RibbonPageGroup("Navegacion")
             groupNavegacion.ItemLinks.Add(btnDashboard)
@@ -713,6 +716,17 @@ Namespace Forms.Shell
             If activeRibbon IsNot Nothing Then
                 _ribbon.MergeRibbon(activeRibbon)
             End If
+
+            FocusHomeRibbonPage()
+        End Sub
+
+        Private Sub FocusHomeRibbonPage()
+            For Each page As RibbonPage In _ribbon.Pages
+                If String.Equals(page.Text, "Inicio", StringComparison.OrdinalIgnoreCase) Then
+                    _ribbon.SelectedPage = page
+                    Exit For
+                End If
+            Next
         End Sub
 
         Private Sub OnCerrarPestanaClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)

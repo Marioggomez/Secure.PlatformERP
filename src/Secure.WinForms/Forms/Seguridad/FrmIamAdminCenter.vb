@@ -233,6 +233,14 @@ Namespace Forms.Seguridad
             AssignIcon(_btnRefrescar, "Actions.Refresh")
             AssignIcon(_btnDesactivar, "Actions.Cancel")
             AssignIcon(_btnLimpiar, "Actions.Clear")
+            _btnTabUsuarios.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnTabRoles.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnTabAsignaciones.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnNuevo.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnGuardar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnRefrescar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnDesactivar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnLimpiar.PaintStyle = BarItemPaintStyle.CaptionGlyph
 
             _ribbon.Items.AddRange(New BarItem() {
                 _btnTabUsuarios, _btnTabRoles, _btnTabAsignaciones,
@@ -240,7 +248,8 @@ Namespace Forms.Seguridad
                 _statusInfo, _statusModulo
             })
 
-            Dim page As New RibbonPage("IAM")
+            Dim page As New RibbonPage("Inicio")
+            page.Name = "rpInicio"
             Dim groupSecciones As New RibbonPageGroup("Secciones")
             groupSecciones.ItemLinks.Add(_btnTabUsuarios)
             groupSecciones.ItemLinks.Add(_btnTabRoles)

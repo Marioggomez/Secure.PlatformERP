@@ -253,10 +253,22 @@ Namespace Forms.Base
             AssignIcon(btnGuardarVista, "Save.Save")
             AssignIcon(btnRestaurarVista, "Actions.Reset")
             AssignIcon(btnExportar, "Export.ExportToXLSX")
+            AssignIcon(_barCampoFiltro, "Filter.FilterEditor")
+            AssignIcon(_barBusqueda, "Find.Find")
             AssignIcon(_barBuscar, "Find.Find")
             AssignIcon(_barLimpiar, "Actions.Clear")
+            AssignIcon(_barTamanoPagina, "Print.PageSetup")
             AssignIcon(_barPaginaAnterior, "Navigation.Back")
             AssignIcon(_barPaginaSiguiente, "Navigation.Forward")
+
+            btnNuevo.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnEditar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnRefrescar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnCerrar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _barBuscar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _barLimpiar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _barPaginaAnterior.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _barPaginaSiguiente.PaintStyle = BarItemPaintStyle.CaptionGlyph
 
             Ribbon.Items.AddRange(New BarItem() {
                 btnNuevo, btnEditar, btnRefrescar, btnCerrar,
@@ -267,7 +279,8 @@ Namespace Forms.Base
                 _statusInfo, _statusPaginacion
             })
 
-            Dim page As New RibbonPage("Datos")
+            Dim page As New RibbonPage("Inicio")
+            page.Name = "rpInicio"
             Dim groupOperaciones As New RibbonPageGroup("Operaciones")
             groupOperaciones.ItemLinks.Add(btnNuevo)
             groupOperaciones.ItemLinks.Add(btnEditar)
