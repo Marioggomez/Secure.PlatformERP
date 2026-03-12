@@ -3,7 +3,9 @@ Imports Secure.Platform.Contracts.Dtos.Seguridad
 Imports Secure.Platform.WinForms.Forms.Auth
 Imports Secure.Platform.WinForms.Forms.Shell
 Imports Secure.Platform.WinForms.Infrastructure
+Imports System.Diagnostics
 Imports System.Windows.Forms
+Imports System.Threading
 
 Module Program
     ''' <summary>
@@ -15,10 +17,35 @@ Module Program
         Application.EnableVisualStyles()
         Application.SetCompatibleTextRenderingDefault(False)
 
-        ThemeService.Initialize()
+        Dim apiClient As ApiClient = Nothing
 
-        Dim apiBaseUrl = AppSettingsProvider.GetApiBaseUrl()
-        Dim apiClient As New ApiClient(apiBaseUrl)
+        Using splash As New FrmSplash()
+            Dim splashWatch = Stopwatch.StartNew()
+            Const MinSplashVisibleMs As Integer = 10000
+
+            splash.Show()
+            splash.UpdateStatus("Inicializando tema corporativo...")
+            ThemeService.Initialize()
+
+            splash.UpdateStatus("Cargando configuracion de API...")
+            Dim apiBaseUrl = AppSettingsProvider.GetApiBaseUrl()
+
+            splash.UpdateStatus("Preparando cliente de seguridad...")
+            apiClient = New ApiClient(apiBaseUrl)
+
+            splash.UpdateStatus("Cargando interfaz de autenticacion...")
+            Application.DoEvents()
+
+            splashWatch.Stop()
+            Dim remainingMs = MinSplashVisibleMs - CInt(splashWatch.ElapsedMilliseconds)
+            If remainingMs > 0 Then
+                Thread.Sleep(remainingMs)
+            End If
+
+            splash.UpdateStatus("Listo.")
+            Application.DoEvents()
+            splash.Close()
+        End Using
 
         Dim loginResult As LoginResponseDto = Nothing
         Dim mfaResult As ValidarMfaResponseDto = Nothing

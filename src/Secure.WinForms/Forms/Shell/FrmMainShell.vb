@@ -8,6 +8,7 @@ Imports System.ComponentModel
 Imports Secure.Platform.Contracts.Dtos.Seguridad
 Imports Secure.Platform.WinForms.Forms.Base
 Imports Secure.Platform.WinForms.Forms.Empresas
+Imports Secure.Platform.WinForms.Forms.Seguridad
 Imports Secure.Platform.WinForms.Forms.Usuarios
 Imports Secure.Platform.WinForms.Infrastructure
 
@@ -131,7 +132,7 @@ Namespace Forms.Shell
             _ribbon.OptionsMenuMinWidth = 320
 
             Dim btnDashboard As New BarButtonItem() With {.Caption = "Dashboard"}
-            Dim btnUsuarios As New BarButtonItem() With {.Caption = "Usuarios"}
+            Dim btnUsuarios As New BarButtonItem() With {.Caption = "Centro IAM"}
             Dim btnEmpresas As New BarButtonItem() With {.Caption = "Empresas"}
             Dim btnApariencia As New BarButtonItem() With {.Caption = "Apariencia"}
             Dim btnCerrarPestana As New BarButtonItem() With {.Caption = "Cerrar pestana"}
@@ -207,7 +208,7 @@ Namespace Forms.Shell
         End Sub
 
         Private Sub OnUsuariosClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)
-            OpenModule("FrmUsuariosBuscar")
+            OpenModule("FrmIamAdminCenter")
         End Sub
 
         Private Sub OnEmpresasClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)
@@ -340,8 +341,8 @@ Namespace Forms.Shell
 
         Private Function CreateModuleForm(ByVal moduleKey As String) As XtraForm
             Select Case moduleKey
-                Case "FrmUsuariosBuscar"
-                    Return New FrmUsuariosBuscar(_apiClient, _sessionContext)
+                Case "FrmIamAdminCenter", "FrmUsuariosBuscar", "FrmRolesBuscar", "FrmAsignacionRolUsuarioBuscar"
+                    Return New FrmIamAdminCenter(_apiClient, _sessionContext)
                 Case "FrmUsuarioEdit"
                     Return New FrmUsuarioEdit()
                 Case "FrmEmpresasBuscar"
@@ -464,6 +465,10 @@ Namespace Forms.Shell
         End Function
 
         Private Function GetModuleFormTitle(ByVal form As XtraForm) As String
+            If TypeOf form Is FrmIamAdminCenter Then
+                Return DirectCast(form, FrmIamAdminCenter).ModuleTitle
+            End If
+
             If TypeOf form Is BaseSearchForm Then
                 Return DirectCast(form, BaseSearchForm).ModuleTitle
             End If
@@ -500,6 +505,8 @@ Namespace Forms.Shell
                 activeRibbon = DirectCast(activePage.Tag, BaseSearchForm).ModuleRibbon
             ElseIf TypeOf activePage.Tag Is BaseEditForm Then
                 activeRibbon = DirectCast(activePage.Tag, BaseEditForm).ModuleRibbon
+            ElseIf TypeOf activePage.Tag Is FrmIamAdminCenter Then
+                activeRibbon = DirectCast(activePage.Tag, FrmIamAdminCenter).ModuleRibbon
             End If
 
             If activeRibbon IsNot Nothing Then
@@ -585,7 +592,7 @@ Namespace Forms.Shell
 
         Private Function GetDefaultResources() As List(Of RecursoUiAccesoDto)
             Return New List(Of RecursoUiAccesoDto) From {
-                New RecursoUiAccesoDto With {.IdRecursoUi = 2, .Codigo = "NAV.USUARIOS", .Nombre = "Usuarios", .Componente = "FrmUsuariosBuscar", .Ruta = "/seguridad/usuarios", .Icono = "BusinessObjects.BOUser", .OrdenVisual = 10},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 2, .Codigo = "NAV.IAM", .Nombre = "Centro IAM", .Componente = "FrmIamAdminCenter", .Ruta = "/seguridad/iam", .Icono = "BusinessObjects.BOUser", .OrdenVisual = 10},
                 New RecursoUiAccesoDto With {.IdRecursoUi = 3, .Codigo = "NAV.EMPRESAS", .Nombre = "Empresas", .Componente = "FrmEmpresasBuscar", .Ruta = "/organizacion/empresas", .Icono = "Edit.Edit", .OrdenVisual = 20}
             }
         End Function

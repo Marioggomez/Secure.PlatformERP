@@ -46,6 +46,18 @@ Namespace Infrastructure
             Return Await SendAsync(Of TResponse)(request).ConfigureAwait(False)
         End Function
 
+        Public Async Function PutAsync(Of TRequest)(ByVal endpoint As String, ByVal payload As TRequest) As Task
+            Dim request = New HttpRequestMessage(HttpMethod.Put, endpoint) With {
+                .Content = JsonContent.Create(payload)
+            }
+            Await SendAsync(Of Object)(request).ConfigureAwait(False)
+        End Function
+
+        Public Async Function DeleteAsync(ByVal endpoint As String) As Task
+            Dim request = New HttpRequestMessage(HttpMethod.Delete, endpoint)
+            Await SendAsync(Of Object)(request).ConfigureAwait(False)
+        End Function
+
         Private Async Function SendAsync(Of TResponse)(ByVal request As HttpRequestMessage) As Task(Of TResponse)
             request.Headers.Add("X-Correlation-Id", Guid.NewGuid().ToString())
 

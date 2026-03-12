@@ -18,13 +18,13 @@ Namespace Forms.Auth
         Private _lblApiBase As LabelControl
 
         Private Sub InitializeComponent()
+            components = New ComponentModel.Container()
+            Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmLogin))
             _panelBrand = New PanelControl()
             lblMarca = New LabelControl()
             lblSubtitulo = New LabelControl()
             lblEntorno = New LabelControl()
             _layout = New LayoutControl()
-            lblTitulo = New LabelControl()
-            lblDescripcion = New LabelControl()
             _txtTenant = New TextEdit()
             _txtUsuario = New TextEdit()
             _txtContrasena = New TextEdit()
@@ -34,9 +34,6 @@ Namespace Forms.Auth
             _lnkRecuperar = New HyperlinkLabelControl()
             _lblApiBase = New LabelControl()
             root = New LayoutControlGroup()
-            spacer = New EmptySpaceItem()
-            LayoutControlItem1 = New LayoutControlItem()
-            LayoutControlItem2 = New LayoutControlItem()
             LayoutControlItem3 = New LayoutControlItem()
             LayoutControlItem4 = New LayoutControlItem()
             LayoutControlItem5 = New LayoutControlItem()
@@ -45,6 +42,9 @@ Namespace Forms.Auth
             LayoutControlItem8 = New LayoutControlItem()
             LayoutControlItem9 = New LayoutControlItem()
             LayoutControlItem10 = New LayoutControlItem()
+            PictureEdit1 = New PictureEdit()
+            LayoutControlItem1 = New LayoutControlItem()
+            BehaviorManager1 = New DevExpress.Utils.Behaviors.BehaviorManager(components)
             CType(_panelBrand, ComponentModel.ISupportInitialize).BeginInit()
             _panelBrand.SuspendLayout()
             CType(_layout, ComponentModel.ISupportInitialize).BeginInit()
@@ -54,9 +54,6 @@ Namespace Forms.Auth
             CType(_txtContrasena.Properties, ComponentModel.ISupportInitialize).BeginInit()
             CType(_chkRecordar.Properties, ComponentModel.ISupportInitialize).BeginInit()
             CType(root, ComponentModel.ISupportInitialize).BeginInit()
-            CType(spacer, ComponentModel.ISupportInitialize).BeginInit()
-            CType(LayoutControlItem1, ComponentModel.ISupportInitialize).BeginInit()
-            CType(LayoutControlItem2, ComponentModel.ISupportInitialize).BeginInit()
             CType(LayoutControlItem3, ComponentModel.ISupportInitialize).BeginInit()
             CType(LayoutControlItem4, ComponentModel.ISupportInitialize).BeginInit()
             CType(LayoutControlItem5, ComponentModel.ISupportInitialize).BeginInit()
@@ -65,6 +62,9 @@ Namespace Forms.Auth
             CType(LayoutControlItem8, ComponentModel.ISupportInitialize).BeginInit()
             CType(LayoutControlItem9, ComponentModel.ISupportInitialize).BeginInit()
             CType(LayoutControlItem10, ComponentModel.ISupportInitialize).BeginInit()
+            CType(PictureEdit1.Properties, ComponentModel.ISupportInitialize).BeginInit()
+            CType(LayoutControlItem1, ComponentModel.ISupportInitialize).BeginInit()
+            CType(BehaviorManager1, ComponentModel.ISupportInitialize).BeginInit()
             SuspendLayout()
             ' 
             ' _panelBrand
@@ -78,7 +78,7 @@ Namespace Forms.Auth
             _panelBrand.Dock = DockStyle.Left
             _panelBrand.Location = New Point(0, 0)
             _panelBrand.Name = "_panelBrand"
-            _panelBrand.Size = New Size(340, 488)
+            _panelBrand.Size = New Size(340, 357)
             _panelBrand.TabIndex = 1
             ' 
             ' lblMarca
@@ -116,8 +116,7 @@ Namespace Forms.Auth
             ' 
             ' _layout
             ' 
-            _layout.Controls.Add(lblTitulo)
-            _layout.Controls.Add(lblDescripcion)
+            _layout.Controls.Add(PictureEdit1)
             _layout.Controls.Add(_txtTenant)
             _layout.Controls.Add(_txtUsuario)
             _layout.Controls.Add(_txtContrasena)
@@ -129,98 +128,81 @@ Namespace Forms.Auth
             _layout.Dock = DockStyle.Fill
             _layout.Location = New Point(340, 0)
             _layout.Name = "_layout"
+            _layout.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = New Rectangle(-776, 134, 650, 400)
             _layout.OptionsView.UseDefaultDragAndDropRendering = False
             _layout.Root = root
-            _layout.Size = New Size(518, 488)
+            _layout.Size = New Size(320, 357)
             _layout.TabIndex = 0
-            ' 
-            ' lblTitulo
-            ' 
-            lblTitulo.Appearance.Font = New Font("Segoe UI", 20F, FontStyle.Bold)
-            lblTitulo.Appearance.Options.UseFont = True
-            lblTitulo.Location = New Point(12, 236)
-            lblTitulo.Name = "lblTitulo"
-            lblTitulo.Size = New Size(494, 37)
-            lblTitulo.StyleController = _layout
-            lblTitulo.TabIndex = 4
-            ' 
-            ' lblDescripcion
-            ' 
-            lblDescripcion.Appearance.Font = New Font("Segoe UI", 10F)
-            lblDescripcion.Appearance.ForeColor = Color.FromArgb(CByte(95), CByte(95), CByte(95))
-            lblDescripcion.Appearance.Options.UseFont = True
-            lblDescripcion.Appearance.Options.UseForeColor = True
-            lblDescripcion.Location = New Point(12, 277)
-            lblDescripcion.Name = "lblDescripcion"
-            lblDescripcion.Size = New Size(494, 17)
-            lblDescripcion.StyleController = _layout
-            lblDescripcion.TabIndex = 5
             ' 
             ' _txtTenant
             ' 
             _txtTenant.EditValue = "SEED"
-            _txtTenant.Location = New Point(80, 298)
+            _txtTenant.Location = New Point(80, 172)
             _txtTenant.Name = "_txtTenant"
             _txtTenant.Properties.NullValuePrompt = "Codigo de tenant"
-            _txtTenant.Size = New Size(426, 20)
+            _txtTenant.Size = New Size(228, 20)
             _txtTenant.StyleController = _layout
-            _txtTenant.TabIndex = 6
+            _txtTenant.TabIndex = 0
             ' 
             ' _txtUsuario
             ' 
             _txtUsuario.EditValue = "admin.seed"
-            _txtUsuario.Location = New Point(80, 322)
+            _txtUsuario.Location = New Point(80, 196)
             _txtUsuario.Name = "_txtUsuario"
             _txtUsuario.Properties.NullValuePrompt = "Usuario o correo"
-            _txtUsuario.Size = New Size(426, 20)
+            _txtUsuario.Size = New Size(228, 20)
             _txtUsuario.StyleController = _layout
-            _txtUsuario.TabIndex = 7
+            _txtUsuario.TabIndex = 2
             ' 
             ' _txtContrasena
             ' 
-            _txtContrasena.Location = New Point(80, 346)
+            _txtContrasena.Location = New Point(80, 220)
             _txtContrasena.Name = "_txtContrasena"
             _txtContrasena.Properties.NullValuePrompt = "Contrasena"
             _txtContrasena.Properties.UseSystemPasswordChar = True
-            _txtContrasena.Size = New Size(426, 20)
+            _txtContrasena.Size = New Size(228, 20)
             _txtContrasena.StyleController = _layout
-            _txtContrasena.TabIndex = 8
+            _txtContrasena.TabIndex = 3
             ' 
             ' _chkRecordar
             ' 
             _chkRecordar.EditValue = True
-            _chkRecordar.Location = New Point(12, 370)
+            _chkRecordar.Location = New Point(12, 244)
             _chkRecordar.Name = "_chkRecordar"
             _chkRecordar.Properties.Caption = "Recordar sesion en este equipo"
-            _chkRecordar.Size = New Size(494, 20)
+            _chkRecordar.Size = New Size(296, 20)
             _chkRecordar.StyleController = _layout
-            _chkRecordar.TabIndex = 9
+            _chkRecordar.TabIndex = 4
             ' 
             ' _btnIngresar
             ' 
-            _btnIngresar.Location = New Point(12, 394)
+            _btnIngresar.ImageOptions.SvgImage = CType(resources.GetObject("_btnIngresar.ImageOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
+            _btnIngresar.Location = New Point(12, 268)
             _btnIngresar.Name = "_btnIngresar"
-            _btnIngresar.Size = New Size(494, 22)
+            _btnIngresar.Size = New Size(146, 36)
             _btnIngresar.StyleController = _layout
-            _btnIngresar.TabIndex = 10
+            _btnIngresar.TabIndex = 5
             _btnIngresar.Text = "Ingresar"
             ' 
             ' _btnCancelar
             ' 
-            _btnCancelar.Location = New Point(12, 420)
+            _btnCancelar.ImageOptions.SvgImage = CType(resources.GetObject("_btnCancelar.ImageOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
+            _btnCancelar.Location = New Point(162, 268)
             _btnCancelar.Name = "_btnCancelar"
-            _btnCancelar.Size = New Size(494, 22)
+            _btnCancelar.Size = New Size(146, 36)
             _btnCancelar.StyleController = _layout
-            _btnCancelar.TabIndex = 11
+            _btnCancelar.TabIndex = 6
             _btnCancelar.Text = "Cancelar"
             ' 
             ' _lnkRecuperar
             ' 
-            _lnkRecuperar.Location = New Point(12, 446)
+            _lnkRecuperar.ImageAlignToText = ImageAlignToText.LeftTop
+            _lnkRecuperar.ImageOptions.Image = CType(resources.GetObject("_lnkRecuperar.ImageOptions.Image"), Image)
+            _lnkRecuperar.Location = New Point(12, 308)
             _lnkRecuperar.Name = "_lnkRecuperar"
-            _lnkRecuperar.Size = New Size(107, 13)
+            _lnkRecuperar.Size = New Size(128, 20)
             _lnkRecuperar.StyleController = _layout
-            _lnkRecuperar.TabIndex = 12
+            _lnkRecuperar.TabIndex = 1
             _lnkRecuperar.Text = "Recuperar contrasena"
             ' 
             ' _lblApiBase
@@ -229,120 +211,117 @@ Namespace Forms.Auth
             _lblApiBase.Appearance.ForeColor = Color.Gray
             _lblApiBase.Appearance.Options.UseFont = True
             _lblApiBase.Appearance.Options.UseForeColor = True
-            _lblApiBase.Location = New Point(12, 463)
+            _lblApiBase.Location = New Point(12, 332)
             _lblApiBase.Name = "_lblApiBase"
             _lblApiBase.Size = New Size(85, 13)
             _lblApiBase.StyleController = _layout
-            _lblApiBase.TabIndex = 13
+            _lblApiBase.TabIndex = 1
             _lblApiBase.Text = "API: configurada"
             ' 
             ' root
             ' 
             root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True
             root.GroupBordersVisible = False
-            root.Items.AddRange(New BaseLayoutItem() {spacer, LayoutControlItem1, LayoutControlItem2, LayoutControlItem3, LayoutControlItem4, LayoutControlItem5, LayoutControlItem6, LayoutControlItem7, LayoutControlItem8, LayoutControlItem9, LayoutControlItem10})
-            root.Name = "root"
-            root.Size = New Size(518, 488)
-            ' 
-            ' spacer
-            ' 
-            spacer.Location = New Point(0, 0)
-            spacer.Name = "spacer"
-            spacer.Size = New Size(498, 224)
-            ' 
-            ' LayoutControlItem1
-            ' 
-            LayoutControlItem1.Control = lblTitulo
-            LayoutControlItem1.Location = New Point(0, 224)
-            LayoutControlItem1.Name = "LayoutControlItem1"
-            LayoutControlItem1.Size = New Size(498, 41)
-            LayoutControlItem1.TextVisible = False
-            ' 
-            ' LayoutControlItem2
-            ' 
-            LayoutControlItem2.Control = lblDescripcion
-            LayoutControlItem2.Location = New Point(0, 265)
-            LayoutControlItem2.Name = "LayoutControlItem2"
-            LayoutControlItem2.Size = New Size(498, 21)
-            LayoutControlItem2.TextVisible = False
+            root.Items.AddRange(New BaseLayoutItem() {LayoutControlItem3, LayoutControlItem4, LayoutControlItem5, LayoutControlItem6, LayoutControlItem7, LayoutControlItem8, LayoutControlItem9, LayoutControlItem10, LayoutControlItem1})
+            root.Name = "Root"
+            root.Size = New Size(320, 357)
             ' 
             ' LayoutControlItem3
             ' 
             LayoutControlItem3.Control = _txtTenant
-            LayoutControlItem3.Location = New Point(0, 286)
+            LayoutControlItem3.Location = New Point(0, 160)
             LayoutControlItem3.Name = "LayoutControlItem3"
-            LayoutControlItem3.Size = New Size(498, 24)
+            LayoutControlItem3.Size = New Size(300, 24)
             LayoutControlItem3.Text = "Tenant"
             LayoutControlItem3.TextSize = New Size(56, 13)
             ' 
             ' LayoutControlItem4
             ' 
             LayoutControlItem4.Control = _txtUsuario
-            LayoutControlItem4.Location = New Point(0, 310)
+            LayoutControlItem4.Location = New Point(0, 184)
             LayoutControlItem4.Name = "LayoutControlItem4"
-            LayoutControlItem4.Size = New Size(498, 24)
+            LayoutControlItem4.Size = New Size(300, 24)
             LayoutControlItem4.Text = "Usuario"
             LayoutControlItem4.TextSize = New Size(56, 13)
             ' 
             ' LayoutControlItem5
             ' 
             LayoutControlItem5.Control = _txtContrasena
-            LayoutControlItem5.Location = New Point(0, 334)
+            LayoutControlItem5.Location = New Point(0, 208)
             LayoutControlItem5.Name = "LayoutControlItem5"
-            LayoutControlItem5.Size = New Size(498, 24)
+            LayoutControlItem5.Size = New Size(300, 24)
             LayoutControlItem5.Text = "Contrasena"
             LayoutControlItem5.TextSize = New Size(56, 13)
             ' 
             ' LayoutControlItem6
             ' 
             LayoutControlItem6.Control = _chkRecordar
-            LayoutControlItem6.Location = New Point(0, 358)
+            LayoutControlItem6.Location = New Point(0, 232)
             LayoutControlItem6.Name = "LayoutControlItem6"
-            LayoutControlItem6.Size = New Size(498, 24)
+            LayoutControlItem6.Size = New Size(300, 24)
             LayoutControlItem6.TextVisible = False
             ' 
             ' LayoutControlItem7
             ' 
             LayoutControlItem7.Control = _btnIngresar
-            LayoutControlItem7.Location = New Point(0, 382)
+            LayoutControlItem7.Location = New Point(0, 256)
             LayoutControlItem7.Name = "LayoutControlItem7"
-            LayoutControlItem7.Size = New Size(498, 26)
+            LayoutControlItem7.Size = New Size(150, 40)
             LayoutControlItem7.TextVisible = False
             ' 
             ' LayoutControlItem8
             ' 
             LayoutControlItem8.Control = _btnCancelar
-            LayoutControlItem8.Location = New Point(0, 408)
+            LayoutControlItem8.Location = New Point(150, 256)
             LayoutControlItem8.Name = "LayoutControlItem8"
-            LayoutControlItem8.Size = New Size(498, 26)
+            LayoutControlItem8.Size = New Size(150, 40)
             LayoutControlItem8.TextVisible = False
             ' 
             ' LayoutControlItem9
             ' 
             LayoutControlItem9.Control = _lnkRecuperar
-            LayoutControlItem9.Location = New Point(0, 434)
+            LayoutControlItem9.Location = New Point(0, 296)
             LayoutControlItem9.Name = "LayoutControlItem9"
-            LayoutControlItem9.Size = New Size(498, 17)
+            LayoutControlItem9.Size = New Size(300, 24)
             LayoutControlItem9.TextVisible = False
             ' 
             ' LayoutControlItem10
             ' 
             LayoutControlItem10.Control = _lblApiBase
-            LayoutControlItem10.Location = New Point(0, 451)
+            LayoutControlItem10.Location = New Point(0, 320)
             LayoutControlItem10.Name = "LayoutControlItem10"
-            LayoutControlItem10.Size = New Size(498, 17)
+            LayoutControlItem10.Size = New Size(300, 17)
             LayoutControlItem10.TextVisible = False
+            ' 
+            ' PictureEdit1
+            ' 
+            PictureEdit1.EditValue = resources.GetObject("PictureEdit1.EditValue")
+            PictureEdit1.Location = New Point(12, 12)
+            PictureEdit1.Name = "PictureEdit1"
+            PictureEdit1.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto
+            PictureEdit1.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Squeeze
+            PictureEdit1.Size = New Size(296, 156)
+            PictureEdit1.StyleController = _layout
+            PictureEdit1.TabIndex = 7
+            ' 
+            ' LayoutControlItem1
+            ' 
+            LayoutControlItem1.Control = PictureEdit1
+            LayoutControlItem1.Location = New Point(0, 0)
+            LayoutControlItem1.Name = "LayoutControlItem1"
+            LayoutControlItem1.Size = New Size(300, 160)
+            LayoutControlItem1.TextVisible = False
             ' 
             ' FrmLogin
             ' 
             AutoScaleDimensions = New SizeF(96F, 96F)
             AutoScaleMode = AutoScaleMode.Dpi
-            ClientSize = New Size(858, 488)
+            ClientSize = New Size(660, 357)
             Controls.Add(_layout)
             Controls.Add(_panelBrand)
+            IconOptions.SvgImage = CType(resources.GetObject("FrmLogin.IconOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
             MaximizeBox = False
             MinimizeBox = False
-            MinimumSize = New Size(860, 520)
             Name = "FrmLogin"
             StartPosition = FormStartPosition.CenterScreen
             Text = "Secure Platform ERP - Login"
@@ -356,9 +335,6 @@ Namespace Forms.Auth
             CType(_txtContrasena.Properties, ComponentModel.ISupportInitialize).EndInit()
             CType(_chkRecordar.Properties, ComponentModel.ISupportInitialize).EndInit()
             CType(root, ComponentModel.ISupportInitialize).EndInit()
-            CType(spacer, ComponentModel.ISupportInitialize).EndInit()
-            CType(LayoutControlItem1, ComponentModel.ISupportInitialize).EndInit()
-            CType(LayoutControlItem2, ComponentModel.ISupportInitialize).EndInit()
             CType(LayoutControlItem3, ComponentModel.ISupportInitialize).EndInit()
             CType(LayoutControlItem4, ComponentModel.ISupportInitialize).EndInit()
             CType(LayoutControlItem5, ComponentModel.ISupportInitialize).EndInit()
@@ -367,18 +343,16 @@ Namespace Forms.Auth
             CType(LayoutControlItem8, ComponentModel.ISupportInitialize).EndInit()
             CType(LayoutControlItem9, ComponentModel.ISupportInitialize).EndInit()
             CType(LayoutControlItem10, ComponentModel.ISupportInitialize).EndInit()
+            CType(PictureEdit1.Properties, ComponentModel.ISupportInitialize).EndInit()
+            CType(LayoutControlItem1, ComponentModel.ISupportInitialize).EndInit()
+            CType(BehaviorManager1, ComponentModel.ISupportInitialize).EndInit()
             ResumeLayout(False)
         End Sub
 
         Friend WithEvents lblMarca As LabelControl
         Friend WithEvents lblSubtitulo As LabelControl
         Friend WithEvents lblEntorno As LabelControl
-        Friend WithEvents lblTitulo As LabelControl
-        Friend WithEvents lblDescripcion As LabelControl
         Friend WithEvents root As LayoutControlGroup
-        Friend WithEvents spacer As EmptySpaceItem
-        Friend WithEvents LayoutControlItem1 As LayoutControlItem
-        Friend WithEvents LayoutControlItem2 As LayoutControlItem
         Friend WithEvents LayoutControlItem3 As LayoutControlItem
         Friend WithEvents LayoutControlItem4 As LayoutControlItem
         Friend WithEvents LayoutControlItem5 As LayoutControlItem
@@ -387,5 +361,9 @@ Namespace Forms.Auth
         Friend WithEvents LayoutControlItem8 As LayoutControlItem
         Friend WithEvents LayoutControlItem9 As LayoutControlItem
         Friend WithEvents LayoutControlItem10 As LayoutControlItem
+        Friend WithEvents PictureEdit1 As PictureEdit
+        Friend WithEvents LayoutControlItem1 As LayoutControlItem
+        Friend WithEvents BehaviorManager1 As DevExpress.Utils.Behaviors.BehaviorManager
+        Private components As System.ComponentModel.IContainer
     End Class
 End Namespace
