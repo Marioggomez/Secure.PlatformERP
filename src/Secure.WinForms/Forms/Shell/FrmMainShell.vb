@@ -283,10 +283,10 @@ Namespace Forms.Shell
         Public Sub BuildDynamicMenu(ByVal recursos As IEnumerable(Of RecursoUiAccesoDto))
             _navBar.Groups.Clear()
 
-            Dim group As New NavBarGroup("Modulos") With {
+            Dim groupGeneral As New NavBarGroup("General") With {
                 .Expanded = True
             }
-            _navBar.Groups.Add(group)
+            _navBar.Groups.Add(groupGeneral)
 
             Dim finalResources = recursos.Where(Function(x) x IsNot Nothing).OrderBy(Function(x) x.OrdenVisual).ToList()
             If finalResources.Count = 0 Then
@@ -307,22 +307,22 @@ Namespace Forms.Shell
                 .Hint = "/"
             }
             homeItem.ImageOptions.SvgImage = TryCast(IconService.GetIcon("Navigation.Home"), SvgImage)
-            group.ItemLinks.Add(homeItem)
+            groupGeneral.ItemLinks.Add(homeItem)
             AddHandler homeItem.LinkClicked, AddressOf OnMenuItemClicked
 
+            Dim moduleGroups As New Dictionary(Of String, NavBarGroup)(StringComparer.OrdinalIgnoreCase)
             For Each item In finalResources
-                Dim navItem As New NavBarItem(item.Nombre) With {
-                    .Tag = item.Componente,
-                    .Hint = item.Ruta
-                }
-
-                Dim svg = TryCast(IconService.GetIcon(item.Icono), SvgImage)
-                If svg IsNot Nothing Then
-                    navItem.ImageOptions.SvgImage = svg
+                Dim moduleKey = ResolveModuleKey(item)
+                Dim moduleGroup As NavBarGroup = Nothing
+                If Not moduleGroups.TryGetValue(moduleKey, moduleGroup) Then
+                    moduleGroup = New NavBarGroup(GetModuleCaption(moduleKey)) With {
+                        .Expanded = True
+                    }
+                    moduleGroups(moduleKey) = moduleGroup
+                    _navBar.Groups.Add(moduleGroup)
                 End If
 
-                group.ItemLinks.Add(navItem)
-                AddHandler navItem.LinkClicked, AddressOf OnMenuItemClicked
+                RegisterResourceNavItem(moduleGroup, item)
             Next
 
             Dim toolsItem As New NavBarItem("Apariencia y Herramientas") With {
@@ -330,9 +330,74 @@ Namespace Forms.Shell
                 .Hint = "/herramientas/apariencia"
             }
             toolsItem.ImageOptions.SvgImage = TryCast(IconService.GetIcon("Image.ColorBalance"), SvgImage)
-            group.ItemLinks.Add(toolsItem)
+            groupGeneral.ItemLinks.Add(toolsItem)
             AddHandler toolsItem.LinkClicked, AddressOf OnMenuItemClicked
         End Sub
+
+        Private Sub RegisterResourceNavItem(ByVal group As NavBarGroup, ByVal item As RecursoUiAccesoDto)
+            Dim navItem As New NavBarItem(item.Nombre) With {
+                .Tag = item.Componente,
+                .Hint = item.Ruta
+            }
+
+            Dim svg = TryCast(IconService.GetIcon(item.Icono), SvgImage)
+            If svg IsNot Nothing Then
+                navItem.ImageOptions.SvgImage = svg
+            End If
+
+            group.ItemLinks.Add(navItem)
+            AddHandler navItem.LinkClicked, AddressOf OnMenuItemClicked
+        End Sub
+
+        Private Shared Function ResolveModuleKey(ByVal item As RecursoUiAccesoDto) As String
+            If item Is Nothing Then Return "general"
+
+            Dim route = If(item.Ruta, String.Empty).Trim()
+            If route.StartsWith("/", StringComparison.Ordinal) Then route = route.Substring(1)
+            If Not String.IsNullOrWhiteSpace(route) Then
+                Dim routeParts = route.Split("/"c, StringSplitOptions.RemoveEmptyEntries)
+                If routeParts.Length > 0 Then
+                    Return routeParts(0).Trim().ToLowerInvariant()
+                End If
+            End If
+
+            Dim code = If(item.Codigo, String.Empty).Trim()
+            If code.StartsWith("NAV.", StringComparison.OrdinalIgnoreCase) Then
+                Dim raw = code.Substring(4)
+                Dim separators = New Char() {"."c, "_"c}
+                Dim codeParts = raw.Split(separators, StringSplitOptions.RemoveEmptyEntries)
+                If codeParts.Length > 0 Then
+                    Return codeParts(0).Trim().ToLowerInvariant()
+                End If
+            End If
+
+            Return "general"
+        End Function
+
+        Private Shared Function GetModuleCaption(ByVal moduleKey As String) As String
+            Dim normalized = If(moduleKey, String.Empty).Trim().ToLowerInvariant()
+
+            Select Case normalized
+                Case "seguridad", "iam"
+                    Return "Seguridad"
+                Case "tercero", "terceros"
+                    Return "Tercero"
+                Case "organizacion"
+                    Return "Organizacion"
+                Case "catalogo", "catalogos"
+                    Return "Catalogo"
+                Case "plataforma"
+                    Return "Plataforma"
+                Case "cumplimiento"
+                    Return "Cumplimiento"
+                Case "observabilidad"
+                    Return "Observabilidad"
+                Case "general", ""
+                    Return "General"
+                Case Else
+                    Return Char.ToUpperInvariant(normalized(0)) & normalized.Substring(1)
+            End Select
+        End Function
 
         Private Sub OnMenuItemClicked(ByVal sender As Object, ByVal e As NavBarLinkEventArgs)
             Dim key = TryCast(e.Link.Item.Tag, String)
