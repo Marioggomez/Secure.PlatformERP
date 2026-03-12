@@ -1,5 +1,6 @@
 Imports System.ComponentModel
 Imports System.Data
+Imports System.Drawing
 Imports System.Drawing.Printing
 Imports System.IO
 Imports System.IO.Compression
@@ -421,18 +422,62 @@ Namespace Forms.Base
                 End If
             Next
 
-            If selectedSvg Is Nothing Then Return
+            Dim selectedBitmap As Image = Nothing
+            If selectedSvg Is Nothing Then
+                selectedBitmap = BuildFallbackBitmap(iconKeys)
+            End If
 
             If TypeOf item Is BarButtonItem Then
                 Dim button = DirectCast(item, BarButtonItem)
-                button.ImageOptions.SvgImage = selectedSvg
-                button.ImageOptions.SvgImageSize = New Size(16, 16)
+                If selectedSvg IsNot Nothing Then
+                    button.ImageOptions.SvgImage = selectedSvg
+                    button.ImageOptions.SvgImageSize = New Size(16, 16)
+                ElseIf selectedBitmap IsNot Nothing Then
+                    button.ImageOptions.Image = selectedBitmap
+                End If
             ElseIf TypeOf item Is BarEditItem Then
                 Dim editor = DirectCast(item, BarEditItem)
-                editor.ImageOptions.SvgImage = selectedSvg
-                editor.ImageOptions.SvgImageSize = New Size(16, 16)
+                If selectedSvg IsNot Nothing Then
+                    editor.ImageOptions.SvgImage = selectedSvg
+                    editor.ImageOptions.SvgImageSize = New Size(16, 16)
+                ElseIf selectedBitmap IsNot Nothing Then
+                    editor.ImageOptions.Image = selectedBitmap
+                End If
             End If
         End Sub
+
+        Private Shared Function BuildFallbackBitmap(ByVal iconKeys As String) As Image
+            Dim normalized = If(iconKeys, String.Empty).ToLowerInvariant()
+            Dim icon As Icon
+
+            If normalized.Contains("add") Then
+                icon = SystemIcons.Information
+            ElseIf normalized.Contains("edit") Then
+                icon = SystemIcons.Application
+            ElseIf normalized.Contains("refresh") Then
+                icon = SystemIcons.Shield
+            ElseIf normalized.Contains("close") OrElse normalized.Contains("cancel") Then
+                icon = SystemIcons.Error
+            ElseIf normalized.Contains("save") Then
+                icon = SystemIcons.Information
+            ElseIf normalized.Contains("export") Then
+                icon = SystemIcons.Shield
+            ElseIf normalized.Contains("reset") OrElse normalized.Contains("undo") OrElse normalized.Contains("clear") Then
+                icon = SystemIcons.Warning
+            ElseIf normalized.Contains("find") OrElse normalized.Contains("search") OrElse normalized.Contains("filter") Then
+                icon = SystemIcons.Question
+            ElseIf normalized.Contains("first") OrElse normalized.Contains("back") OrElse normalized.Contains("previous") Then
+                icon = SystemIcons.Asterisk
+            ElseIf normalized.Contains("next") OrElse normalized.Contains("forward") OrElse normalized.Contains("last") Then
+                icon = SystemIcons.Asterisk
+            ElseIf normalized.Contains("print") OrElse normalized.Contains("page") Then
+                icon = SystemIcons.Application
+            Else
+                icon = SystemIcons.Application
+            End If
+
+            Return icon.ToBitmap()
+        End Function
 
         Private Shared Sub ApplyRibbonButtonVisual(ByVal item As BarButtonItem)
             item.PaintStyle = BarItemPaintStyle.CaptionGlyph
