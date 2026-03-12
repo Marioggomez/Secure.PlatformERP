@@ -37,10 +37,7 @@ Module Program
             Application.DoEvents()
 
             splashWatch.Stop()
-            Dim remainingMs = MinSplashVisibleMs - CInt(splashWatch.ElapsedMilliseconds)
-            If remainingMs > 0 Then
-                Thread.Sleep(remainingMs)
-            End If
+            WaitSplashMinimumTime(splash, splashWatch.ElapsedMilliseconds, MinSplashVisibleMs)
 
             splash.UpdateStatus("Listo.")
             Application.DoEvents()
@@ -96,5 +93,19 @@ Module Program
 
             Application.Run(shell)
         End Using
+    End Sub
+
+    Private Sub WaitSplashMinimumTime(ByVal splash As FrmSplash, ByVal elapsedMs As Long, ByVal minimumMs As Integer)
+        Dim remainingMs = minimumMs - CInt(elapsedMs)
+        If remainingMs <= 0 Then Return
+
+        Dim sw = Stopwatch.StartNew()
+        Do While sw.ElapsedMilliseconds < remainingMs
+            If splash Is Nothing OrElse splash.IsDisposed Then Exit Do
+
+            splash.Refresh()
+            Application.DoEvents()
+            Thread.Sleep(16)
+        Loop
     End Sub
 End Module
