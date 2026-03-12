@@ -1,5 +1,8 @@
 param(
-    [string]$RepoRoot = "C:\Users\Administrator\OneDrive\Documents\Secure Plataform ERP"
+    [string]$RepoRoot = "C:\Users\Administrator\OneDrive\Documents\Secure Plataform ERP",
+    [string]$IncludeSchema = "",
+    [string[]]$IncludeTables = @(),
+    [switch]$SkipSnapshot
 )
 
 $ErrorActionPreference = "Stop"
@@ -292,16 +295,42 @@ ORDER BY s1.name, t1.name, fk.name, fkc.constraint_column_id;
 
 $connection.Close()
 
-Ensure-Directory -Path (Join-Path $RepoRoot "database\schema-snapshots")
-@{
-    generated_utc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
-    source = "INFORMATION_SCHEMA.TABLES | INFORMATION_SCHEMA.COLUMNS | sys.foreign_keys"
-    tableCount = $tables.Count
-    columnCount = $columns.Count
-    foreignKeyCount = $foreignKeys.Count
-    tables = $tables
-    foreignKeys = $foreignKeys
-} | ConvertTo-Json -Depth 8 | Set-Content -Path (Join-Path $RepoRoot "database\schema-snapshots\secure-schema.json") -Encoding UTF8
+if (-not [string]::IsNullOrWhiteSpace($IncludeSchema)) {
+    $tables = @($tables | Where-Object { $_.TABLE_SCHEMA -eq $IncludeSchema })
+}
+
+if ($IncludeTables.Count -gt 0) {
+    $includeSet = New-Object "System.Collections.Generic.HashSet[string]" ([StringComparer]::OrdinalIgnoreCase)
+    foreach ($tableName in $IncludeTables) {
+        [void]$includeSet.Add($tableName)
+    }
+
+    $tables = @($tables | Where-Object { $includeSet.Contains($_.TABLE_NAME) })
+}
+
+$tableKeys = New-Object "System.Collections.Generic.HashSet[string]" ([StringComparer]::OrdinalIgnoreCase)
+foreach ($table in $tables) {
+    [void]$tableKeys.Add("$($table.TABLE_SCHEMA).$($table.TABLE_NAME)")
+}
+
+$columns = @($columns | Where-Object { $tableKeys.Contains("$($_.TABLE_SCHEMA).$($_.TABLE_NAME)") })
+$foreignKeys = @($foreignKeys | Where-Object {
+    $tableKeys.Contains("$($_.PARENT_SCHEMA).$($_.PARENT_TABLE)") -or
+    $tableKeys.Contains("$($_.REFERENCED_SCHEMA).$($_.REFERENCED_TABLE)")
+})
+
+if (-not $SkipSnapshot) {
+    Ensure-Directory -Path (Join-Path $RepoRoot "database\schema-snapshots")
+    @{
+        generated_utc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+        source = "INFORMATION_SCHEMA.TABLES | INFORMATION_SCHEMA.COLUMNS | sys.foreign_keys"
+        tableCount = $tables.Count
+        columnCount = $columns.Count
+        foreignKeyCount = $foreignKeys.Count
+        tables = $tables
+        foreignKeys = $foreignKeys
+    } | ConvertTo-Json -Depth 8 | Set-Content -Path (Join-Path $RepoRoot "database\schema-snapshots\secure-schema.json") -Encoding UTF8
+}
 
 $columnsByTable = @{}
 foreach ($column in $columns) {

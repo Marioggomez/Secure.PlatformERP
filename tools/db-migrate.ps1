@@ -249,6 +249,14 @@ function Invoke-MigrationScriptTransactional {
         throw "No existe script de migracion: $InnerScriptPath"
     }
 
+    $scriptContent = Get-Content -Path $InnerScriptPath -Raw
+    $hasBatchSeparator = [regex]::IsMatch($scriptContent, "(?im)^\s*GO(\s+|$)")
+    if ($hasBatchSeparator) {
+        # Los scripts con GO se ejecutan sin wrapper transaccional porque GO divide lotes.
+        Invoke-SqlcmdScript -Config $Config -ScriptPath $InnerScriptPath
+        return
+    }
+
     $safePath = $InnerScriptPath.Replace("""", """""")
     $tempFile = [System.IO.Path]::GetTempFileName() + ".sql"
 

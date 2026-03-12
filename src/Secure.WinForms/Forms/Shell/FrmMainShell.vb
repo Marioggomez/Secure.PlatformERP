@@ -9,6 +9,7 @@ Imports Secure.Platform.Contracts.Dtos.Seguridad
 Imports Secure.Platform.WinForms.Forms.Base
 Imports Secure.Platform.WinForms.Forms.Empresas
 Imports Secure.Platform.WinForms.Forms.Seguridad
+Imports Secure.Platform.WinForms.Forms.Terceros
 Imports Secure.Platform.WinForms.Forms.Usuarios
 Imports Secure.Platform.WinForms.Infrastructure
 
@@ -133,6 +134,7 @@ Namespace Forms.Shell
 
             Dim btnDashboard As New BarButtonItem() With {.Caption = "Dashboard"}
             Dim btnUsuarios As New BarButtonItem() With {.Caption = "Centro IAM"}
+            Dim btnTerceros As New BarButtonItem() With {.Caption = "Terceros"}
             Dim btnEmpresas As New BarButtonItem() With {.Caption = "Empresas"}
             Dim btnApariencia As New BarButtonItem() With {.Caption = "Apariencia"}
             Dim btnCerrarPestana As New BarButtonItem() With {.Caption = "Cerrar pestana"}
@@ -141,6 +143,7 @@ Namespace Forms.Shell
 
             btnDashboard.ImageOptions.SvgImage = TryCast(IconService.GetIcon("Navigation.Home"), SvgImage)
             btnUsuarios.ImageOptions.SvgImage = TryCast(IconService.GetIcon("BusinessObjects.BOUser"), SvgImage)
+            btnTerceros.ImageOptions.SvgImage = TryCast(IconService.GetIcon("BusinessObjects.BOPerson"), SvgImage)
             btnEmpresas.ImageOptions.SvgImage = TryCast(IconService.GetIcon("BusinessObjects.BOOrganization"), SvgImage)
             btnApariencia.ImageOptions.SvgImage = TryCast(IconService.GetIcon("Image.ColorBalance"), SvgImage)
             btnCerrarPestana.ImageOptions.SvgImage = TryCast(IconService.GetIcon("Actions.Cancel"), SvgImage)
@@ -152,6 +155,7 @@ Namespace Forms.Shell
             _ribbon.Items.AddRange(New BarItem() {
                 btnDashboard,
                 btnUsuarios,
+                btnTerceros,
                 btnEmpresas,
                 btnApariencia,
                 btnCerrarPestana,
@@ -172,6 +176,7 @@ Namespace Forms.Shell
             Dim groupNavegacion As New RibbonPageGroup("Navegacion")
             groupNavegacion.ItemLinks.Add(btnDashboard)
             groupNavegacion.ItemLinks.Add(btnUsuarios)
+            groupNavegacion.ItemLinks.Add(btnTerceros)
             groupNavegacion.ItemLinks.Add(btnEmpresas)
             groupNavegacion.ItemLinks.Add(btnApariencia)
 
@@ -196,6 +201,7 @@ Namespace Forms.Shell
 
             AddHandler btnDashboard.ItemClick, AddressOf OnDashboardClick
             AddHandler btnUsuarios.ItemClick, AddressOf OnUsuariosClick
+            AddHandler btnTerceros.ItemClick, AddressOf OnTercerosClick
             AddHandler btnEmpresas.ItemClick, AddressOf OnEmpresasClick
             AddHandler btnApariencia.ItemClick, AddressOf OnAparienciaClick
             AddHandler btnCerrarPestana.ItemClick, AddressOf OnCerrarPestanaClick
@@ -209,6 +215,10 @@ Namespace Forms.Shell
 
         Private Sub OnUsuariosClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)
             OpenModule("FrmIamAdminCenter")
+        End Sub
+
+        Private Sub OnTercerosClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)
+            OpenModule("FrmTercerosBuscar")
         End Sub
 
         Private Sub OnEmpresasClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)
@@ -281,6 +291,15 @@ Namespace Forms.Shell
             Dim finalResources = recursos.Where(Function(x) x IsNot Nothing).OrderBy(Function(x) x.OrdenVisual).ToList()
             If finalResources.Count = 0 Then
                 finalResources = GetDefaultResources()
+            Else
+                Dim defaults = GetDefaultResources()
+                For Each item In defaults
+                    If Not finalResources.Any(Function(existing) String.Equals(existing.Codigo, item.Codigo, StringComparison.OrdinalIgnoreCase)) Then
+                        finalResources.Add(item)
+                    End If
+                Next
+
+                finalResources = finalResources.OrderBy(Function(x) x.OrdenVisual).ToList()
             End If
 
             Dim homeItem As New NavBarItem("Inicio") With {
@@ -345,6 +364,20 @@ Namespace Forms.Shell
                     Return New FrmIamAdminCenter(_apiClient, _sessionContext)
                 Case "FrmUsuarioEdit"
                     Return New FrmUsuarioEdit()
+                Case "FrmTercerosBuscar"
+                    Return New FrmTercerosBuscar(_apiClient, _sessionContext)
+                Case "FrmTipoPersonaBuscar"
+                    Return New FrmTipoPersonaBuscar(_apiClient, _sessionContext)
+                Case "FrmIdentificacionTerceroBuscar"
+                    Return New FrmIdentificacionTerceroBuscar(_apiClient, _sessionContext)
+                Case "FrmDireccionTerceroBuscar"
+                    Return New FrmDireccionTerceroBuscar(_apiClient, _sessionContext)
+                Case "FrmContactoTerceroBuscar"
+                    Return New FrmContactoTerceroBuscar(_apiClient, _sessionContext)
+                Case "FrmCuentaBancariaTerceroBuscar"
+                    Return New FrmCuentaBancariaTerceroBuscar(_apiClient, _sessionContext)
+                Case "FrmTerceroRolBuscar"
+                    Return New FrmTerceroRolBuscar(_apiClient, _sessionContext)
                 Case "FrmEmpresasBuscar"
                     Return New FrmEmpresasBuscar(_apiClient, _sessionContext)
                 Case "FrmEmpresaEdit"
@@ -593,7 +626,8 @@ Namespace Forms.Shell
         Private Function GetDefaultResources() As List(Of RecursoUiAccesoDto)
             Return New List(Of RecursoUiAccesoDto) From {
                 New RecursoUiAccesoDto With {.IdRecursoUi = 2, .Codigo = "NAV.IAM", .Nombre = "Centro IAM", .Componente = "FrmIamAdminCenter", .Ruta = "/seguridad/iam", .Icono = "BusinessObjects.BOUser", .OrdenVisual = 10},
-                New RecursoUiAccesoDto With {.IdRecursoUi = 3, .Codigo = "NAV.EMPRESAS", .Nombre = "Empresas", .Componente = "FrmEmpresasBuscar", .Ruta = "/organizacion/empresas", .Icono = "Edit.Edit", .OrdenVisual = 20}
+                New RecursoUiAccesoDto With {.IdRecursoUi = 3, .Codigo = "NAV.EMPRESAS", .Nombre = "Empresas", .Componente = "FrmEmpresasBuscar", .Ruta = "/organizacion/empresas", .Icono = "Edit.Edit", .OrdenVisual = 20},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 4, .Codigo = "NAV.TERCEROS", .Nombre = "Terceros", .Componente = "FrmTercerosBuscar", .Ruta = "/tercero/terceros", .Icono = "BusinessObjects.BOPerson", .OrdenVisual = 30}
             }
         End Function
     End Class
