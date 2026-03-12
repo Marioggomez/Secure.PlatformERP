@@ -245,40 +245,40 @@ Namespace Forms.Base
             AssignIcon(btnNuevo, "Actions.Add")
             AssignIcon(btnEditar, "Edit.Edit")
             AssignIcon(btnRefrescar, "Actions.Refresh")
-            AssignIcon(btnCerrar, "Actions.Close")
-            AssignIcon(btnPrimero, "Navigation.First")
-            AssignIcon(btnAnterior, "Navigation.Back")
-            AssignIcon(btnSiguiente, "Navigation.Forward")
-            AssignIcon(btnUltimo, "Navigation.Last")
+            AssignIcon(btnCerrar, "Actions.Close|Actions.Cancel")
+            AssignIcon(btnPrimero, "Navigation.First|Arrows.ArrowUp")
+            AssignIcon(btnAnterior, "Navigation.Back|Navigation.Previous|Arrows.ArrowLeft")
+            AssignIcon(btnSiguiente, "Navigation.Forward|Navigation.Next|Arrows.ArrowRight")
+            AssignIcon(btnUltimo, "Navigation.Last|Arrows.ArrowDown")
             AssignIcon(btnGuardarVista, "Save.Save")
-            AssignIcon(btnRestaurarVista, "Actions.Reset")
-            AssignIcon(btnExportar, "Export.ExportToXLSX")
-            AssignIcon(_barCampoFiltro, "Filter.FilterEditor")
-            AssignIcon(_barBusqueda, "Find.Find")
-            AssignIcon(_barBuscar, "Find.Find")
+            AssignIcon(btnRestaurarVista, "Actions.Reset|Actions.Undo")
+            AssignIcon(btnExportar, "Export.ExportToXLSX|Export.ExportTo")
+            AssignIcon(_barCampoFiltro, "Filter.FilterEditor|Filter.Filter")
+            AssignIcon(_barBusqueda, "Find.Find|Actions.Search")
+            AssignIcon(_barBuscar, "Find.Find|Actions.Search")
             AssignIcon(_barLimpiar, "Actions.Clear")
-            AssignIcon(_barTamanoPagina, "Print.PageSetup")
-            AssignIcon(_barPaginaAnterior, "Navigation.Back")
-            AssignIcon(_barPaginaSiguiente, "Navigation.Forward")
+            AssignIcon(_barTamanoPagina, "Print.PageSetup|Print.Preview")
+            AssignIcon(_barPaginaAnterior, "Navigation.Back|Navigation.Previous|Arrows.ArrowLeft")
+            AssignIcon(_barPaginaSiguiente, "Navigation.Forward|Navigation.Next|Arrows.ArrowRight")
 
-            btnNuevo.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnEditar.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnRefrescar.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnCerrar.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnPrimero.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnAnterior.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnSiguiente.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnUltimo.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnGuardarVista.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnRestaurarVista.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            btnExportar.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            _barCampoFiltro.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            _barBusqueda.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            _barTamanoPagina.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            _barBuscar.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            _barLimpiar.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            _barPaginaAnterior.PaintStyle = BarItemPaintStyle.CaptionGlyph
-            _barPaginaSiguiente.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            ApplyRibbonButtonVisual(btnNuevo)
+            ApplyRibbonButtonVisual(btnEditar)
+            ApplyRibbonButtonVisual(btnRefrescar)
+            ApplyRibbonButtonVisual(btnCerrar)
+            ApplyRibbonButtonVisual(btnPrimero)
+            ApplyRibbonButtonVisual(btnAnterior)
+            ApplyRibbonButtonVisual(btnSiguiente)
+            ApplyRibbonButtonVisual(btnUltimo)
+            ApplyRibbonButtonVisual(btnGuardarVista)
+            ApplyRibbonButtonVisual(btnRestaurarVista)
+            ApplyRibbonButtonVisual(btnExportar)
+            ApplyRibbonButtonVisual(_barBuscar)
+            ApplyRibbonButtonVisual(_barLimpiar)
+            ApplyRibbonButtonVisual(_barPaginaAnterior)
+            ApplyRibbonButtonVisual(_barPaginaSiguiente)
+            ApplyRibbonEditVisual(_barCampoFiltro)
+            ApplyRibbonEditVisual(_barBusqueda)
+            ApplyRibbonEditVisual(_barTamanoPagina)
 
             Ribbon.Items.AddRange(New BarItem() {
                 btnNuevo, btnEditar, btnRefrescar, btnCerrar,
@@ -409,15 +409,39 @@ Namespace Forms.Base
             End Try
         End Sub
 
-        Private Sub AssignIcon(ByVal item As BarItem, ByVal iconKey As String)
-            Dim svg = TryCast(IconService.GetIcon(iconKey), SvgImage)
-            If svg Is Nothing Then Return
+        Private Sub AssignIcon(ByVal item As BarItem, ByVal iconKeys As String)
+            If item Is Nothing OrElse String.IsNullOrWhiteSpace(iconKeys) Then Return
+
+            Dim selectedSvg As SvgImage = Nothing
+            For Each candidate In iconKeys.Split("|"c, StringSplitOptions.RemoveEmptyEntries)
+                Dim svg = TryCast(IconService.GetIcon(candidate.Trim()), SvgImage)
+                If svg IsNot Nothing Then
+                    selectedSvg = svg
+                    Exit For
+                End If
+            Next
+
+            If selectedSvg Is Nothing Then Return
 
             If TypeOf item Is BarButtonItem Then
-                DirectCast(item, BarButtonItem).ImageOptions.SvgImage = svg
+                Dim button = DirectCast(item, BarButtonItem)
+                button.ImageOptions.SvgImage = selectedSvg
+                button.ImageOptions.SvgImageSize = New Size(16, 16)
             ElseIf TypeOf item Is BarEditItem Then
-                DirectCast(item, BarEditItem).ImageOptions.SvgImage = svg
+                Dim editor = DirectCast(item, BarEditItem)
+                editor.ImageOptions.SvgImage = selectedSvg
+                editor.ImageOptions.SvgImageSize = New Size(16, 16)
             End If
+        End Sub
+
+        Private Shared Sub ApplyRibbonButtonVisual(ByVal item As BarButtonItem)
+            item.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            item.RibbonStyle = RibbonItemStyles.SmallWithText Or RibbonItemStyles.Large
+        End Sub
+
+        Private Shared Sub ApplyRibbonEditVisual(ByVal item As BarEditItem)
+            item.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            item.RibbonStyle = RibbonItemStyles.SmallWithText Or RibbonItemStyles.Large
         End Sub
 
         Protected Overridable Function BuildFormTitle() As String
