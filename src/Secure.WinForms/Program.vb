@@ -22,25 +22,38 @@ Module Program
         Using splash As New FrmSplash()
             Dim splashWatch = Stopwatch.StartNew()
             Const MinSplashVisibleMs As Integer = 10000
+            Const MinSplashStepMs As Integer = 900
 
             splash.Show()
-            splash.UpdateStatus("Inicializando tema corporativo...")
-            ThemeService.Initialize()
+            RunSplashStep(
+                splash,
+                "Inicializando tema corporativo...",
+                MinSplashStepMs,
+                Sub() ThemeService.Initialize())
 
-            splash.UpdateStatus("Cargando configuracion de API...")
-            Dim apiBaseUrl = AppSettingsProvider.GetApiBaseUrl()
+            Dim apiBaseUrl As String = String.Empty
+            RunSplashStep(
+                splash,
+                "Cargando configuracion de API...",
+                MinSplashStepMs,
+                Sub() apiBaseUrl = AppSettingsProvider.GetApiBaseUrl())
 
-            splash.UpdateStatus("Preparando cliente de seguridad...")
-            apiClient = New ApiClient(apiBaseUrl)
+            RunSplashStep(
+                splash,
+                "Preparando cliente de seguridad...",
+                MinSplashStepMs,
+                Sub() apiClient = New ApiClient(apiBaseUrl))
 
-            splash.UpdateStatus("Cargando interfaz de autenticacion...")
-            Application.DoEvents()
+            RunSplashStep(
+                splash,
+                "Cargando interfaz de autenticacion...",
+                MinSplashStepMs,
+                Nothing)
 
             splashWatch.Stop()
             WaitSplashMinimumTime(splash, splashWatch.ElapsedMilliseconds, MinSplashVisibleMs)
 
-            splash.UpdateStatus("Listo.")
-            Application.DoEvents()
+            RunSplashStep(splash, "Listo.", 500, Nothing)
             splash.Close()
         End Using
 
@@ -95,17 +108,36 @@ Module Program
         End Using
     End Sub
 
-    Private Sub WaitSplashMinimumTime(ByVal splash As FrmSplash, ByVal elapsedMs As Long, ByVal minimumMs As Integer)
-        Dim remainingMs = minimumMs - CInt(elapsedMs)
-        If remainingMs <= 0 Then Return
+    Private Sub RunSplashStep(ByVal splash As FrmSplash, ByVal message As String, ByVal minVisibleMs As Integer, ByVal action As Action)
+        If splash Is Nothing OrElse splash.IsDisposed Then
+            action?.Invoke()
+            Return
+        End If
 
         Dim sw = Stopwatch.StartNew()
-        Do While sw.ElapsedMilliseconds < remainingMs
+        splash.UpdateStatus(message)
+        action?.Invoke()
+
+        WaitSplashUi(splash, Math.Max(0, minVisibleMs - CInt(sw.ElapsedMilliseconds)))
+    End Sub
+
+    Private Sub WaitSplashUi(ByVal splash As FrmSplash, ByVal durationMs As Integer)
+        If durationMs <= 0 Then Return
+
+        Dim sw = Stopwatch.StartNew()
+        Do While sw.ElapsedMilliseconds < durationMs
             If splash Is Nothing OrElse splash.IsDisposed Then Exit Do
 
             splash.Refresh()
             Application.DoEvents()
             Thread.Sleep(16)
         Loop
+    End Sub
+
+    Private Sub WaitSplashMinimumTime(ByVal splash As FrmSplash, ByVal elapsedMs As Long, ByVal minimumMs As Integer)
+        Dim remainingMs = minimumMs - CInt(elapsedMs)
+        If remainingMs <= 0 Then Return
+
+        WaitSplashUi(splash, remainingMs)
     End Sub
 End Module
