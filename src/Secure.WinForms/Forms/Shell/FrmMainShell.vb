@@ -169,10 +169,10 @@ Namespace Forms.Shell
                 _statusModulo
             })
 
-            Dim pageInicio As New RibbonPage("Inicio")
+            Dim pageInicio As New RibbonPage("Modulos")
             Dim pageVista As New RibbonPage("Vista")
             Dim pageSesion As New RibbonPage("Sesion")
-            pageInicio.Name = "rpInicio"
+            pageInicio.Name = "rpModulos"
             pageVista.Name = "rpVista"
             pageSesion.Name = "rpSesion"
 
@@ -717,12 +717,12 @@ Namespace Forms.Shell
                 _ribbon.MergeRibbon(activeRibbon)
             End If
 
-            FocusHomeRibbonPage()
+            FocusPrimaryRibbonPage()
         End Sub
 
-        Private Sub FocusHomeRibbonPage()
+        Private Sub FocusPrimaryRibbonPage()
             For Each page As RibbonPage In _ribbon.Pages
-                If String.Equals(page.Text, "Inicio", StringComparison.OrdinalIgnoreCase) Then
+                If String.Equals(page.Text, "Modulos", StringComparison.OrdinalIgnoreCase) Then
                     _ribbon.SelectedPage = page
                     Exit For
                 End If

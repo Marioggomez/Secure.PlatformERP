@@ -265,6 +265,16 @@ Namespace Forms.Base
             btnEditar.PaintStyle = BarItemPaintStyle.CaptionGlyph
             btnRefrescar.PaintStyle = BarItemPaintStyle.CaptionGlyph
             btnCerrar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnPrimero.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnAnterior.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnSiguiente.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnUltimo.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnGuardarVista.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnRestaurarVista.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            btnExportar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _barCampoFiltro.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _barBusqueda.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _barTamanoPagina.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _barBuscar.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _barLimpiar.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _barPaginaAnterior.PaintStyle = BarItemPaintStyle.CaptionGlyph
