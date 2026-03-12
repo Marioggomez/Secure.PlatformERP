@@ -382,6 +382,37 @@ BEGIN TRY
             source.activo
         );
 
+    DECLARE @idRecursoUiTerceros BIGINT = (
+        SELECT TOP (1) id_recurso_ui
+        FROM seguridad.recurso_ui
+        WHERE codigo = N'NAV.TERCEROS'
+    );
+
+    IF @idRecursoUiTerceros IS NOT NULL
+    BEGIN
+        UPDATE seguridad.recurso_ui
+        SET
+            id_recurso_ui_padre = NULL,
+            actualizado_utc = @now
+        WHERE codigo = N'NAV.TERCEROS'
+          AND id_recurso_ui_padre IS NOT NULL;
+
+        UPDATE seguridad.recurso_ui
+        SET
+            id_recurso_ui_padre = @idRecursoUiTerceros,
+            actualizado_utc = @now
+        WHERE codigo IN
+        (
+            N'NAV.TIPO_PERSONA',
+            N'NAV.IDENTIFICACION_TERCERO',
+            N'NAV.DIRECCION_TERCERO',
+            N'NAV.CONTACTO_TERCERO',
+            N'NAV.CUENTA_BANCARIA_TERCERO',
+            N'NAV.TERCERO_ROL'
+        )
+          AND (id_recurso_ui_padre IS NULL OR id_recurso_ui_padre <> @idRecursoUiTerceros);
+    END;
+
     MERGE seguridad.recurso_ui_permiso AS target
     USING (
         SELECT r.id_recurso_ui, p.id_permiso

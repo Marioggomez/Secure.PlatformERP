@@ -310,9 +310,44 @@ Namespace Forms.Shell
             groupGeneral.ItemLinks.Add(homeItem)
             AddHandler homeItem.LinkClicked, AddressOf OnMenuItemClicked
 
+            Dim normalizedResources = finalResources.
+                Where(Function(item) Not IsHomeResource(item)).
+                GroupBy(Function(item) item.IdRecursoUi).
+                Select(Function(grouping) grouping.OrderBy(Function(item) item.OrdenVisual).First()).
+                ToList()
+
+            Dim resourcesById = normalizedResources.ToDictionary(Function(item) item.IdRecursoUi)
+            Dim childrenByParent As New Dictionary(Of Long, List(Of RecursoUiAccesoDto))()
+            Dim rootResources As New List(Of RecursoUiAccesoDto)()
+
+            For Each item In normalizedResources
+                If item.IdRecursoUiPadre.HasValue AndAlso resourcesById.ContainsKey(item.IdRecursoUiPadre.Value) Then
+                    Dim parentId = item.IdRecursoUiPadre.Value
+                    If Not childrenByParent.ContainsKey(parentId) Then
+                        childrenByParent(parentId) = New List(Of RecursoUiAccesoDto)()
+                    End If
+
+                    childrenByParent(parentId).Add(item)
+                Else
+                    rootResources.Add(item)
+                End If
+            Next
+
+            For Each parentKey In childrenByParent.Keys.ToList()
+                childrenByParent(parentKey) = childrenByParent(parentKey).
+                    OrderBy(Function(item) item.OrdenVisual).
+                    ThenBy(Function(item) item.Nombre).
+                    ToList()
+            Next
+
+            If rootResources.Count = 0 Then
+                rootResources.AddRange(normalizedResources)
+            End If
+
             Dim moduleGroups As New Dictionary(Of String, NavBarGroup)(StringComparer.OrdinalIgnoreCase)
-            For Each item In finalResources
-                Dim moduleKey = ResolveModuleKey(item)
+            Dim renderedResourceIds As New HashSet(Of Long)()
+            For Each rootItem In rootResources.OrderBy(Function(item) item.OrdenVisual).ThenBy(Function(item) item.Nombre)
+                Dim moduleKey = ResolveModuleKey(rootItem)
                 Dim moduleGroup As NavBarGroup = Nothing
                 If Not moduleGroups.TryGetValue(moduleKey, moduleGroup) Then
                     moduleGroup = New NavBarGroup(GetModuleCaption(moduleKey)) With {
@@ -322,7 +357,27 @@ Namespace Forms.Shell
                     _navBar.Groups.Add(moduleGroup)
                 End If
 
-                RegisterResourceNavItem(moduleGroup, item)
+                AddResourceTree(moduleGroup, rootItem, childrenByParent, 0, renderedResourceIds, New HashSet(Of Long)())
+            Next
+
+            Dim pendingResources = normalizedResources.
+                Where(Function(item) Not renderedResourceIds.Contains(item.IdRecursoUi)).
+                OrderBy(Function(item) item.OrdenVisual).
+                ThenBy(Function(item) item.Nombre).
+                ToList()
+
+            For Each pendingItem In pendingResources
+                Dim moduleKey = ResolveModuleKey(pendingItem)
+                Dim moduleGroup As NavBarGroup = Nothing
+                If Not moduleGroups.TryGetValue(moduleKey, moduleGroup) Then
+                    moduleGroup = New NavBarGroup(GetModuleCaption(moduleKey)) With {
+                        .Expanded = True
+                    }
+                    moduleGroups(moduleKey) = moduleGroup
+                    _navBar.Groups.Add(moduleGroup)
+                End If
+
+                AddResourceTree(moduleGroup, pendingItem, childrenByParent, 0, renderedResourceIds, New HashSet(Of Long)())
             Next
 
             Dim toolsItem As New NavBarItem("Apariencia y Herramientas") With {
@@ -334,8 +389,46 @@ Namespace Forms.Shell
             AddHandler toolsItem.LinkClicked, AddressOf OnMenuItemClicked
         End Sub
 
-        Private Sub RegisterResourceNavItem(ByVal group As NavBarGroup, ByVal item As RecursoUiAccesoDto)
-            Dim navItem As New NavBarItem(item.Nombre) With {
+        Private Sub AddResourceTree(
+            ByVal group As NavBarGroup,
+            ByVal item As RecursoUiAccesoDto,
+            ByVal childrenByParent As Dictionary(Of Long, List(Of RecursoUiAccesoDto)),
+            ByVal depth As Integer,
+            ByVal renderedResourceIds As HashSet(Of Long),
+            ByVal branchVisited As HashSet(Of Long))
+
+            If item Is Nothing Then Return
+            If renderedResourceIds.Contains(item.IdRecursoUi) Then Return
+            If branchVisited.Contains(item.IdRecursoUi) Then Return
+
+            branchVisited.Add(item.IdRecursoUi)
+
+            Dim children As List(Of RecursoUiAccesoDto) = Nothing
+            Dim hasChildren = childrenByParent.TryGetValue(item.IdRecursoUi, children) AndAlso
+                children.Any(Function(child) Not renderedResourceIds.Contains(child.IdRecursoUi))
+            RegisterResourceNavItem(group, item, depth, hasChildren)
+            renderedResourceIds.Add(item.IdRecursoUi)
+
+            If Not hasChildren Then
+                branchVisited.Remove(item.IdRecursoUi)
+                Return
+            End If
+
+            For Each child In children
+                AddResourceTree(group, child, childrenByParent, depth + 1, renderedResourceIds, branchVisited)
+            Next
+
+            branchVisited.Remove(item.IdRecursoUi)
+        End Sub
+
+        Private Sub RegisterResourceNavItem(
+            ByVal group As NavBarGroup,
+            ByVal item As RecursoUiAccesoDto,
+            ByVal depth As Integer,
+            ByVal hasChildren As Boolean)
+
+            Dim captionPrefix = If(depth > 0, New String(" "c, depth * 2) & "|- ", String.Empty)
+            Dim navItem As New NavBarItem(captionPrefix & item.Nombre) With {
                 .Tag = item.Componente,
                 .Hint = item.Ruta
             }
@@ -345,9 +438,19 @@ Namespace Forms.Shell
                 navItem.ImageOptions.SvgImage = svg
             End If
 
+            If String.IsNullOrWhiteSpace(item.Componente) AndAlso hasChildren Then
+                navItem.Enabled = False
+            End If
+
             group.ItemLinks.Add(navItem)
             AddHandler navItem.LinkClicked, AddressOf OnMenuItemClicked
         End Sub
+
+        Private Shared Function IsHomeResource(ByVal item As RecursoUiAccesoDto) As Boolean
+            If item Is Nothing Then Return False
+            If String.Equals(item.Codigo, "NAV.HOME", StringComparison.OrdinalIgnoreCase) Then Return True
+            Return String.Equals(item.Componente, "Home", StringComparison.OrdinalIgnoreCase)
+        End Function
 
         Private Shared Function ResolveModuleKey(ByVal item As RecursoUiAccesoDto) As String
             If item Is Nothing Then Return "general"
@@ -690,9 +793,17 @@ Namespace Forms.Shell
 
         Private Function GetDefaultResources() As List(Of RecursoUiAccesoDto)
             Return New List(Of RecursoUiAccesoDto) From {
-                New RecursoUiAccesoDto With {.IdRecursoUi = 2, .Codigo = "NAV.IAM", .Nombre = "Centro IAM", .Componente = "FrmIamAdminCenter", .Ruta = "/seguridad/iam", .Icono = "BusinessObjects.BOUser", .OrdenVisual = 10},
-                New RecursoUiAccesoDto With {.IdRecursoUi = 3, .Codigo = "NAV.EMPRESAS", .Nombre = "Empresas", .Componente = "FrmEmpresasBuscar", .Ruta = "/organizacion/empresas", .Icono = "Edit.Edit", .OrdenVisual = 20},
-                New RecursoUiAccesoDto With {.IdRecursoUi = 4, .Codigo = "NAV.TERCEROS", .Nombre = "Terceros", .Componente = "FrmTercerosBuscar", .Ruta = "/tercero/terceros", .Icono = "BusinessObjects.BOPerson", .OrdenVisual = 30}
+                New RecursoUiAccesoDto With {.IdRecursoUi = 200, .Codigo = "NAV.SEGURIDAD", .Nombre = "Seguridad", .Componente = "FrmIamAdminCenter", .Ruta = "/seguridad", .Icono = "BusinessObjects.BOUser", .OrdenVisual = 10},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 201, .Codigo = "NAV.SEGURIDAD.IAM", .Nombre = "Centro IAM", .Componente = "FrmIamAdminCenter", .Ruta = "/seguridad/iam", .Icono = "BusinessObjects.BOUser", .OrdenVisual = 11, .IdRecursoUiPadre = 200},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 300, .Codigo = "NAV.ORGANIZACION", .Nombre = "Organizacion", .Componente = "FrmEmpresasBuscar", .Ruta = "/organizacion", .Icono = "BusinessObjects.BOOrganization", .OrdenVisual = 20},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 301, .Codigo = "NAV.EMPRESAS", .Nombre = "Empresas", .Componente = "FrmEmpresasBuscar", .Ruta = "/organizacion/empresas", .Icono = "Edit.Edit", .OrdenVisual = 21, .IdRecursoUiPadre = 300},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 400, .Codigo = "NAV.TERCEROS", .Nombre = "Terceros", .Componente = "FrmTercerosBuscar", .Ruta = "/tercero/terceros", .Icono = "BusinessObjects.BOPerson", .OrdenVisual = 30},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 401, .Codigo = "NAV.TIPO_PERSONA", .Nombre = "Tipos Persona", .Componente = "FrmTipoPersonaBuscar", .Ruta = "/tercero/tipo-persona", .Icono = "BusinessObjects.BOContact", .OrdenVisual = 31, .IdRecursoUiPadre = 400},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 402, .Codigo = "NAV.IDENTIFICACION_TERCERO", .Nombre = "Identificaciones", .Componente = "FrmIdentificacionTerceroBuscar", .Ruta = "/tercero/identificaciones", .Icono = "BusinessObjects.BOValidation", .OrdenVisual = 32, .IdRecursoUiPadre = 400},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 403, .Codigo = "NAV.DIRECCION_TERCERO", .Nombre = "Direcciones", .Componente = "FrmDireccionTerceroBuscar", .Ruta = "/tercero/direcciones", .Icono = "BusinessObjects.BOAddress", .OrdenVisual = 33, .IdRecursoUiPadre = 400},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 404, .Codigo = "NAV.CONTACTO_TERCERO", .Nombre = "Contactos", .Componente = "FrmContactoTerceroBuscar", .Ruta = "/tercero/contactos", .Icono = "BusinessObjects.BOLead", .OrdenVisual = 34, .IdRecursoUiPadre = 400},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 405, .Codigo = "NAV.CUENTA_BANCARIA_TERCERO", .Nombre = "Cuentas Bancarias", .Componente = "FrmCuentaBancariaTerceroBuscar", .Ruta = "/tercero/cuentas", .Icono = "BusinessObjects.BOInvoice", .OrdenVisual = 35, .IdRecursoUiPadre = 400},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 406, .Codigo = "NAV.TERCERO_ROL", .Nombre = "Roles de Tercero", .Componente = "FrmTerceroRolBuscar", .Ruta = "/tercero/roles", .Icono = "BusinessObjects.BORole", .OrdenVisual = 36, .IdRecursoUiPadre = 400}
             }
         End Function
     End Class
