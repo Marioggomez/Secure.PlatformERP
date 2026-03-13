@@ -40,7 +40,7 @@ public sealed class TipoFactorMfaController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoFactorMfaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idTipoFactorMfa = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idTipoFactorMfa}")]
@@ -60,5 +60,6 @@ public sealed class TipoFactorMfaController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

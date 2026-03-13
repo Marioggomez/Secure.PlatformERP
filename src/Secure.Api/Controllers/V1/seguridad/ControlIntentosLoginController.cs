@@ -40,7 +40,7 @@ public sealed class ControlIntentosLoginController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ControlIntentosLoginDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idControlIntento = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idControlIntento}")]
@@ -60,5 +60,6 @@ public sealed class ControlIntentosLoginController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

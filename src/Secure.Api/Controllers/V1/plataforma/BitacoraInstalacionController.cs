@@ -40,7 +40,7 @@ public sealed class BitacoraInstalacionController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] BitacoraInstalacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idBitacoraInstalacion = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idBitacoraInstalacion}")]
@@ -60,5 +60,6 @@ public sealed class BitacoraInstalacionController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

@@ -40,7 +40,7 @@ public sealed class VersionEsquemaController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] VersionEsquemaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idVersionEsquema = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idVersionEsquema}")]
@@ -60,5 +60,6 @@ public sealed class VersionEsquemaController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

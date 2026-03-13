@@ -40,7 +40,7 @@ public sealed class CredencialLocalUsuarioController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] CredencialLocalUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idUsuario = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idUsuario}")]
@@ -60,5 +60,6 @@ public sealed class CredencialLocalUsuarioController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

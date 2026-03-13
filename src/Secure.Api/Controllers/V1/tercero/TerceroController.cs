@@ -49,7 +49,7 @@ public sealed class TerceroController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] TerceroDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idTercero = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idTercero}")]
@@ -69,5 +69,6 @@ public sealed class TerceroController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

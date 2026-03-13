@@ -40,7 +40,7 @@ public sealed class DesafioMfaController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] DesafioMfaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idDesafioMfa = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idDesafioMfa}")]
@@ -60,5 +60,6 @@ public sealed class DesafioMfaController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

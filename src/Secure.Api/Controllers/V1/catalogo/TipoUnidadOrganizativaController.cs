@@ -40,7 +40,7 @@ public sealed class TipoUnidadOrganizativaController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoUnidadOrganizativaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idTipoUnidadOrganizativa = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idTipoUnidadOrganizativa}")]
@@ -60,5 +60,6 @@ public sealed class TipoUnidadOrganizativaController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

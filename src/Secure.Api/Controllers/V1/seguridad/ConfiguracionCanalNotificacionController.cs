@@ -40,7 +40,7 @@ public sealed class ConfiguracionCanalNotificacionController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ConfiguracionCanalNotificacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idConfiguracionCanalNotificacion = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idConfiguracionCanalNotificacion}")]
@@ -60,5 +60,6 @@ public sealed class ConfiguracionCanalNotificacionController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

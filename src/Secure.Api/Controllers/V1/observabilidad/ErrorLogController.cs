@@ -40,7 +40,7 @@ public sealed class ErrorLogController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ErrorLogDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idErrorLog = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idErrorLog}")]
@@ -60,5 +60,6 @@ public sealed class ErrorLogController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

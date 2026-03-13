@@ -40,7 +40,7 @@ public sealed class RecursoUiController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] RecursoUiDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idRecursoUi = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idRecursoUi}")]
@@ -60,5 +60,6 @@ public sealed class RecursoUiController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

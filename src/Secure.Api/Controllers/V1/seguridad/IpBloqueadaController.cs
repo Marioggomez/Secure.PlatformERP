@@ -40,7 +40,7 @@ public sealed class IpBloqueadaController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] IpBloqueadaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idIpBloqueada = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idIpBloqueada}")]
@@ -60,5 +60,6 @@ public sealed class IpBloqueadaController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

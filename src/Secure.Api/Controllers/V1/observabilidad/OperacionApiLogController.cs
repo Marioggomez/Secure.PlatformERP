@@ -40,7 +40,7 @@ public sealed class OperacionApiLogController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] OperacionApiLogDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idOperacionApiLog = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idOperacionApiLog}")]
@@ -60,5 +60,6 @@ public sealed class OperacionApiLogController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

@@ -40,7 +40,7 @@ public sealed class ExcepcionSodController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ExcepcionSodDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idExcepcionSod = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idExcepcionSod}")]
@@ -60,5 +60,6 @@ public sealed class ExcepcionSodController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

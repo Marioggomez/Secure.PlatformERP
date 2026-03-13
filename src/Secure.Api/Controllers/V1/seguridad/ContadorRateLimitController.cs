@@ -40,7 +40,7 @@ public sealed class ContadorRateLimitController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ContadorRateLimitDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idContadorRateLimit = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idContadorRateLimit}")]
@@ -60,5 +60,6 @@ public sealed class ContadorRateLimitController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

@@ -40,7 +40,7 @@ public sealed class EntidadAlcanceDatoController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] EntidadAlcanceDatoDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { codigoEntidad = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{codigoEntidad}")]
@@ -60,5 +60,6 @@ public sealed class EntidadAlcanceDatoController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

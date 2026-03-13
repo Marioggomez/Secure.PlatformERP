@@ -40,7 +40,7 @@ public sealed class ModuloPermisoController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ModuloPermisoDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idModuloPermiso = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idModuloPermiso}")]
@@ -60,5 +60,6 @@ public sealed class ModuloPermisoController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

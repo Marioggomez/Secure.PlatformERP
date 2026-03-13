@@ -40,7 +40,7 @@ public sealed class DeberController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] DeberDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idDeber = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idDeber}")]
@@ -60,5 +60,6 @@ public sealed class DeberController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

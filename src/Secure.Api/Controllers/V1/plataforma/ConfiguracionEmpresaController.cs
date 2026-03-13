@@ -40,7 +40,7 @@ public sealed class ConfiguracionEmpresaController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ConfiguracionEmpresaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idConfiguracionEmpresa = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idConfiguracionEmpresa}")]
@@ -60,5 +60,6 @@ public sealed class ConfiguracionEmpresaController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

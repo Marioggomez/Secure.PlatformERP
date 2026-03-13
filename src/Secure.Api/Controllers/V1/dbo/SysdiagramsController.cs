@@ -40,7 +40,7 @@ public sealed class SysdiagramsController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] SysdiagramsDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { name = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{name}")]
@@ -60,5 +60,6 @@ public sealed class SysdiagramsController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

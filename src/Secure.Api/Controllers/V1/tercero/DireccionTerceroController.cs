@@ -40,7 +40,7 @@ public sealed class DireccionTerceroController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] DireccionTerceroDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idDireccionTercero = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idDireccionTercero}")]
@@ -60,5 +60,6 @@ public sealed class DireccionTerceroController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

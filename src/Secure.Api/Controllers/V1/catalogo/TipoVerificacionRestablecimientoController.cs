@@ -40,7 +40,7 @@ public sealed class TipoVerificacionRestablecimientoController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoVerificacionRestablecimientoDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idTipoVerificacionRestablecimiento = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idTipoVerificacionRestablecimiento}")]
@@ -60,5 +60,6 @@ public sealed class TipoVerificacionRestablecimientoController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

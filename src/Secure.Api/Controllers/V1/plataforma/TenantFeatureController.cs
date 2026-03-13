@@ -40,7 +40,7 @@ public sealed class TenantFeatureController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] TenantFeatureDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idTenantFeature = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idTenantFeature}")]
@@ -60,5 +60,6 @@ public sealed class TenantFeatureController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

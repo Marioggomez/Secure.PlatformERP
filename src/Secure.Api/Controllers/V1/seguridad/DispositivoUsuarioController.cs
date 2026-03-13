@@ -40,7 +40,7 @@ public sealed class DispositivoUsuarioController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] DispositivoUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idDispositivoUsuario = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idDispositivoUsuario}")]
@@ -60,5 +60,6 @@ public sealed class DispositivoUsuarioController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

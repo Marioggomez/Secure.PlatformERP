@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -40,7 +40,7 @@ public sealed class AlcanceAsignacionController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] AlcanceAsignacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idAlcanceAsignacion = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idAlcanceAsignacion}")]
@@ -60,3 +60,4 @@ public sealed class AlcanceAsignacionController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+

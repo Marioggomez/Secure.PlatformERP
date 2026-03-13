@@ -40,7 +40,7 @@ public sealed class FeatureFlagController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] FeatureFlagDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idFeature = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idFeature}")]
@@ -60,5 +60,6 @@ public sealed class FeatureFlagController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

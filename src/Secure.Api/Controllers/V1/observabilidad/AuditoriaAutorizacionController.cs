@@ -40,7 +40,7 @@ public sealed class AuditoriaAutorizacionController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] AuditoriaAutorizacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idAuditoriaAutorizacion = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idAuditoriaAutorizacion}")]
@@ -60,5 +60,6 @@ public sealed class AuditoriaAutorizacionController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

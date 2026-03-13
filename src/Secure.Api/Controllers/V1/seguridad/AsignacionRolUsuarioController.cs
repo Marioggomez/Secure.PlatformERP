@@ -40,7 +40,7 @@ public sealed class AsignacionRolUsuarioController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] AsignacionRolUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idAsignacionRolUsuario = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idAsignacionRolUsuario}")]
@@ -60,5 +60,6 @@ public sealed class AsignacionRolUsuarioController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

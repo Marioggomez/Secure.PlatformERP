@@ -40,7 +40,7 @@ public sealed class TipoIdentificadorUsuarioController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoIdentificadorUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idTipoIdentificadorUsuario = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idTipoIdentificadorUsuario}")]
@@ -60,5 +60,6 @@ public sealed class TipoIdentificadorUsuarioController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

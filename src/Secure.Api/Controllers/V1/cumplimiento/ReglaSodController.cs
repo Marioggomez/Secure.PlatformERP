@@ -40,7 +40,7 @@ public sealed class ReglaSodController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ReglaSodDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idReglaSod = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idReglaSod}")]
@@ -60,5 +60,6 @@ public sealed class ReglaSodController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

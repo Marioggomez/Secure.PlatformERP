@@ -40,7 +40,7 @@ public sealed class TipoOrigenAutenticacionController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoOrigenAutenticacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idTipoOrigenAutenticacion = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idTipoOrigenAutenticacion}")]
@@ -60,5 +60,6 @@ public sealed class TipoOrigenAutenticacionController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

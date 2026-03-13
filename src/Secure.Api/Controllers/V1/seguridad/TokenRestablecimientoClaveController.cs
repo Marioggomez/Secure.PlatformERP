@@ -40,7 +40,7 @@ public sealed class TokenRestablecimientoClaveController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] TokenRestablecimientoClaveDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idTokenRestablecimientoClave = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idTokenRestablecimientoClave}")]
@@ -60,5 +60,6 @@ public sealed class TokenRestablecimientoClaveController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

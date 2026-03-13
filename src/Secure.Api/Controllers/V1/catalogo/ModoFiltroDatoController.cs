@@ -40,7 +40,7 @@ public sealed class ModoFiltroDatoController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ModoFiltroDatoDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idModoFiltroDato = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idModoFiltroDato}")]
@@ -60,5 +60,6 @@ public sealed class ModoFiltroDatoController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

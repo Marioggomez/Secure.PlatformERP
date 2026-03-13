@@ -40,7 +40,7 @@ public sealed class PoliticaIpController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] PoliticaIpDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idPoliticaIp = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idPoliticaIp}")]
@@ -60,5 +60,6 @@ public sealed class PoliticaIpController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

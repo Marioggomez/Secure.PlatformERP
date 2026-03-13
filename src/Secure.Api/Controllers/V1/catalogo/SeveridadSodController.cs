@@ -40,7 +40,7 @@ public sealed class SeveridadSodController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] SeveridadSodDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idSeveridadSod = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idSeveridadSod}")]
@@ -60,5 +60,6 @@ public sealed class SeveridadSodController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

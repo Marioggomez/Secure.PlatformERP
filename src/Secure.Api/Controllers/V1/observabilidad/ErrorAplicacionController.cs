@@ -40,7 +40,7 @@ public sealed class ErrorAplicacionController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] ErrorAplicacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idErrorAplicacion = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idErrorAplicacion}")]
@@ -60,5 +60,6 @@ public sealed class ErrorAplicacionController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 

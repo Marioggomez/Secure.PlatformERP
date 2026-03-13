@@ -40,7 +40,7 @@ public sealed class PerfilAprobacionController : ControllerBase
     public async Task<ActionResult<object>> CrearAsync([FromBody] PerfilAprobacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
-        return CreatedAtAction(nameof(ObtenerAsync), new { idPerfilAprobacion = id }, new { id });
+        return Ok(new { id });
     }
 
     [HttpPut("{idPerfilAprobacion}")]
@@ -60,5 +60,6 @@ public sealed class PerfilAprobacionController : ControllerBase
         return ok ? Ok() : NotFound();
     }
 }
+
 
 
