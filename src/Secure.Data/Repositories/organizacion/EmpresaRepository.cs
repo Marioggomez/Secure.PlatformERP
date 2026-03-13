@@ -64,6 +64,7 @@ public sealed class EmpresaRepository : IEmpresaRepository
     {
         var page = request.Page < 1 ? 1 : request.Page;
         var size = request.Size < 5 ? 25 : Math.Min(request.Size, 500);
+        var scopedTenantId = SqlScopeContext.Current?.IdTenant ?? request.IdTenant;
 
         var total = 0;
         var items = new List<EmpresaListadoDto>();
@@ -79,7 +80,7 @@ public sealed class EmpresaRepository : IEmpresaRepository
         command.Parameters.Add(CreateParameter("@sort_dir", SqlDbType.VarChar, NormalizeSortDirection(request.SortDirection), 4));
         command.Parameters.Add(CreateParameter("@filter", SqlDbType.NVarChar, request.Filter, 200));
         command.Parameters.Add(CreateParameter("@filter_field", SqlDbType.NVarChar, request.FilterField, 64));
-        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, request.IdTenant));
+        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, scopedTenantId));
 
         var totalParameter = new SqlParameter("@total_registros", SqlDbType.Int)
         {
@@ -158,12 +159,14 @@ public sealed class EmpresaRepository : IEmpresaRepository
 
     public async Task<long> CrearAsync(EmpresaDto dto, CancellationToken cancellationToken)
     {
+        var scopedTenantId = SqlScopeContext.Current?.IdTenant ?? dto.IdTenant;
+
         using var connection = _connectionFactory.CreateConnection();
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
         using var command = connection.CreateCommand();
         command.CommandType = CommandType.StoredProcedure;
         command.CommandText = SpCrear;
-        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, dto.IdTenant));
+        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, scopedTenantId));
         command.Parameters.Add(CreateParameter("@codigo", SqlDbType.NVarChar, dto.Codigo, 50));
         command.Parameters.Add(CreateParameter("@nombre", SqlDbType.NVarChar, dto.Nombre, 250));
         command.Parameters.Add(CreateParameter("@nombre_legal", SqlDbType.NVarChar, dto.NombreLegal, 300));
@@ -181,13 +184,15 @@ public sealed class EmpresaRepository : IEmpresaRepository
 
     public async Task<bool> ActualizarAsync(EmpresaDto dto, CancellationToken cancellationToken)
     {
+        var scopedTenantId = SqlScopeContext.Current?.IdTenant ?? dto.IdTenant;
+
         using var connection = _connectionFactory.CreateConnection();
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
         using var command = connection.CreateCommand();
         command.CommandType = CommandType.StoredProcedure;
         command.CommandText = SpActualizar;
         command.Parameters.Add(CreateParameter("@id_empresa", SqlDbType.BigInt, dto.IdEmpresa));
-        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, dto.IdTenant));
+        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, scopedTenantId));
         command.Parameters.Add(CreateParameter("@codigo", SqlDbType.NVarChar, dto.Codigo, 50));
         command.Parameters.Add(CreateParameter("@nombre", SqlDbType.NVarChar, dto.Nombre, 250));
         command.Parameters.Add(CreateParameter("@nombre_legal", SqlDbType.NVarChar, dto.NombreLegal, 300));

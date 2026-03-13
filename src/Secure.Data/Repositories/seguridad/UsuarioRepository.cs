@@ -73,6 +73,7 @@ public sealed class UsuarioRepository : IUsuarioRepository
     {
         var page = request.Page < 1 ? 1 : request.Page;
         var size = request.Size < 5 ? 25 : Math.Min(request.Size, 500);
+        var scopedTenantId = SqlScopeContext.Current?.IdTenant ?? request.IdTenant;
 
         var total = 0;
         var items = new List<UsuarioListadoDto>();
@@ -88,7 +89,7 @@ public sealed class UsuarioRepository : IUsuarioRepository
         command.Parameters.Add(CreateParameter("@sort_dir", SqlDbType.VarChar, NormalizeSortDirection(request.SortDirection), 4));
         command.Parameters.Add(CreateParameter("@filter", SqlDbType.NVarChar, request.Filter, 200));
         command.Parameters.Add(CreateParameter("@filter_field", SqlDbType.NVarChar, request.FilterField, 64));
-        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, request.IdTenant));
+        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, scopedTenantId));
 
         var totalParameter = new SqlParameter("@total_registros", SqlDbType.Int)
         {
