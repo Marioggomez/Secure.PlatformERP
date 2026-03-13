@@ -24,14 +24,14 @@ builder.Services.AddSwaggerGen(options =>
     options.TagActionsBy(apiDescription =>
     {
         var relativePath = apiDescription.RelativePath ?? string.Empty;
-        return new[] { BuildSchemaTableTag(relativePath) };
+        return new[] { BuildEnterpriseTag(relativePath) };
     });
 
     options.OrderActionsBy(apiDescription =>
     {
         var relativePath = apiDescription.RelativePath ?? string.Empty;
-        var schemaTable = BuildSchemaTableTag(relativePath);
-        return $"{schemaTable}_{relativePath}_{apiDescription.HttpMethod}";
+        var (module, schema, table, endpoint) = ParseRouteSegments(relativePath);
+        return $"{module}_{schema}_{table}_{endpoint}_{apiDescription.HttpMethod}";
     });
 });
 
@@ -56,11 +56,16 @@ app.MapControllers();
 
 app.Run();
 
-static string BuildSchemaTableTag(string relativePath)
+static string BuildEnterpriseTag(string relativePath)
+{
+    var (module, schema, table, _) = ParseRouteSegments(relativePath);
+    return $"{module} | {schema}.{table}";
+}
+
+static (string Module, string Schema, string Table, string Endpoint) ParseRouteSegments(string relativePath)
 {
     var pathOnly = (relativePath ?? string.Empty).Split('?', 2)[0];
-    var pathSegments = pathOnly
-        .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    var pathSegments = pathOnly.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
     if (pathSegments.Length >= 4 &&
         string.Equals(pathSegments[0], "api", StringComparison.OrdinalIgnoreCase) &&
@@ -68,10 +73,30 @@ static string BuildSchemaTableTag(string relativePath)
     {
         var schema = NormalizeSegment(pathSegments[2]);
         var table = NormalizeSegment(pathSegments[3]);
-        return $"{schema}.{table}";
+        var endpoint = pathSegments.Length >= 5
+            ? NormalizeSegment(string.Join("_", pathSegments.Skip(4)))
+            : "base";
+        var module = BuildModuleLabel(schema);
+        return (module, schema, table, endpoint);
     }
 
-    return "general";
+    return ("General", "general", "general", "base");
+}
+
+static string BuildModuleLabel(string schema)
+{
+    return schema switch
+    {
+        "seguridad" => "Seguridad",
+        "tercero" => "Tercero",
+        "organizacion" => "Organizacion",
+        "catalogo" => "Catalogo",
+        "plataforma" => "Plataforma",
+        "cumplimiento" => "Cumplimiento",
+        "observabilidad" => "Observabilidad",
+        "dbo" => "Dbo",
+        _ => "General"
+    };
 }
 
 static string NormalizeSegment(string? segment)
