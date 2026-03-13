@@ -24,9 +24,12 @@ Namespace Forms.Seguridad
     ''' </summary>
     Public Class FrmIamAdminCenter
         Inherits XtraForm
-        Private Const DefaultOnboardingPassword As String = "Cambio#2026"
         Private Const PasswordHashAlgorithm As String = "SHA2_512"
         Private Const PasswordHashIterations As Integer = 100000
+        Private Const PasswordUpperChars As String = "ABCDEFGHJKLMNPQRSTUVWXYZ"
+        Private Const PasswordLowerChars As String = "abcdefghijkmnopqrstuvwxyz"
+        Private Const PasswordNumberChars As String = "23456789"
+        Private Const PasswordSpecialChars As String = "!@#$%*+-_=?."
 
         Private NotInheritable Class ComboLongItem
             Public Property Id As Long
@@ -2171,13 +2174,14 @@ Namespace Forms.Seguridad
                         Throw New InvalidOperationException("La API no devolvio id del usuario creado.")
                     End If
 
+                    Dim claveTemporal = Await GenerarClaveTemporalSeguraAsync().ConfigureAwait(True)
                     Await EnsureUsuarioTenantEmpresaAsync(idNuevoUsuario.Value, now).ConfigureAwait(True)
-                    Await UpsertCredencialUsuarioAsync(idNuevoUsuario.Value, DefaultOnboardingPassword, True).ConfigureAwait(True)
+                    Await UpsertCredencialUsuarioAsync(idNuevoUsuario.Value, claveTemporal, True).ConfigureAwait(True)
                     Await MarcarUsuarioRequiereCambioClaveAsync(idNuevoUsuario.Value, True).ConfigureAwait(True)
 
                     XtraMessageBox.Show(
                         Me,
-                        $"Usuario creado. Clave temporal inicial: {DefaultOnboardingPassword}{Environment.NewLine}Debe cambiarla en su primer ingreso.",
+                        $"Usuario creado. Clave temporal inicial: {claveTemporal}{Environment.NewLine}Debe cambiarla en su primer ingreso.",
                         "Onboarding usuario",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information)
@@ -2313,7 +2317,8 @@ Namespace Forms.Seguridad
                 Return
             End If
 
-            Dim input = XtraInputBox.Show("Nueva clave temporal para el usuario:", "Reset clave", DefaultOnboardingPassword)
+            Dim sugerida = Await GenerarClaveTemporalSeguraAsync().ConfigureAwait(True)
+            Dim input = XtraInputBox.Show("Nueva clave temporal para el usuario:", "Reset clave", sugerida)
             If input Is Nothing Then
                 Return
             End If
@@ -2496,6 +2501,70 @@ Namespace Forms.Seguridad
 
             Dim parsed As Long
             Return If(Long.TryParse(raw.ToString(), parsed), parsed, CType(Nothing, Long?))
+        End Function
+
+        Private Async Function GenerarClaveTemporalSeguraAsync() As Task(Of String)
+            Dim longitudMinima As Integer = 12
+            Dim requiereMayuscula As Boolean = True
+            Dim requiereMinuscula As Boolean = True
+            Dim requiereNumero As Boolean = True
+            Dim requiereEspecial As Boolean = True
+
+            Try
+                If _sessionContext.IdTenant.HasValue Then
+                    Dim politica = Await _apiClient.GetAsync(Of PoliticaTenantDto)("api/v1/seguridad/politica_tenant/obtener/" & _sessionContext.IdTenant.Value.ToString()).ConfigureAwait(True)
+                    If politica IsNot Nothing Then
+                        longitudMinima = Math.Max(12, CInt(If(politica.LongitudMinimaClave, CByte(12))))
+                        requiereMayuscula = If(politica.RequiereMayuscula, True)
+                        requiereMinuscula = If(politica.RequiereMinuscula, True)
+                        requiereNumero = If(politica.RequiereNumero, True)
+                        requiereEspecial = If(politica.RequiereEspecial, True)
+                    End If
+                End If
+            Catch ex As Exception
+                ' Si politica no esta disponible, se aplica baseline fuerte por defecto.
+            End Try
+
+            Dim grupos As New List(Of String)()
+            If requiereMayuscula Then grupos.Add(PasswordUpperChars)
+            If requiereMinuscula Then grupos.Add(PasswordLowerChars)
+            If requiereNumero Then grupos.Add(PasswordNumberChars)
+            If requiereEspecial Then grupos.Add(PasswordSpecialChars)
+            If grupos.Count = 0 Then
+                grupos.Add(PasswordUpperChars)
+                grupos.Add(PasswordLowerChars)
+                grupos.Add(PasswordNumberChars)
+                grupos.Add(PasswordSpecialChars)
+            End If
+
+            If longitudMinima < grupos.Count Then
+                longitudMinima = grupos.Count
+            End If
+
+            Dim todos = String.Concat(grupos)
+            Dim chars As New List(Of Char)(longitudMinima)
+
+            For Each grupo In grupos
+                chars.Add(RandomCharFrom(grupo))
+            Next
+
+            While chars.Count < longitudMinima
+                chars.Add(RandomCharFrom(todos))
+            End While
+
+            For i = chars.Count - 1 To 1 Step -1
+                Dim j = RandomNumberGenerator.GetInt32(i + 1)
+                Dim tmp = chars(i)
+                chars(i) = chars(j)
+                chars(j) = tmp
+            Next
+
+            Return New String(chars.ToArray())
+        End Function
+
+        Private Shared Function RandomCharFrom(ByVal source As String) As Char
+            Dim idx = RandomNumberGenerator.GetInt32(source.Length)
+            Return source(idx)
         End Function
 
         Private Sub SetBusy(ByVal busy As Boolean, Optional ByVal message As String = Nothing)
