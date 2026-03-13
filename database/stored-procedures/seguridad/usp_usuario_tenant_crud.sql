@@ -19,6 +19,7 @@ END
 GO
 
 CREATE OR ALTER PROCEDURE seguridad.usp_usuario_tenant_crear
+    @id_usuario bigint,
     @id_tenant bigint,
     @es_administrador_tenant bit,
     @es_cuenta_servicio bit,
@@ -28,9 +29,9 @@ CREATE OR ALTER PROCEDURE seguridad.usp_usuario_tenant_crear
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO seguridad.usuario_tenant ([id_tenant], [es_administrador_tenant], [es_cuenta_servicio], [activo], [creado_utc], [actualizado_utc])
-    VALUES (@id_tenant, @es_administrador_tenant, @es_cuenta_servicio, @activo, @creado_utc, @actualizado_utc);
-    SELECT CAST(SCOPE_IDENTITY() AS bigint) AS id;
+    INSERT INTO seguridad.usuario_tenant ([id_usuario], [id_tenant], [es_administrador_tenant], [es_cuenta_servicio], [activo], [creado_utc], [actualizado_utc])
+    VALUES (@id_usuario, @id_tenant, @es_administrador_tenant, @es_cuenta_servicio, @activo, @creado_utc, @actualizado_utc);
+    SELECT @id_usuario AS id;
 END
 GO
 

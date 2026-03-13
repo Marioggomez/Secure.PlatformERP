@@ -82,6 +82,7 @@ public sealed class UsuarioTenantRepository : IUsuarioTenantRepository
         using var command = connection.CreateCommand();
         command.CommandType = CommandType.StoredProcedure;
         command.CommandText = SpCrear;
+        command.Parameters.Add(CreateParameter("@id_usuario", SqlDbType.BigInt, dto.IdUsuario));
         command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, dto.IdTenant));
         command.Parameters.Add(CreateParameter("@es_administrador_tenant", SqlDbType.Bit, dto.EsAdministradorTenant));
         command.Parameters.Add(CreateParameter("@es_cuenta_servicio", SqlDbType.Bit, dto.EsCuentaServicio));
@@ -89,7 +90,7 @@ public sealed class UsuarioTenantRepository : IUsuarioTenantRepository
         command.Parameters.Add(CreateParameter("@creado_utc", SqlDbType.DateTime2, dto.CreadoUtc));
         command.Parameters.Add(CreateParameter("@actualizado_utc", SqlDbType.DateTime2, dto.ActualizadoUtc));
         var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
-        return Convert.ToInt64(result);
+        return result is null or DBNull ? dto.IdUsuario ?? 0 : Convert.ToInt64(result);
     }
 
     public async Task<bool> ActualizarAsync(UsuarioTenantDto dto, CancellationToken cancellationToken)

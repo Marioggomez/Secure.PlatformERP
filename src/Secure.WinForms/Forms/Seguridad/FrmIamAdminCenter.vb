@@ -1,5 +1,9 @@
 Imports System.Linq
+Imports System.Net
+Imports System.Security.Cryptography
 Imports System.ComponentModel
+Imports System.Text
+Imports System.Text.Json
 Imports DevExpress.Utils.Svg
 Imports DevExpress.XtraBars
 Imports DevExpress.XtraBars.Ribbon
@@ -20,6 +24,9 @@ Namespace Forms.Seguridad
     ''' </summary>
     Public Class FrmIamAdminCenter
         Inherits XtraForm
+        Private Const DefaultOnboardingPassword As String = "Cambio#2026"
+        Private Const PasswordHashAlgorithm As String = "SHA2_512"
+        Private Const PasswordHashIterations As Integer = 100000
 
         Private NotInheritable Class ComboLongItem
             Public Property Id As Long
@@ -114,6 +121,7 @@ Namespace Forms.Seguridad
         Private ReadOnly _btnRefrescar As BarButtonItem
         Private ReadOnly _btnDesactivar As BarButtonItem
         Private ReadOnly _btnLimpiar As BarButtonItem
+        Private ReadOnly _btnResetClave As BarButtonItem
 
         Private ReadOnly _mainLayout As LayoutControl
         Private ReadOnly _tabs As TabControl
@@ -244,6 +252,7 @@ Namespace Forms.Seguridad
             _btnRefrescar = New BarButtonItem() With {.Caption = "Refrescar"}
             _btnDesactivar = New BarButtonItem() With {.Caption = "Desactivar"}
             _btnLimpiar = New BarButtonItem() With {.Caption = "Limpiar editor"}
+            _btnResetClave = New BarButtonItem() With {.Caption = "Reset clave"}
 
             _mainLayout = New LayoutControl()
             _tabs = New TabControl()
@@ -401,6 +410,7 @@ Namespace Forms.Seguridad
             AssignIcon(_btnRefrescar, "Actions.Refresh")
             AssignIcon(_btnDesactivar, "Actions.Cancel")
             AssignIcon(_btnLimpiar, "Actions.Clear")
+            AssignIcon(_btnResetClave, "BusinessObjects.BOChange")
             _btnTabUsuarios.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnTabRoles.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnTabAsignaciones.PaintStyle = BarItemPaintStyle.CaptionGlyph
@@ -414,10 +424,11 @@ Namespace Forms.Seguridad
             _btnRefrescar.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnDesactivar.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnLimpiar.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnResetClave.PaintStyle = BarItemPaintStyle.CaptionGlyph
 
             _ribbon.Items.AddRange(New BarItem() {
                 _btnTabUsuarios, _btnTabRoles, _btnTabAsignaciones, _btnTabPermisos, _btnTabMenu, _btnTabSesiones, _btnTabHelpdesk, _btnTabAuditoria,
-                _btnNuevo, _btnGuardar, _btnRefrescar, _btnDesactivar, _btnLimpiar,
+                _btnNuevo, _btnGuardar, _btnRefrescar, _btnDesactivar, _btnLimpiar, _btnResetClave,
                 _statusInfo, _statusModulo
             })
 
@@ -439,6 +450,7 @@ Namespace Forms.Seguridad
             groupAcciones.ItemLinks.Add(_btnRefrescar)
             groupAcciones.ItemLinks.Add(_btnDesactivar)
             groupAcciones.ItemLinks.Add(_btnLimpiar)
+            groupAcciones.ItemLinks.Add(_btnResetClave)
 
             page.Groups.Add(groupSecciones)
             page.Groups.Add(groupAcciones)
@@ -1031,6 +1043,7 @@ Namespace Forms.Seguridad
             AddHandler _btnRefrescar.ItemClick, AddressOf OnRefrescarClickAsync
             AddHandler _btnDesactivar.ItemClick, AddressOf OnDesactivarClickAsync
             AddHandler _btnLimpiar.ItemClick, AddressOf OnLimpiarClick
+            AddHandler _btnResetClave.ItemClick, AddressOf OnResetClaveClickAsync
 
             AddHandler _txtBuscarUsuarios.EditValueChanged, Sub(sender, e) _viewUsuarios.FindFilterText = _txtBuscarUsuarios.Text
             AddHandler _txtBuscarRoles.EditValueChanged, Sub(sender, e) _viewRoles.FindFilterText = _txtBuscarRoles.Text
@@ -2090,6 +2103,7 @@ Namespace Forms.Seguridad
             Dim nombre = _txtUsuarioNombre.Text.Trim()
             Dim nombreMostrar = _txtUsuarioNombreMostrar.Text.Trim()
             Dim estadoId = GetSelectedShortId(_cmbUsuarioEstado)
+            Dim isNewUser = Not _editingUsuarioId.HasValue
 
             If String.IsNullOrWhiteSpace(login) Then
                 XtraMessageBox.Show(Me, "Ingrese el login del usuario.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -2111,6 +2125,11 @@ Namespace Forms.Seguridad
             If Not estadoId.HasValue Then
                 XtraMessageBox.Show(Me, "Seleccione un estado para el usuario.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 _cmbUsuarioEstado.Focus()
+                Return
+            End If
+
+            If isNewUser AndAlso (Not _sessionContext.IdTenant.HasValue OrElse Not _sessionContext.IdEmpresa.HasValue) Then
+                XtraMessageBox.Show(Me, "La sesion activa debe tener tenant y empresa para crear usuarios operables.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return
             End If
 
@@ -2142,16 +2161,34 @@ Namespace Forms.Seguridad
             }
 
             SetBusy(True, "Guardando usuario...")
-            If _editingUsuarioId.HasValue Then
-                Await _apiClient.PutAsync("api/v1/seguridad/usuario/actualizar/" & _editingUsuarioId.Value.ToString(), dto).ConfigureAwait(True)
-            Else
-                Await _apiClient.PostAsync(Of UsuarioDto, Dictionary(Of String, Object))("api/v1/seguridad/usuario", dto).ConfigureAwait(True)
-            End If
+            Try
+                If _editingUsuarioId.HasValue Then
+                    Await _apiClient.PutAsync("api/v1/seguridad/usuario/actualizar/" & _editingUsuarioId.Value.ToString(), dto).ConfigureAwait(True)
+                Else
+                    Dim createResult = Await _apiClient.PostAsync(Of UsuarioDto, Dictionary(Of String, Object))("api/v1/seguridad/usuario", dto).ConfigureAwait(True)
+                    Dim idNuevoUsuario = ExtractCreatedId(createResult)
+                    If Not idNuevoUsuario.HasValue Then
+                        Throw New InvalidOperationException("La API no devolvio id del usuario creado.")
+                    End If
 
-            Await LoadUsuariosAsync().ConfigureAwait(True)
-            Await LoadAsignacionesAsync().ConfigureAwait(True)
-            _statusInfo.Caption = "Usuario guardado correctamente."
-            SetBusy(False)
+                    Await EnsureUsuarioTenantEmpresaAsync(idNuevoUsuario.Value, now).ConfigureAwait(True)
+                    Await UpsertCredencialUsuarioAsync(idNuevoUsuario.Value, DefaultOnboardingPassword, True).ConfigureAwait(True)
+                    Await MarcarUsuarioRequiereCambioClaveAsync(idNuevoUsuario.Value, True).ConfigureAwait(True)
+
+                    XtraMessageBox.Show(
+                        Me,
+                        $"Usuario creado. Clave temporal inicial: {DefaultOnboardingPassword}{Environment.NewLine}Debe cambiarla en su primer ingreso.",
+                        "Onboarding usuario",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information)
+                End If
+
+                Await LoadUsuariosAsync().ConfigureAwait(True)
+                Await LoadAsignacionesAsync().ConfigureAwait(True)
+                _statusInfo.Caption = "Usuario guardado correctamente."
+            Finally
+                SetBusy(False)
+            End Try
         End Function
         Private Async Function SaveRolAsync() As Task
             If Not _sessionContext.IdTenant.HasValue Then
@@ -2262,6 +2299,203 @@ Namespace Forms.Seguridad
             Await LoadAsignacionesAsync().ConfigureAwait(True)
             _statusInfo.Caption = "Asignacion guardada correctamente."
             SetBusy(False)
+        End Function
+
+        Private Async Sub OnResetClaveClickAsync(ByVal sender As Object, ByVal e As ItemClickEventArgs)
+            If _busy Then Return
+            If _tabs.SelectedIndex <> 0 Then
+                XtraMessageBox.Show(Me, "Reset clave aplica en la pestaña Usuarios.", "Reset clave", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+
+            If Not _editingUsuarioId.HasValue Then
+                XtraMessageBox.Show(Me, "Seleccione un usuario para resetear su clave.", "Reset clave", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Dim input = XtraInputBox.Show("Nueva clave temporal para el usuario:", "Reset clave", DefaultOnboardingPassword)
+            If input Is Nothing Then
+                Return
+            End If
+
+            Dim nuevaClave = input.ToString().Trim()
+            If String.IsNullOrWhiteSpace(nuevaClave) OrElse nuevaClave.Length < 8 Then
+                XtraMessageBox.Show(Me, "La clave temporal debe tener al menos 8 caracteres.", "Reset clave", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            SetBusy(True, "Reseteando clave de usuario...")
+            Try
+                Await UpsertCredencialUsuarioAsync(_editingUsuarioId.Value, nuevaClave, True).ConfigureAwait(True)
+                Await MarcarUsuarioRequiereCambioClaveAsync(_editingUsuarioId.Value, True).ConfigureAwait(True)
+                Await LoadUsuariosAsync().ConfigureAwait(True)
+                _statusInfo.Caption = "Clave temporal aplicada y usuario marcado para cambio obligatorio."
+                XtraMessageBox.Show(Me, $"Clave temporal aplicada: {nuevaClave}", "Reset clave", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Catch ex As ApiClientException
+                Dim detalle = If(String.IsNullOrWhiteSpace(ex.ResponseBody), ex.Message, ex.ResponseBody)
+                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Catch ex As Exception
+                XtraMessageBox.Show(Me, ex.Message, "Reset clave", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Finally
+                SetBusy(False)
+            End Try
+        End Sub
+
+        Private Async Function EnsureUsuarioTenantEmpresaAsync(ByVal idUsuario As Long, ByVal nowUtc As DateTime) As Task
+            If Not _sessionContext.IdTenant.HasValue Then
+                Throw New InvalidOperationException("No existe id_tenant en sesion para alta de usuario.")
+            End If
+
+            If Not _sessionContext.IdEmpresa.HasValue Then
+                Throw New InvalidOperationException("No existe id_empresa en sesion para alta de usuario.")
+            End If
+
+            Dim idTenant = _sessionContext.IdTenant.Value
+            Dim idEmpresa = _sessionContext.IdEmpresa.Value
+
+            Dim tenantDto As UsuarioTenantDto = Nothing
+            Try
+                tenantDto = Await _apiClient.GetAsync(Of UsuarioTenantDto)("api/v1/seguridad/usuario_tenant/obtener/" & idUsuario.ToString()).ConfigureAwait(True)
+            Catch ex As ApiClientException When ex.StatusCode = HttpStatusCode.NotFound
+                tenantDto = Nothing
+            End Try
+
+            If tenantDto Is Nothing Then
+                tenantDto = New UsuarioTenantDto With {
+                    .IdUsuario = idUsuario,
+                    .IdTenant = idTenant,
+                    .EsAdministradorTenant = False,
+                    .EsCuentaServicio = False,
+                    .Activo = True,
+                    .CreadoUtc = nowUtc,
+                    .ActualizadoUtc = nowUtc
+                }
+                Await _apiClient.PostAsync(Of UsuarioTenantDto, Dictionary(Of String, Object))("api/v1/seguridad/usuario_tenant", tenantDto).ConfigureAwait(True)
+            Else
+                tenantDto.IdUsuario = idUsuario
+                tenantDto.IdTenant = idTenant
+                tenantDto.Activo = True
+                tenantDto.ActualizadoUtc = nowUtc
+                If Not tenantDto.CreadoUtc.HasValue Then
+                    tenantDto.CreadoUtc = nowUtc
+                End If
+                Await _apiClient.PutAsync("api/v1/seguridad/usuario_tenant/actualizar/" & idUsuario.ToString(), tenantDto).ConfigureAwait(True)
+            End If
+
+            Dim empresas = Await _apiClient.GetAsync(Of List(Of UsuarioEmpresaDto))("api/v1/seguridad/usuario_empresa/listar").ConfigureAwait(True)
+            Dim empresaDto = empresas.FirstOrDefault(
+                Function(item) item.IdUsuario.HasValue AndAlso item.IdUsuario.Value = idUsuario AndAlso
+                               item.IdTenant.HasValue AndAlso item.IdTenant.Value = idTenant AndAlso
+                               item.IdEmpresa.HasValue AndAlso item.IdEmpresa.Value = idEmpresa)
+
+            If empresaDto Is Nothing Then
+                empresaDto = New UsuarioEmpresaDto With {
+                    .IdUsuario = idUsuario,
+                    .IdTenant = idTenant,
+                    .IdEmpresa = idEmpresa,
+                    .EsEmpresaPredeterminada = True,
+                    .PuedeOperar = True,
+                    .FechaInicioUtc = nowUtc,
+                    .FechaFinUtc = Nothing,
+                    .Activo = True,
+                    .CreadoUtc = nowUtc,
+                    .ActualizadoUtc = nowUtc
+                }
+                Await _apiClient.PostAsync(Of UsuarioEmpresaDto, Dictionary(Of String, Object))("api/v1/seguridad/usuario_empresa", empresaDto).ConfigureAwait(True)
+            Else
+                empresaDto.IdUsuario = idUsuario
+                empresaDto.IdTenant = idTenant
+                empresaDto.IdEmpresa = idEmpresa
+                empresaDto.EsEmpresaPredeterminada = True
+                empresaDto.PuedeOperar = True
+                empresaDto.Activo = True
+                empresaDto.FechaInicioUtc = If(empresaDto.FechaInicioUtc, nowUtc)
+                empresaDto.FechaFinUtc = Nothing
+                empresaDto.ActualizadoUtc = nowUtc
+                If Not empresaDto.CreadoUtc.HasValue Then
+                    empresaDto.CreadoUtc = nowUtc
+                End If
+                Await _apiClient.PutAsync("api/v1/seguridad/usuario_empresa/actualizar/" & empresaDto.IdUsuarioEmpresa.Value.ToString(), empresaDto).ConfigureAwait(True)
+            End If
+        End Function
+
+        Private Async Function UpsertCredencialUsuarioAsync(ByVal idUsuario As Long, ByVal clavePlano As String, ByVal debeCambiarClave As Boolean) As Task
+            Dim nowUtc = DateTime.UtcNow
+            Dim salt = RandomNumberGenerator.GetBytes(32)
+            Dim hash = CalcularHashContrasena(clavePlano, salt)
+
+            Dim dto As New CredencialLocalUsuarioDto With {
+                .IdUsuario = idUsuario,
+                .HashClave = hash,
+                .SaltClave = salt,
+                .AlgoritmoClave = PasswordHashAlgorithm,
+                .IteracionesClave = PasswordHashIterations,
+                .CambioClaveUtc = nowUtc,
+                .DebeCambiarClave = debeCambiarClave,
+                .Activo = True
+            }
+
+            Dim credencialExiste = True
+            Try
+                Await _apiClient.GetAsync(Of CredencialLocalUsuarioDto)("api/v1/seguridad/credencial_local_usuario/obtener/" & idUsuario.ToString()).ConfigureAwait(True)
+            Catch ex As ApiClientException When ex.StatusCode = HttpStatusCode.NotFound
+                credencialExiste = False
+            End Try
+
+            If credencialExiste Then
+                Await _apiClient.PutAsync("api/v1/seguridad/credencial_local_usuario/actualizar/" & idUsuario.ToString(), dto).ConfigureAwait(True)
+            Else
+                Await _apiClient.PostAsync(Of CredencialLocalUsuarioDto, Dictionary(Of String, Object))("api/v1/seguridad/credencial_local_usuario", dto).ConfigureAwait(True)
+            End If
+        End Function
+
+        Private Async Function MarcarUsuarioRequiereCambioClaveAsync(ByVal idUsuario As Long, ByVal requiereCambio As Boolean) As Task
+            Dim usuario = Await _apiClient.GetAsync(Of UsuarioDto)("api/v1/seguridad/usuario/obtener/" & idUsuario.ToString()).ConfigureAwait(True)
+            If usuario Is Nothing Then
+                Return
+            End If
+
+            usuario.RequiereCambioClave = requiereCambio
+            usuario.ActualizadoUtc = DateTime.UtcNow
+            usuario.ActualizadoPor = _sessionContext.IdUsuario
+            Await _apiClient.PutAsync("api/v1/seguridad/usuario/actualizar/" & idUsuario.ToString(), usuario).ConfigureAwait(True)
+        End Function
+
+        Private Shared Function CalcularHashContrasena(ByVal clavePlano As String, ByVal salt As Byte()) As Byte()
+            Dim claveBytes = Encoding.UTF8.GetBytes(clavePlano)
+            Dim payload(salt.Length + claveBytes.Length - 1) As Byte
+            Buffer.BlockCopy(salt, 0, payload, 0, salt.Length)
+            Buffer.BlockCopy(claveBytes, 0, payload, salt.Length, claveBytes.Length)
+            Return SHA512.HashData(payload)
+        End Function
+
+        Private Shared Function ExtractCreatedId(ByVal response As Dictionary(Of String, Object)) As Long?
+            If response Is Nothing OrElse Not response.ContainsKey("id") Then
+                Return Nothing
+            End If
+
+            Dim raw = response("id")
+            If raw Is Nothing Then
+                Return Nothing
+            End If
+
+            If TypeOf raw Is JsonElement Then
+                Dim json = DirectCast(raw, JsonElement)
+                If json.ValueKind = JsonValueKind.Number Then
+                    Dim parsedNumber As Long
+                    If json.TryGetInt64(parsedNumber) Then
+                        Return parsedNumber
+                    End If
+                ElseIf json.ValueKind = JsonValueKind.String Then
+                    Dim parsedText As Long
+                    If Long.TryParse(json.GetString(), parsedText) Then
+                        Return parsedText
+                    End If
+                End If
+            End If
+
+            Dim parsed As Long
+            Return If(Long.TryParse(raw.ToString(), parsed), parsed, CType(Nothing, Long?))
         End Function
 
         Private Sub SetBusy(ByVal busy As Boolean, Optional ByVal message As String = Nothing)

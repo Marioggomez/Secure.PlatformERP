@@ -86,6 +86,7 @@ public sealed class CredencialLocalUsuarioRepository : ICredencialLocalUsuarioRe
         using var command = connection.CreateCommand();
         command.CommandType = CommandType.StoredProcedure;
         command.CommandText = SpCrear;
+        command.Parameters.Add(CreateParameter("@id_usuario", SqlDbType.BigInt, dto.IdUsuario));
         command.Parameters.Add(CreateParameter("@hash_clave", SqlDbType.VarBinary, dto.HashClave, 128));
         command.Parameters.Add(CreateParameter("@salt_clave", SqlDbType.VarBinary, dto.SaltClave, 32));
         command.Parameters.Add(CreateParameter("@algoritmo_clave", SqlDbType.VarChar, dto.AlgoritmoClave, 30));
@@ -94,7 +95,7 @@ public sealed class CredencialLocalUsuarioRepository : ICredencialLocalUsuarioRe
         command.Parameters.Add(CreateParameter("@debe_cambiar_clave", SqlDbType.Bit, dto.DebeCambiarClave));
         command.Parameters.Add(CreateParameter("@activo", SqlDbType.Bit, dto.Activo));
         var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
-        return Convert.ToInt64(result);
+        return result is null or DBNull ? dto.IdUsuario ?? 0 : Convert.ToInt64(result);
     }
 
     public async Task<bool> ActualizarAsync(CredencialLocalUsuarioDto dto, CancellationToken cancellationToken)

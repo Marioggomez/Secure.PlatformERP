@@ -19,6 +19,7 @@ END
 GO
 
 CREATE OR ALTER PROCEDURE seguridad.usp_credencial_local_usuario_crear
+    @id_usuario bigint,
     @hash_clave varbinary(128),
     @salt_clave varbinary(32),
     @algoritmo_clave varchar(30),
@@ -29,9 +30,9 @@ CREATE OR ALTER PROCEDURE seguridad.usp_credencial_local_usuario_crear
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO seguridad.credencial_local_usuario ([hash_clave], [salt_clave], [algoritmo_clave], [iteraciones_clave], [cambio_clave_utc], [debe_cambiar_clave], [activo])
-    VALUES (@hash_clave, @salt_clave, @algoritmo_clave, @iteraciones_clave, @cambio_clave_utc, @debe_cambiar_clave, @activo);
-    SELECT CAST(SCOPE_IDENTITY() AS bigint) AS id;
+    INSERT INTO seguridad.credencial_local_usuario ([id_usuario], [hash_clave], [salt_clave], [algoritmo_clave], [iteraciones_clave], [cambio_clave_utc], [debe_cambiar_clave], [activo])
+    VALUES (@id_usuario, @hash_clave, @salt_clave, @algoritmo_clave, @iteraciones_clave, @cambio_clave_utc, @debe_cambiar_clave, @activo);
+    SELECT @id_usuario AS id;
 END
 GO
 
