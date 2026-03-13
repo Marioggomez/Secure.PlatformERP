@@ -8,6 +8,7 @@ Imports DevExpress.XtraGrid
 Imports DevExpress.XtraGrid.Views.Grid
 Imports DevExpress.XtraLayout
 Imports Secure.Platform.Contracts.Dtos.Catalogo
+Imports Secure.Platform.Contracts.Dtos.Observabilidad
 Imports Secure.Platform.Contracts.Dtos.Seguridad
 Imports Secure.Platform.WinForms.Infrastructure
 
@@ -47,6 +48,27 @@ Namespace Forms.Seguridad
             Public Property Activo As Boolean
         End Class
 
+        Private NotInheritable Class SesionGridRow
+            Public Property IdSesionUsuario As Guid
+            Public Property Usuario As String = String.Empty
+            Public Property Empresa As String = String.Empty
+            Public Property Origen As String = String.Empty
+            Public Property MfaValidado As Boolean
+            Public Property Activo As Boolean
+            Public Property UltimaActividadUtc As DateTime?
+            Public Property ExpiraAbsolutaUtc As DateTime?
+            Public Property IpOrigen As String = String.Empty
+        End Class
+
+        Private NotInheritable Class HelpdeskGridRow
+            Public Property IdAuditoria As Long
+            Public Property UsuarioAfectado As String = String.Empty
+            Public Property Administrador As String = String.Empty
+            Public Property Motivo As String = String.Empty
+            Public Property FechaUtc As DateTime?
+            Public Property Empresa As String = String.Empty
+        End Class
+
         Private ReadOnly _apiClient As ApiClient
         Private ReadOnly _sessionContext As UserSessionContext
 
@@ -57,6 +79,11 @@ Namespace Forms.Seguridad
         Private ReadOnly _btnTabUsuarios As BarButtonItem
         Private ReadOnly _btnTabRoles As BarButtonItem
         Private ReadOnly _btnTabAsignaciones As BarButtonItem
+        Private ReadOnly _btnTabPermisos As BarButtonItem
+        Private ReadOnly _btnTabMenu As BarButtonItem
+        Private ReadOnly _btnTabSesiones As BarButtonItem
+        Private ReadOnly _btnTabHelpdesk As BarButtonItem
+        Private ReadOnly _btnTabAuditoria As BarButtonItem
         Private ReadOnly _btnNuevo As BarButtonItem
         Private ReadOnly _btnGuardar As BarButtonItem
         Private ReadOnly _btnRefrescar As BarButtonItem
@@ -102,9 +129,42 @@ Namespace Forms.Seguridad
         Private ReadOnly _dteAsignFin As DateEdit
         Private ReadOnly _chkAsignActivo As CheckEdit
 
+        Private ReadOnly _splitPermisos As SplitContainerControl
+        Private ReadOnly _txtBuscarPermisos As TextEdit
+        Private ReadOnly _gridPermisos As GridControl
+        Private ReadOnly _viewPermisos As GridView
+
+        Private ReadOnly _splitMenu As SplitContainerControl
+        Private ReadOnly _txtBuscarMenu As TextEdit
+        Private ReadOnly _gridMenu As GridControl
+        Private ReadOnly _viewMenu As GridView
+
+        Private ReadOnly _splitSesiones As SplitContainerControl
+        Private ReadOnly _txtBuscarSesiones As TextEdit
+        Private ReadOnly _gridSesiones As GridControl
+        Private ReadOnly _viewSesiones As GridView
+
+        Private ReadOnly _splitHelpdesk As SplitContainerControl
+        Private ReadOnly _cmbHelpdeskUsuario As ComboBoxEdit
+        Private ReadOnly _memoHelpdeskMotivo As MemoEdit
+        Private ReadOnly _btnHelpdeskRegistrar As SimpleButton
+        Private ReadOnly _txtBuscarHelpdesk As TextEdit
+        Private ReadOnly _gridHelpdesk As GridControl
+        Private ReadOnly _viewHelpdesk As GridView
+
+        Private ReadOnly _splitAuditoria As SplitContainerControl
+        Private ReadOnly _txtBuscarAuditoria As TextEdit
+        Private ReadOnly _gridAuditoria As GridControl
+        Private ReadOnly _viewAuditoria As GridView
+
         Private _usuarios As List(Of UsuarioDto)
         Private _roles As List(Of RolDto)
         Private _asignaciones As List(Of AsignacionRolUsuarioDto)
+        Private _permisos As List(Of PermisoDto)
+        Private _recursosUi As List(Of RecursoUiDto)
+        Private _sesiones As List(Of SesionUsuarioDto)
+        Private _auditoriaEventos As List(Of AuditoriaEventoSeguridadDto)
+        Private _auditoriaHelpdesk As List(Of AuditoriaReinicioMesaAyudaDto)
         Private _estadosUsuario As List(Of EstadoUsuarioDto)
         Private _alcances As List(Of AlcanceAsignacionDto)
 
@@ -133,6 +193,11 @@ Namespace Forms.Seguridad
             _btnTabUsuarios = New BarButtonItem() With {.Caption = "Usuarios"}
             _btnTabRoles = New BarButtonItem() With {.Caption = "Roles"}
             _btnTabAsignaciones = New BarButtonItem() With {.Caption = "Asignaciones"}
+            _btnTabPermisos = New BarButtonItem() With {.Caption = "Permisos"}
+            _btnTabMenu = New BarButtonItem() With {.Caption = "Menu UI"}
+            _btnTabSesiones = New BarButtonItem() With {.Caption = "Sesiones"}
+            _btnTabHelpdesk = New BarButtonItem() With {.Caption = "Helpdesk MFA"}
+            _btnTabAuditoria = New BarButtonItem() With {.Caption = "Auditoria"}
             _btnNuevo = New BarButtonItem() With {.Caption = "Nuevo"}
             _btnGuardar = New BarButtonItem() With {.Caption = "Guardar"}
             _btnRefrescar = New BarButtonItem() With {.Caption = "Refrescar"}
@@ -178,9 +243,42 @@ Namespace Forms.Seguridad
             _dteAsignFin = New DateEdit()
             _chkAsignActivo = New CheckEdit()
 
+            _splitPermisos = New SplitContainerControl()
+            _txtBuscarPermisos = New TextEdit()
+            _gridPermisos = New GridControl()
+            _viewPermisos = New GridView()
+
+            _splitMenu = New SplitContainerControl()
+            _txtBuscarMenu = New TextEdit()
+            _gridMenu = New GridControl()
+            _viewMenu = New GridView()
+
+            _splitSesiones = New SplitContainerControl()
+            _txtBuscarSesiones = New TextEdit()
+            _gridSesiones = New GridControl()
+            _viewSesiones = New GridView()
+
+            _splitHelpdesk = New SplitContainerControl()
+            _cmbHelpdeskUsuario = New ComboBoxEdit()
+            _memoHelpdeskMotivo = New MemoEdit()
+            _btnHelpdeskRegistrar = New SimpleButton() With {.Text = "Registrar Reinicio MFA"}
+            _txtBuscarHelpdesk = New TextEdit()
+            _gridHelpdesk = New GridControl()
+            _viewHelpdesk = New GridView()
+
+            _splitAuditoria = New SplitContainerControl()
+            _txtBuscarAuditoria = New TextEdit()
+            _gridAuditoria = New GridControl()
+            _viewAuditoria = New GridView()
+
             _usuarios = New List(Of UsuarioDto)()
             _roles = New List(Of RolDto)()
             _asignaciones = New List(Of AsignacionRolUsuarioDto)()
+            _permisos = New List(Of PermisoDto)()
+            _recursosUi = New List(Of RecursoUiDto)()
+            _sesiones = New List(Of SesionUsuarioDto)()
+            _auditoriaEventos = New List(Of AuditoriaEventoSeguridadDto)()
+            _auditoriaHelpdesk = New List(Of AuditoriaReinicioMesaAyudaDto)()
             _estadosUsuario = New List(Of EstadoUsuarioDto)()
             _alcances = New List(Of AlcanceAsignacionDto)()
 
@@ -227,6 +325,11 @@ Namespace Forms.Seguridad
             AssignIcon(_btnTabUsuarios, "BusinessObjects.BOUser")
             AssignIcon(_btnTabRoles, "BusinessObjects.BORole")
             AssignIcon(_btnTabAsignaciones, "BusinessObjects.BOPosition")
+            AssignIcon(_btnTabPermisos, "BusinessObjects.BOPermission")
+            AssignIcon(_btnTabMenu, "BusinessObjects.BOTask")
+            AssignIcon(_btnTabSesiones, "Actions.NavigateBackward")
+            AssignIcon(_btnTabHelpdesk, "Support.Support")
+            AssignIcon(_btnTabAuditoria, "Reports.Report")
             AssignIcon(_btnNuevo, "Actions.Add")
             AssignIcon(_btnGuardar, "Save.Save")
             AssignIcon(_btnRefrescar, "Actions.Refresh")
@@ -235,6 +338,11 @@ Namespace Forms.Seguridad
             _btnTabUsuarios.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnTabRoles.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnTabAsignaciones.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnTabPermisos.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnTabMenu.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnTabSesiones.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnTabHelpdesk.PaintStyle = BarItemPaintStyle.CaptionGlyph
+            _btnTabAuditoria.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnNuevo.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnGuardar.PaintStyle = BarItemPaintStyle.CaptionGlyph
             _btnRefrescar.PaintStyle = BarItemPaintStyle.CaptionGlyph
@@ -242,7 +350,7 @@ Namespace Forms.Seguridad
             _btnLimpiar.PaintStyle = BarItemPaintStyle.CaptionGlyph
 
             _ribbon.Items.AddRange(New BarItem() {
-                _btnTabUsuarios, _btnTabRoles, _btnTabAsignaciones,
+                _btnTabUsuarios, _btnTabRoles, _btnTabAsignaciones, _btnTabPermisos, _btnTabMenu, _btnTabSesiones, _btnTabHelpdesk, _btnTabAuditoria,
                 _btnNuevo, _btnGuardar, _btnRefrescar, _btnDesactivar, _btnLimpiar,
                 _statusInfo, _statusModulo
             })
@@ -253,6 +361,11 @@ Namespace Forms.Seguridad
             groupSecciones.ItemLinks.Add(_btnTabUsuarios)
             groupSecciones.ItemLinks.Add(_btnTabRoles)
             groupSecciones.ItemLinks.Add(_btnTabAsignaciones)
+            groupSecciones.ItemLinks.Add(_btnTabPermisos)
+            groupSecciones.ItemLinks.Add(_btnTabMenu)
+            groupSecciones.ItemLinks.Add(_btnTabSesiones)
+            groupSecciones.ItemLinks.Add(_btnTabHelpdesk)
+            groupSecciones.ItemLinks.Add(_btnTabAuditoria)
 
             Dim groupAcciones As New RibbonPageGroup("Acciones")
             groupAcciones.ItemLinks.Add(_btnNuevo)
@@ -279,14 +392,29 @@ Namespace Forms.Seguridad
             Dim tabUsuarios As New TabPage("Usuarios")
             Dim tabRoles As New TabPage("Roles")
             Dim tabAsignaciones As New TabPage("Asignaciones")
+            Dim tabPermisos As New TabPage("Permisos")
+            Dim tabMenu As New TabPage("Menu UI")
+            Dim tabSesiones As New TabPage("Sesiones")
+            Dim tabHelpdesk As New TabPage("Helpdesk MFA")
+            Dim tabAuditoria As New TabPage("Auditoria")
 
             BuildUsuariosTab(tabUsuarios)
             BuildRolesTab(tabRoles)
             BuildAsignacionesTab(tabAsignaciones)
+            BuildPermisosTab(tabPermisos)
+            BuildMenuTab(tabMenu)
+            BuildSesionesTab(tabSesiones)
+            BuildHelpdeskTab(tabHelpdesk)
+            BuildAuditoriaTab(tabAuditoria)
 
             _tabs.TabPages.Add(tabUsuarios)
             _tabs.TabPages.Add(tabRoles)
             _tabs.TabPages.Add(tabAsignaciones)
+            _tabs.TabPages.Add(tabPermisos)
+            _tabs.TabPages.Add(tabMenu)
+            _tabs.TabPages.Add(tabSesiones)
+            _tabs.TabPages.Add(tabHelpdesk)
+            _tabs.TabPages.Add(tabAuditoria)
 
             _mainLayout.Controls.Add(_tabs)
             Dim item = DirectCast(_mainLayout.Root, LayoutControlGroup).AddItem(String.Empty, _tabs)
@@ -526,6 +654,155 @@ Namespace Forms.Seguridad
             ConfigureAsignacionColumns()
         End Sub
 
+        Private Sub BuildPermisosTab(ByVal tab As TabPage)
+            _splitPermisos.Dock = DockStyle.Fill
+            _splitPermisos.Horizontal = False
+            _splitPermisos.SplitterPosition = 52
+            tab.Controls.Add(_splitPermisos)
+
+            Dim panelTop As New PanelControl() With {.Dock = DockStyle.Fill, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
+            Dim lblSearch As New LabelControl() With {.Text = "Buscar permiso:", .Location = New Point(8, 16)}
+            _txtBuscarPermisos.Location = New Point(100, 12)
+            _txtBuscarPermisos.Width = 360
+            _txtBuscarPermisos.Properties.NullValuePrompt = "Codigo, modulo, accion o nombre..."
+            _txtBuscarPermisos.Properties.NullValuePromptShowForEmptyValue = True
+            panelTop.Controls.Add(lblSearch)
+            panelTop.Controls.Add(_txtBuscarPermisos)
+            _splitPermisos.Panel1.Controls.Add(panelTop)
+
+            _gridPermisos.Dock = DockStyle.Fill
+            _gridPermisos.MainView = _viewPermisos
+            ConfigureGridView(_viewPermisos)
+            _splitPermisos.Panel2.Controls.Add(_gridPermisos)
+            ConfigurePermisoColumns()
+        End Sub
+
+        Private Sub BuildMenuTab(ByVal tab As TabPage)
+            _splitMenu.Dock = DockStyle.Fill
+            _splitMenu.Horizontal = False
+            _splitMenu.SplitterPosition = 52
+            tab.Controls.Add(_splitMenu)
+
+            Dim panelTop As New PanelControl() With {.Dock = DockStyle.Fill, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
+            Dim lblSearch As New LabelControl() With {.Text = "Buscar recurso UI:", .Location = New Point(8, 16)}
+            _txtBuscarMenu.Location = New Point(108, 12)
+            _txtBuscarMenu.Width = 360
+            _txtBuscarMenu.Properties.NullValuePrompt = "Codigo, nombre, ruta o componente..."
+            _txtBuscarMenu.Properties.NullValuePromptShowForEmptyValue = True
+            panelTop.Controls.Add(lblSearch)
+            panelTop.Controls.Add(_txtBuscarMenu)
+            _splitMenu.Panel1.Controls.Add(panelTop)
+
+            _gridMenu.Dock = DockStyle.Fill
+            _gridMenu.MainView = _viewMenu
+            ConfigureGridView(_viewMenu)
+            _splitMenu.Panel2.Controls.Add(_gridMenu)
+            ConfigureMenuColumns()
+        End Sub
+
+        Private Sub BuildSesionesTab(ByVal tab As TabPage)
+            _splitSesiones.Dock = DockStyle.Fill
+            _splitSesiones.Horizontal = False
+            _splitSesiones.SplitterPosition = 52
+            tab.Controls.Add(_splitSesiones)
+
+            Dim panelTop As New PanelControl() With {.Dock = DockStyle.Fill, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
+            Dim lblSearch As New LabelControl() With {.Text = "Buscar sesion:", .Location = New Point(8, 16)}
+            _txtBuscarSesiones.Location = New Point(95, 12)
+            _txtBuscarSesiones.Width = 360
+            _txtBuscarSesiones.Properties.NullValuePrompt = "Usuario, origen, IP..."
+            _txtBuscarSesiones.Properties.NullValuePromptShowForEmptyValue = True
+            panelTop.Controls.Add(lblSearch)
+            panelTop.Controls.Add(_txtBuscarSesiones)
+            _splitSesiones.Panel1.Controls.Add(panelTop)
+
+            _gridSesiones.Dock = DockStyle.Fill
+            _gridSesiones.MainView = _viewSesiones
+            ConfigureGridView(_viewSesiones)
+            _splitSesiones.Panel2.Controls.Add(_gridSesiones)
+            ConfigureSesionColumns()
+        End Sub
+
+        Private Sub BuildHelpdeskTab(ByVal tab As TabPage)
+            _splitHelpdesk.Dock = DockStyle.Fill
+            _splitHelpdesk.SplitterPosition = 420
+            tab.Controls.Add(_splitHelpdesk)
+
+            Dim panelLeft As New PanelControl() With {.Dock = DockStyle.Fill, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
+            _splitHelpdesk.Panel1.Controls.Add(panelLeft)
+
+            Dim layout As New LayoutControl() With {.Dock = DockStyle.Fill}
+            panelLeft.Controls.Add(layout)
+
+            Dim lblInfo As New LabelControl() With {.Text = "Mesa de ayuda MFA: registra reinicio controlado con motivo y auditoria."}
+            lblInfo.Appearance.ForeColor = Color.DimGray
+            _cmbHelpdeskUsuario.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
+            _memoHelpdeskMotivo.Properties.NullValuePrompt = "Motivo obligatorio (incidente, verificacion identidad, ticket, evidencia)."
+            _memoHelpdeskMotivo.Properties.NullValuePromptShowForEmptyValue = True
+
+            layout.Controls.Add(lblInfo)
+            layout.Controls.Add(_cmbHelpdeskUsuario)
+            layout.Controls.Add(_memoHelpdeskMotivo)
+            layout.Controls.Add(_btnHelpdeskRegistrar)
+
+            Dim root As New LayoutControlGroup() With {
+                .EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True,
+                .GroupBordersVisible = False
+            }
+            layout.Root = root
+
+            Dim iInfo = root.AddItem(String.Empty, lblInfo)
+            iInfo.TextVisible = False
+            iInfo.Padding = New DevExpress.XtraLayout.Utils.Padding(4, 4, 8, 10)
+            root.AddItem("Usuario afectado*", _cmbHelpdeskUsuario)
+            root.AddItem("Motivo*", _memoHelpdeskMotivo)
+            Dim iBtn = root.AddItem(String.Empty, _btnHelpdeskRegistrar)
+            iBtn.TextVisible = False
+            iBtn.Padding = New DevExpress.XtraLayout.Utils.Padding(4, 4, 8, 4)
+
+            Dim panelRight As New PanelControl() With {.Dock = DockStyle.Fill, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
+            _splitHelpdesk.Panel2.Controls.Add(panelRight)
+
+            Dim pnlSearch As New PanelControl() With {.Dock = DockStyle.Top, .Height = 42, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
+            Dim lblSearch As New LabelControl() With {.Text = "Buscar historial:", .Location = New Point(8, 14)}
+            _txtBuscarHelpdesk.Location = New Point(96, 11)
+            _txtBuscarHelpdesk.Width = 320
+            _txtBuscarHelpdesk.Properties.NullValuePrompt = "Usuario, admin o motivo..."
+            _txtBuscarHelpdesk.Properties.NullValuePromptShowForEmptyValue = True
+            pnlSearch.Controls.Add(lblSearch)
+            pnlSearch.Controls.Add(_txtBuscarHelpdesk)
+
+            _gridHelpdesk.Dock = DockStyle.Fill
+            _gridHelpdesk.MainView = _viewHelpdesk
+            ConfigureGridView(_viewHelpdesk)
+            panelRight.Controls.Add(_gridHelpdesk)
+            panelRight.Controls.Add(pnlSearch)
+            ConfigureHelpdeskColumns()
+        End Sub
+
+        Private Sub BuildAuditoriaTab(ByVal tab As TabPage)
+            _splitAuditoria.Dock = DockStyle.Fill
+            _splitAuditoria.Horizontal = False
+            _splitAuditoria.SplitterPosition = 52
+            tab.Controls.Add(_splitAuditoria)
+
+            Dim panelTop As New PanelControl() With {.Dock = DockStyle.Fill, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
+            Dim lblSearch As New LabelControl() With {.Text = "Buscar evento:", .Location = New Point(8, 16)}
+            _txtBuscarAuditoria.Location = New Point(92, 12)
+            _txtBuscarAuditoria.Width = 360
+            _txtBuscarAuditoria.Properties.NullValuePrompt = "Detalle, IP, solicitud..."
+            _txtBuscarAuditoria.Properties.NullValuePromptShowForEmptyValue = True
+            panelTop.Controls.Add(lblSearch)
+            panelTop.Controls.Add(_txtBuscarAuditoria)
+            _splitAuditoria.Panel1.Controls.Add(panelTop)
+
+            _gridAuditoria.Dock = DockStyle.Fill
+            _gridAuditoria.MainView = _viewAuditoria
+            ConfigureGridView(_viewAuditoria)
+            _splitAuditoria.Panel2.Controls.Add(_gridAuditoria)
+            ConfigureAuditoriaColumns()
+        End Sub
+
         Private Sub ConfigureGridView(ByVal view As GridView)
             view.OptionsBehavior.Editable = False
             view.OptionsView.ColumnAutoWidth = False
@@ -566,12 +843,69 @@ Namespace Forms.Seguridad
             _viewAsignaciones.Columns.AddVisible(NameOf(AsignacionGridRow.FechaFinUtc), "Fin").Width = 150
             _viewAsignaciones.Columns.AddVisible(NameOf(AsignacionGridRow.Activo), "Activo").Width = 80
         End Sub
+
+        Private Sub ConfigurePermisoColumns()
+            _viewPermisos.Columns.Clear()
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Codigo), "Codigo").Width = 180
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Modulo), "Modulo").Width = 140
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Accion), "Accion").Width = 130
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Nombre), "Nombre").Width = 260
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.EsSensible), "Sensible").Width = 90
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Activo), "Activo").Width = 80
+        End Sub
+
+        Private Sub ConfigureMenuColumns()
+            _viewMenu.Columns.Clear()
+            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Codigo), "Codigo").Width = 170
+            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Nombre), "Nombre").Width = 220
+            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Ruta), "Ruta").Width = 220
+            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Componente), "Componente").Width = 180
+            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.EsVisible), "Visible").Width = 90
+            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Activo), "Activo").Width = 80
+        End Sub
+
+        Private Sub ConfigureSesionColumns()
+            _viewSesiones.Columns.Clear()
+            _viewSesiones.Columns.AddVisible(NameOf(SesionGridRow.Usuario), "Usuario").Width = 220
+            _viewSesiones.Columns.AddVisible(NameOf(SesionGridRow.Empresa), "Empresa").Width = 130
+            _viewSesiones.Columns.AddVisible(NameOf(SesionGridRow.Origen), "Origen").Width = 120
+            _viewSesiones.Columns.AddVisible(NameOf(SesionGridRow.MfaValidado), "MFA").Width = 70
+            _viewSesiones.Columns.AddVisible(NameOf(SesionGridRow.Activo), "Activa").Width = 70
+            _viewSesiones.Columns.AddVisible(NameOf(SesionGridRow.UltimaActividadUtc), "Ultima actividad").Width = 150
+            _viewSesiones.Columns.AddVisible(NameOf(SesionGridRow.ExpiraAbsolutaUtc), "Expira").Width = 150
+            _viewSesiones.Columns.AddVisible(NameOf(SesionGridRow.IpOrigen), "IP").Width = 130
+        End Sub
+
+        Private Sub ConfigureHelpdeskColumns()
+            _viewHelpdesk.Columns.Clear()
+            _viewHelpdesk.Columns.AddVisible(NameOf(HelpdeskGridRow.IdAuditoria), "Id").Width = 70
+            _viewHelpdesk.Columns.AddVisible(NameOf(HelpdeskGridRow.UsuarioAfectado), "Usuario afectado").Width = 180
+            _viewHelpdesk.Columns.AddVisible(NameOf(HelpdeskGridRow.Administrador), "Administrador").Width = 180
+            _viewHelpdesk.Columns.AddVisible(NameOf(HelpdeskGridRow.Empresa), "Empresa").Width = 100
+            _viewHelpdesk.Columns.AddVisible(NameOf(HelpdeskGridRow.Motivo), "Motivo").Width = 320
+            _viewHelpdesk.Columns.AddVisible(NameOf(HelpdeskGridRow.FechaUtc), "Fecha UTC").Width = 150
+        End Sub
+
+        Private Sub ConfigureAuditoriaColumns()
+            _viewAuditoria.Columns.Clear()
+            _viewAuditoria.Columns.AddVisible(NameOf(AuditoriaEventoSeguridadDto.FechaUtc), "Fecha UTC").Width = 150
+            _viewAuditoria.Columns.AddVisible(NameOf(AuditoriaEventoSeguridadDto.IdTipoEventoSeguridad), "Tipo").Width = 70
+            _viewAuditoria.Columns.AddVisible(NameOf(AuditoriaEventoSeguridadDto.IdUsuario), "Usuario").Width = 90
+            _viewAuditoria.Columns.AddVisible(NameOf(AuditoriaEventoSeguridadDto.IdEmpresa), "Empresa").Width = 90
+            _viewAuditoria.Columns.AddVisible(NameOf(AuditoriaEventoSeguridadDto.IpOrigen), "IP").Width = 130
+            _viewAuditoria.Columns.AddVisible(NameOf(AuditoriaEventoSeguridadDto.Detalle), "Detalle").Width = 400
+        End Sub
         Private Sub WireEvents()
             AddHandler Shown, AddressOf OnFirstShown
             AddHandler _tabs.SelectedIndexChanged, AddressOf OnTabChanged
             AddHandler _btnTabUsuarios.ItemClick, Sub(sender, e) _tabs.SelectedIndex = 0
             AddHandler _btnTabRoles.ItemClick, Sub(sender, e) _tabs.SelectedIndex = 1
             AddHandler _btnTabAsignaciones.ItemClick, Sub(sender, e) _tabs.SelectedIndex = 2
+            AddHandler _btnTabPermisos.ItemClick, Sub(sender, e) _tabs.SelectedIndex = 3
+            AddHandler _btnTabMenu.ItemClick, Sub(sender, e) _tabs.SelectedIndex = 4
+            AddHandler _btnTabSesiones.ItemClick, Sub(sender, e) _tabs.SelectedIndex = 5
+            AddHandler _btnTabHelpdesk.ItemClick, Sub(sender, e) _tabs.SelectedIndex = 6
+            AddHandler _btnTabAuditoria.ItemClick, Sub(sender, e) _tabs.SelectedIndex = 7
             AddHandler _btnNuevo.ItemClick, AddressOf OnNuevoClick
             AddHandler _btnGuardar.ItemClick, AddressOf OnGuardarClickAsync
             AddHandler _btnRefrescar.ItemClick, AddressOf OnRefrescarClickAsync
@@ -581,10 +915,16 @@ Namespace Forms.Seguridad
             AddHandler _txtBuscarUsuarios.EditValueChanged, Sub(sender, e) _viewUsuarios.FindFilterText = _txtBuscarUsuarios.Text
             AddHandler _txtBuscarRoles.EditValueChanged, Sub(sender, e) _viewRoles.FindFilterText = _txtBuscarRoles.Text
             AddHandler _txtBuscarAsignaciones.EditValueChanged, Sub(sender, e) _viewAsignaciones.FindFilterText = _txtBuscarAsignaciones.Text
+            AddHandler _txtBuscarPermisos.EditValueChanged, Sub(sender, e) _viewPermisos.FindFilterText = _txtBuscarPermisos.Text
+            AddHandler _txtBuscarMenu.EditValueChanged, Sub(sender, e) _viewMenu.FindFilterText = _txtBuscarMenu.Text
+            AddHandler _txtBuscarSesiones.EditValueChanged, Sub(sender, e) _viewSesiones.FindFilterText = _txtBuscarSesiones.Text
+            AddHandler _txtBuscarHelpdesk.EditValueChanged, Sub(sender, e) _viewHelpdesk.FindFilterText = _txtBuscarHelpdesk.Text
+            AddHandler _txtBuscarAuditoria.EditValueChanged, Sub(sender, e) _viewAuditoria.FindFilterText = _txtBuscarAuditoria.Text
 
             AddHandler _viewUsuarios.FocusedRowChanged, AddressOf OnUsuarioFocusedRowChanged
             AddHandler _viewRoles.FocusedRowChanged, AddressOf OnRolFocusedRowChanged
             AddHandler _viewAsignaciones.FocusedRowChanged, AddressOf OnAsignacionFocusedRowChanged
+            AddHandler _btnHelpdeskRegistrar.Click, AddressOf OnHelpdeskRegistrarClickAsync
         End Sub
 
         Private Async Sub OnFirstShown(ByVal sender As Object, ByVal e As EventArgs)
@@ -608,8 +948,18 @@ Namespace Forms.Seguridad
                     Return "Usuarios"
                 Case 1
                     Return "Roles"
-                Case Else
+                Case 2
                     Return "Asignaciones"
+                Case 3
+                    Return "Permisos"
+                Case 4
+                    Return "Menu UI"
+                Case 5
+                    Return "Sesiones"
+                Case 6
+                    Return "Helpdesk MFA"
+                Case Else
+                    Return "Auditoria"
             End Select
         End Function
 
@@ -620,9 +970,15 @@ Namespace Forms.Seguridad
                 Await LoadUsuariosAsync().ConfigureAwait(True)
                 Await LoadRolesAsync().ConfigureAwait(True)
                 Await LoadAsignacionesAsync().ConfigureAwait(True)
+                Await LoadPermisosAsync().ConfigureAwait(True)
+                Await LoadRecursosUiAsync().ConfigureAwait(True)
+                Await LoadSesionesAsync().ConfigureAwait(True)
+                Await LoadHelpdeskHistorialAsync().ConfigureAwait(True)
+                Await LoadAuditoriaEventosAsync().ConfigureAwait(True)
                 ResetUsuarioEditor()
                 ResetRolEditor()
                 ResetAsignacionEditor()
+                ResetHelpdeskEditor()
                 _statusInfo.Caption = "Centro IAM cargado."
             Catch ex As Exception
                 XtraMessageBox.Show(Me, ex.Message, "Centro IAM", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -701,6 +1057,69 @@ Namespace Forms.Seguridad
             SetBusy(False)
         End Function
 
+        Private Async Function LoadPermisosAsync() As Task
+            SetBusy(True, "Cargando permisos...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of PermisoDto))("api/v1/seguridad/permiso").ConfigureAwait(True)
+            _permisos = If(list, New List(Of PermisoDto)()).
+                Where(Function(x) x IsNot Nothing).
+                OrderBy(Function(x) x.Modulo).
+                ThenBy(Function(x) x.Codigo).
+                ToList()
+
+            _gridPermisos.DataSource = _permisos
+            SetBusy(False)
+        End Function
+
+        Private Async Function LoadRecursosUiAsync() As Task
+            SetBusy(True, "Cargando menu UI...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of RecursoUiDto))("api/v1/seguridad/recurso_ui").ConfigureAwait(True)
+            _recursosUi = If(list, New List(Of RecursoUiDto)()).
+                Where(Function(x) x IsNot Nothing).
+                OrderBy(Function(x) x.OrdenVisual.GetValueOrDefault(Integer.MaxValue)).
+                ThenBy(Function(x) x.Nombre).
+                ToList()
+
+            _gridMenu.DataSource = _recursosUi
+            SetBusy(False)
+        End Function
+
+        Private Async Function LoadSesionesAsync() As Task
+            SetBusy(True, "Cargando sesiones...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of SesionUsuarioDto))("api/v1/seguridad/sesion_usuario").ConfigureAwait(True)
+            _sesiones = If(list, New List(Of SesionUsuarioDto)()).
+                Where(Function(x) x IsNot Nothing).
+                OrderByDescending(Function(x) x.UltimaActividadUtc.GetValueOrDefault(DateTime.MinValue)).
+                ToList()
+
+            _gridSesiones.DataSource = BuildSesionRows(_sesiones)
+            SetBusy(False)
+        End Function
+
+        Private Async Function LoadHelpdeskHistorialAsync() As Task
+            SetBusy(True, "Cargando auditoria helpdesk...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of AuditoriaReinicioMesaAyudaDto))("api/v1/observabilidad/auditoria_reinicio_mesa_ayuda").ConfigureAwait(True)
+            _auditoriaHelpdesk = If(list, New List(Of AuditoriaReinicioMesaAyudaDto)()).
+                Where(Function(x) x IsNot Nothing).
+                OrderByDescending(Function(x) x.FechaUtc.GetValueOrDefault(DateTime.MinValue)).
+                ToList()
+
+            _gridHelpdesk.DataSource = BuildHelpdeskRows(_auditoriaHelpdesk)
+            BuildHelpdeskUsuariosCombo()
+            SetBusy(False)
+        End Function
+
+        Private Async Function LoadAuditoriaEventosAsync() As Task
+            SetBusy(True, "Cargando auditoria de eventos...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of AuditoriaEventoSeguridadDto))("api/v1/observabilidad/auditoria_evento_seguridad").ConfigureAwait(True)
+            _auditoriaEventos = If(list, New List(Of AuditoriaEventoSeguridadDto)()).
+                Where(Function(x) x IsNot Nothing).
+                OrderByDescending(Function(x) x.FechaUtc.GetValueOrDefault(DateTime.MinValue)).
+                ToList()
+
+            _gridAuditoria.DataSource = _auditoriaEventos
+            SetBusy(False)
+        End Function
+
         Private Sub BuildUsuariosCombo()
             _cmbAsignUsuario.Properties.Items.Clear()
             For Each u In _usuarios.Where(Function(x) x.IdUsuario.HasValue)
@@ -746,6 +1165,62 @@ Namespace Forms.Seguridad
 
             Return rows
         End Function
+
+        Private Function BuildSesionRows(ByVal source As IEnumerable(Of SesionUsuarioDto)) As List(Of SesionGridRow)
+            Dim userMap = _usuarios.Where(Function(u) u.IdUsuario.HasValue).ToDictionary(Function(u) u.IdUsuario.Value, Function(u) If(String.IsNullOrWhiteSpace(u.NombreMostrar), u.LoginPrincipal, u.NombreMostrar))
+            Dim rows As New List(Of SesionGridRow)()
+
+            For Each item In source
+                If Not item.IdSesionUsuario.HasValue Then Continue For
+
+                Dim usuarioTexto = If(item.IdUsuario.HasValue AndAlso userMap.ContainsKey(item.IdUsuario.Value), userMap(item.IdUsuario.Value), "Usuario #" & item.IdUsuario.GetValueOrDefault().ToString())
+                rows.Add(New SesionGridRow With {
+                    .IdSesionUsuario = item.IdSesionUsuario.Value,
+                    .Usuario = usuarioTexto,
+                    .Empresa = If(item.IdEmpresa.HasValue, "Empresa #" & item.IdEmpresa.Value.ToString(), "Sin empresa"),
+                    .Origen = If(item.OrigenAutenticacion, String.Empty),
+                    .MfaValidado = item.MfaValidado.GetValueOrDefault(False),
+                    .Activo = item.Activo.GetValueOrDefault(False),
+                    .UltimaActividadUtc = item.UltimaActividadUtc,
+                    .ExpiraAbsolutaUtc = item.ExpiraAbsolutaUtc,
+                    .IpOrigen = If(item.IpOrigen, String.Empty)
+                })
+            Next
+
+            Return rows
+        End Function
+
+        Private Function BuildHelpdeskRows(ByVal source As IEnumerable(Of AuditoriaReinicioMesaAyudaDto)) As List(Of HelpdeskGridRow)
+            Dim userMap = _usuarios.Where(Function(u) u.IdUsuario.HasValue).ToDictionary(Function(u) u.IdUsuario.Value, Function(u) If(String.IsNullOrWhiteSpace(u.NombreMostrar), u.LoginPrincipal, u.NombreMostrar))
+            Dim rows As New List(Of HelpdeskGridRow)()
+
+            For Each item In source
+                If Not item.IdAuditoriaReinicioMesaAyuda.HasValue Then Continue For
+                Dim afectado = If(item.IdUsuarioAfectado.HasValue AndAlso userMap.ContainsKey(item.IdUsuarioAfectado.Value), userMap(item.IdUsuarioAfectado.Value), "Usuario #" & item.IdUsuarioAfectado.GetValueOrDefault().ToString())
+                Dim admin = If(item.IdUsuarioAdministrador.HasValue AndAlso userMap.ContainsKey(item.IdUsuarioAdministrador.Value), userMap(item.IdUsuarioAdministrador.Value), "Usuario #" & item.IdUsuarioAdministrador.GetValueOrDefault().ToString())
+                rows.Add(New HelpdeskGridRow With {
+                    .IdAuditoria = item.IdAuditoriaReinicioMesaAyuda.Value,
+                    .UsuarioAfectado = afectado,
+                    .Administrador = admin,
+                    .Motivo = If(item.Motivo, String.Empty),
+                    .FechaUtc = item.FechaUtc,
+                    .Empresa = If(item.IdEmpresa.HasValue, "Empresa #" & item.IdEmpresa.Value.ToString(), "Sin empresa")
+                })
+            Next
+
+            Return rows
+        End Function
+
+        Private Sub BuildHelpdeskUsuariosCombo()
+            _cmbHelpdeskUsuario.Properties.Items.Clear()
+            For Each u In _usuarios.Where(Function(x) x.IdUsuario.HasValue AndAlso x.Activo.GetValueOrDefault(True)).
+                OrderBy(Function(x) If(String.IsNullOrWhiteSpace(x.NombreMostrar), x.LoginPrincipal, x.NombreMostrar))
+                _cmbHelpdeskUsuario.Properties.Items.Add(New ComboLongItem With {
+                    .Id = u.IdUsuario.Value,
+                    .Nombre = If(String.IsNullOrWhiteSpace(u.NombreMostrar), u.LoginPrincipal, u.NombreMostrar)
+                })
+            Next
+        End Sub
         Private Sub OnUsuarioFocusedRowChanged(ByVal sender As Object, ByVal e As DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventArgs)
             If _loadingEditors Then Return
             Dim dto = TryCast(_viewUsuarios.GetFocusedRow(), UsuarioDto)
@@ -875,6 +1350,80 @@ Namespace Forms.Seguridad
             End Try
         End Sub
 
+        Private Sub ResetHelpdeskEditor()
+            _loadingEditors = True
+            Try
+                If _cmbHelpdeskUsuario.Properties.Items.Count > 0 Then
+                    _cmbHelpdeskUsuario.SelectedIndex = 0
+                Else
+                    _cmbHelpdeskUsuario.SelectedItem = Nothing
+                End If
+                _memoHelpdeskMotivo.Text = String.Empty
+            Finally
+                _loadingEditors = False
+            End Try
+        End Sub
+
+        Private Async Sub OnHelpdeskRegistrarClickAsync(ByVal sender As Object, ByVal e As EventArgs)
+            If _busy Then Return
+            Try
+                Await RegistrarHelpdeskAsync().ConfigureAwait(True)
+            Catch ex As ApiClientException
+                Dim detalle = If(String.IsNullOrWhiteSpace(ex.ResponseBody), ex.Message, ex.ResponseBody)
+                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Catch ex As Exception
+                XtraMessageBox.Show(Me, ex.Message, "Helpdesk MFA", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Sub
+
+        Private Async Function RegistrarHelpdeskAsync() As Task
+            If Not _sessionContext.IdTenant.HasValue Then
+                XtraMessageBox.Show(Me, "La sesion no tiene id_tenant para registrar override MFA.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            If Not _sessionContext.IdUsuario.HasValue Then
+                XtraMessageBox.Show(Me, "La sesion no tiene id_usuario administrador para auditar el override MFA.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Dim idUsuarioAfectado = GetSelectedLongId(_cmbHelpdeskUsuario)
+            If Not idUsuarioAfectado.HasValue Then
+                XtraMessageBox.Show(Me, "Seleccione el usuario afectado.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                _cmbHelpdeskUsuario.Focus()
+                Return
+            End If
+
+            Dim motivo = _memoHelpdeskMotivo.Text.Trim()
+            If String.IsNullOrWhiteSpace(motivo) OrElse motivo.Length < 12 Then
+                XtraMessageBox.Show(Me, "Ingrese un motivo detallado de al menos 12 caracteres.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                _memoHelpdeskMotivo.Focus()
+                Return
+            End If
+
+            Dim dto As New AuditoriaReinicioMesaAyudaDto With {
+                .IdTenant = _sessionContext.IdTenant.Value,
+                .IdEmpresa = _sessionContext.IdEmpresa,
+                .IdUsuarioAfectado = idUsuarioAfectado.Value,
+                .IdUsuarioAdministrador = _sessionContext.IdUsuario.Value,
+                .Motivo = motivo,
+                .IpOrigen = "127.0.0.1",
+                .AgenteUsuario = $"Secure.WinForms IAM/{Application.ProductVersion} {Environment.MachineName}",
+                .FechaUtc = DateTime.UtcNow
+            }
+
+            SetBusy(True, "Registrando override MFA helpdesk...")
+            Try
+                Await _apiClient.PostAsync(Of AuditoriaReinicioMesaAyudaDto, Dictionary(Of String, Object))("api/v1/observabilidad/auditoria_reinicio_mesa_ayuda/crear", dto).ConfigureAwait(True)
+                Await LoadHelpdeskHistorialAsync().ConfigureAwait(True)
+                Await LoadAuditoriaEventosAsync().ConfigureAwait(True)
+                ResetHelpdeskEditor()
+                _statusInfo.Caption = "Override MFA helpdesk registrado y auditado correctamente."
+            Finally
+                SetBusy(False)
+            End Try
+        End Function
+
         Private Sub OnNuevoClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)
             If _busy Then Return
 
@@ -883,8 +1432,12 @@ Namespace Forms.Seguridad
                     ResetUsuarioEditor()
                 Case 1
                     ResetRolEditor()
-                Case Else
+                Case 2
                     ResetAsignacionEditor()
+                Case 6
+                    ResetHelpdeskEditor()
+                Case Else
+                    _statusInfo.Caption = "Esta seccion no tiene formulario de captura para limpiar."
             End Select
         End Sub
 
@@ -896,8 +1449,12 @@ Namespace Forms.Seguridad
                         Await SaveUsuarioAsync().ConfigureAwait(True)
                     Case 1
                         Await SaveRolAsync().ConfigureAwait(True)
-                    Case Else
+                    Case 2
                         Await SaveAsignacionAsync().ConfigureAwait(True)
+                    Case 6
+                        Await RegistrarHelpdeskAsync().ConfigureAwait(True)
+                    Case Else
+                        _statusInfo.Caption = "Esta seccion es de consulta; no requiere guardar."
                 End Select
             Catch ex As ApiClientException
                 Dim detalle = If(String.IsNullOrWhiteSpace(ex.ResponseBody), ex.Message, ex.ResponseBody)
@@ -915,8 +1472,18 @@ Namespace Forms.Seguridad
                         Await LoadUsuariosAsync().ConfigureAwait(True)
                     Case 1
                         Await LoadRolesAsync().ConfigureAwait(True)
-                    Case Else
+                    Case 2
                         Await LoadAsignacionesAsync().ConfigureAwait(True)
+                    Case 3
+                        Await LoadPermisosAsync().ConfigureAwait(True)
+                    Case 4
+                        Await LoadRecursosUiAsync().ConfigureAwait(True)
+                    Case 5
+                        Await LoadSesionesAsync().ConfigureAwait(True)
+                    Case 6
+                        Await LoadHelpdeskHistorialAsync().ConfigureAwait(True)
+                    Case Else
+                        Await LoadAuditoriaEventosAsync().ConfigureAwait(True)
                 End Select
 
                 _statusInfo.Caption = "Datos actualizados."
@@ -927,6 +1494,10 @@ Namespace Forms.Seguridad
 
         Private Async Sub OnDesactivarClickAsync(ByVal sender As Object, ByVal e As ItemClickEventArgs)
             If _busy Then Return
+            If _tabs.SelectedIndex > 2 Then
+                _statusInfo.Caption = "Desactivar aplica solo para Usuarios, Roles y Asignaciones."
+                Return
+            End If
 
             If XtraMessageBox.Show(Me, "Confirma desactivar el registro seleccionado?", "Confirmacion", MessageBoxButtons.YesNo, MessageBoxIcon.Question) <> DialogResult.Yes Then
                 Return
