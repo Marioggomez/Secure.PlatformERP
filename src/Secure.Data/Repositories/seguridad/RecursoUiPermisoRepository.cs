@@ -76,6 +76,7 @@ public sealed class RecursoUiPermisoRepository : IRecursoUiPermisoRepository
         using var command = connection.CreateCommand();
         command.CommandType = CommandType.StoredProcedure;
         command.CommandText = SpCrear;
+        command.Parameters.Add(CreateParameter("@id_recurso_ui", SqlDbType.BigInt, dto.IdRecursoUi));
         command.Parameters.Add(CreateParameter("@id_permiso", SqlDbType.Int, dto.IdPermiso));
         command.Parameters.Add(CreateParameter("@activo", SqlDbType.Bit, dto.Activo));
         command.Parameters.Add(CreateParameter("@creado_utc", SqlDbType.DateTime2, dto.CreadoUtc));

@@ -78,6 +78,7 @@ public sealed class RolDeberRepository : IRolDeberRepository
         using var command = connection.CreateCommand();
         command.CommandType = CommandType.StoredProcedure;
         command.CommandText = SpCrear;
+        command.Parameters.Add(CreateParameter("@id_rol", SqlDbType.BigInt, dto.IdRol));
         command.Parameters.Add(CreateParameter("@id_deber", SqlDbType.BigInt, dto.IdDeber));
         command.Parameters.Add(CreateParameter("@activo", SqlDbType.Bit, dto.Activo));
         command.Parameters.Add(CreateParameter("@creado_utc", SqlDbType.DateTime2, dto.CreadoUtc));

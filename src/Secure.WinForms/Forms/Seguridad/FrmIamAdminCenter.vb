@@ -7,6 +7,7 @@ Imports DevExpress.XtraEditors
 Imports DevExpress.XtraGrid
 Imports DevExpress.XtraGrid.Views.Grid
 Imports DevExpress.XtraLayout
+Imports Secure.Platform.Contracts.Dtos.Organizacion
 Imports Secure.Platform.Contracts.Dtos.Catalogo
 Imports Secure.Platform.Contracts.Dtos.Observabilidad
 Imports Secure.Platform.Contracts.Dtos.Seguridad
@@ -67,6 +68,30 @@ Namespace Forms.Seguridad
             Public Property Motivo As String = String.Empty
             Public Property FechaUtc As DateTime?
             Public Property Empresa As String = String.Empty
+        End Class
+
+        Private NotInheritable Class PermisoMatrixRow
+            Public Property IdPermiso As Integer
+            Public Property IdDeber As Long?
+            Public Property Asignado As Boolean
+            Public Property Codigo As String = String.Empty
+            Public Property Modulo As String = String.Empty
+            Public Property Accion As String = String.Empty
+            Public Property Nombre As String = String.Empty
+            Public Property Sensible As Boolean
+            Public Property Activo As Boolean
+        End Class
+
+        Private NotInheritable Class MenuMatrixRow
+            Public Property IdRecursoUi As Long
+            Public Property Asignado As Boolean
+            Public Property Codigo As String = String.Empty
+            Public Property Nombre As String = String.Empty
+            Public Property Ruta As String = String.Empty
+            Public Property Componente As String = String.Empty
+            Public Property Visible As Boolean
+            Public Property Activo As Boolean
+            Public Property Permisos As String = String.Empty
         End Class
 
         Private ReadOnly _apiClient As ApiClient
@@ -131,11 +156,17 @@ Namespace Forms.Seguridad
 
         Private ReadOnly _splitPermisos As SplitContainerControl
         Private ReadOnly _txtBuscarPermisos As TextEdit
+        Private ReadOnly _cmbPermisosRol As ComboBoxEdit
+        Private ReadOnly _btnPermisoConceder As SimpleButton
+        Private ReadOnly _btnPermisoRevocar As SimpleButton
         Private ReadOnly _gridPermisos As GridControl
         Private ReadOnly _viewPermisos As GridView
 
         Private ReadOnly _splitMenu As SplitContainerControl
         Private ReadOnly _txtBuscarMenu As TextEdit
+        Private ReadOnly _cmbMenuRol As ComboBoxEdit
+        Private ReadOnly _btnMenuConceder As SimpleButton
+        Private ReadOnly _btnMenuRevocar As SimpleButton
         Private ReadOnly _gridMenu As GridControl
         Private ReadOnly _viewMenu As GridView
 
@@ -146,6 +177,8 @@ Namespace Forms.Seguridad
 
         Private ReadOnly _splitHelpdesk As SplitContainerControl
         Private ReadOnly _cmbHelpdeskUsuario As ComboBoxEdit
+        Private ReadOnly _cmbHelpdeskAprobador As ComboBoxEdit
+        Private ReadOnly _chkHelpdeskCritico As CheckEdit
         Private ReadOnly _memoHelpdeskMotivo As MemoEdit
         Private ReadOnly _btnHelpdeskRegistrar As SimpleButton
         Private ReadOnly _txtBuscarHelpdesk As TextEdit
@@ -154,6 +187,10 @@ Namespace Forms.Seguridad
 
         Private ReadOnly _splitAuditoria As SplitContainerControl
         Private ReadOnly _txtBuscarAuditoria As TextEdit
+        Private ReadOnly _cmbSimUsuario As ComboBoxEdit
+        Private ReadOnly _cmbSimEmpresa As ComboBoxEdit
+        Private ReadOnly _btnSimularScope As SimpleButton
+        Private ReadOnly _memoSimulador As MemoEdit
         Private ReadOnly _gridAuditoria As GridControl
         Private ReadOnly _viewAuditoria As GridView
 
@@ -161,7 +198,11 @@ Namespace Forms.Seguridad
         Private _roles As List(Of RolDto)
         Private _asignaciones As List(Of AsignacionRolUsuarioDto)
         Private _permisos As List(Of PermisoDto)
+        Private _deberes As List(Of DeberDto)
+        Private _rolDeberes As List(Of RolDeberDto)
         Private _recursosUi As List(Of RecursoUiDto)
+        Private _recursoPermisos As List(Of RecursoUiPermisoDto)
+        Private _empresas As List(Of EmpresaDto)
         Private _sesiones As List(Of SesionUsuarioDto)
         Private _auditoriaEventos As List(Of AuditoriaEventoSeguridadDto)
         Private _auditoriaHelpdesk As List(Of AuditoriaReinicioMesaAyudaDto)
@@ -245,11 +286,17 @@ Namespace Forms.Seguridad
 
             _splitPermisos = New SplitContainerControl()
             _txtBuscarPermisos = New TextEdit()
+            _cmbPermisosRol = New ComboBoxEdit()
+            _btnPermisoConceder = New SimpleButton() With {.Text = "Conceder permiso"}
+            _btnPermisoRevocar = New SimpleButton() With {.Text = "Revocar permiso"}
             _gridPermisos = New GridControl()
             _viewPermisos = New GridView()
 
             _splitMenu = New SplitContainerControl()
             _txtBuscarMenu = New TextEdit()
+            _cmbMenuRol = New ComboBoxEdit()
+            _btnMenuConceder = New SimpleButton() With {.Text = "Conceder menu"}
+            _btnMenuRevocar = New SimpleButton() With {.Text = "Revocar menu"}
             _gridMenu = New GridControl()
             _viewMenu = New GridView()
 
@@ -260,6 +307,8 @@ Namespace Forms.Seguridad
 
             _splitHelpdesk = New SplitContainerControl()
             _cmbHelpdeskUsuario = New ComboBoxEdit()
+            _cmbHelpdeskAprobador = New ComboBoxEdit()
+            _chkHelpdeskCritico = New CheckEdit() With {.Text = "Operacion critica (requiere 4 ojos)"}
             _memoHelpdeskMotivo = New MemoEdit()
             _btnHelpdeskRegistrar = New SimpleButton() With {.Text = "Registrar Reinicio MFA"}
             _txtBuscarHelpdesk = New TextEdit()
@@ -268,6 +317,10 @@ Namespace Forms.Seguridad
 
             _splitAuditoria = New SplitContainerControl()
             _txtBuscarAuditoria = New TextEdit()
+            _cmbSimUsuario = New ComboBoxEdit()
+            _cmbSimEmpresa = New ComboBoxEdit()
+            _btnSimularScope = New SimpleButton() With {.Text = "Simular alcance"}
+            _memoSimulador = New MemoEdit()
             _gridAuditoria = New GridControl()
             _viewAuditoria = New GridView()
 
@@ -275,7 +328,11 @@ Namespace Forms.Seguridad
             _roles = New List(Of RolDto)()
             _asignaciones = New List(Of AsignacionRolUsuarioDto)()
             _permisos = New List(Of PermisoDto)()
+            _deberes = New List(Of DeberDto)()
+            _rolDeberes = New List(Of RolDeberDto)()
             _recursosUi = New List(Of RecursoUiDto)()
+            _recursoPermisos = New List(Of RecursoUiPermisoDto)()
+            _empresas = New List(Of EmpresaDto)()
             _sesiones = New List(Of SesionUsuarioDto)()
             _auditoriaEventos = New List(Of AuditoriaEventoSeguridadDto)()
             _auditoriaHelpdesk = New List(Of AuditoriaReinicioMesaAyudaDto)()
@@ -657,7 +714,7 @@ Namespace Forms.Seguridad
         Private Sub BuildPermisosTab(ByVal tab As TabPage)
             _splitPermisos.Dock = DockStyle.Fill
             _splitPermisos.Horizontal = False
-            _splitPermisos.SplitterPosition = 52
+            _splitPermisos.SplitterPosition = 84
             tab.Controls.Add(_splitPermisos)
 
             Dim panelTop As New PanelControl() With {.Dock = DockStyle.Fill, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
@@ -666,8 +723,20 @@ Namespace Forms.Seguridad
             _txtBuscarPermisos.Width = 360
             _txtBuscarPermisos.Properties.NullValuePrompt = "Codigo, modulo, accion o nombre..."
             _txtBuscarPermisos.Properties.NullValuePromptShowForEmptyValue = True
+            Dim lblRol As New LabelControl() With {.Text = "Rol:", .Location = New Point(8, 52)}
+            _cmbPermisosRol.Location = New Point(100, 48)
+            _cmbPermisosRol.Width = 280
+            _cmbPermisosRol.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
+            _btnPermisoConceder.Location = New Point(396, 46)
+            _btnPermisoConceder.Width = 130
+            _btnPermisoRevocar.Location = New Point(534, 46)
+            _btnPermisoRevocar.Width = 130
             panelTop.Controls.Add(lblSearch)
             panelTop.Controls.Add(_txtBuscarPermisos)
+            panelTop.Controls.Add(lblRol)
+            panelTop.Controls.Add(_cmbPermisosRol)
+            panelTop.Controls.Add(_btnPermisoConceder)
+            panelTop.Controls.Add(_btnPermisoRevocar)
             _splitPermisos.Panel1.Controls.Add(panelTop)
 
             _gridPermisos.Dock = DockStyle.Fill
@@ -680,7 +749,7 @@ Namespace Forms.Seguridad
         Private Sub BuildMenuTab(ByVal tab As TabPage)
             _splitMenu.Dock = DockStyle.Fill
             _splitMenu.Horizontal = False
-            _splitMenu.SplitterPosition = 52
+            _splitMenu.SplitterPosition = 84
             tab.Controls.Add(_splitMenu)
 
             Dim panelTop As New PanelControl() With {.Dock = DockStyle.Fill, .BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder}
@@ -689,8 +758,20 @@ Namespace Forms.Seguridad
             _txtBuscarMenu.Width = 360
             _txtBuscarMenu.Properties.NullValuePrompt = "Codigo, nombre, ruta o componente..."
             _txtBuscarMenu.Properties.NullValuePromptShowForEmptyValue = True
+            Dim lblRol As New LabelControl() With {.Text = "Rol:", .Location = New Point(8, 52)}
+            _cmbMenuRol.Location = New Point(108, 48)
+            _cmbMenuRol.Width = 280
+            _cmbMenuRol.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
+            _btnMenuConceder.Location = New Point(396, 46)
+            _btnMenuConceder.Width = 120
+            _btnMenuRevocar.Location = New Point(524, 46)
+            _btnMenuRevocar.Width = 120
             panelTop.Controls.Add(lblSearch)
             panelTop.Controls.Add(_txtBuscarMenu)
+            panelTop.Controls.Add(lblRol)
+            panelTop.Controls.Add(_cmbMenuRol)
+            panelTop.Controls.Add(_btnMenuConceder)
+            panelTop.Controls.Add(_btnMenuRevocar)
             _splitMenu.Panel1.Controls.Add(panelTop)
 
             _gridMenu.Dock = DockStyle.Fill
@@ -737,11 +818,14 @@ Namespace Forms.Seguridad
             Dim lblInfo As New LabelControl() With {.Text = "Mesa de ayuda MFA: registra reinicio controlado con motivo y auditoria."}
             lblInfo.Appearance.ForeColor = Color.DimGray
             _cmbHelpdeskUsuario.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
+            _cmbHelpdeskAprobador.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
             _memoHelpdeskMotivo.Properties.NullValuePrompt = "Motivo obligatorio (incidente, verificacion identidad, ticket, evidencia)."
             _memoHelpdeskMotivo.Properties.NullValuePromptShowForEmptyValue = True
 
             layout.Controls.Add(lblInfo)
             layout.Controls.Add(_cmbHelpdeskUsuario)
+            layout.Controls.Add(_cmbHelpdeskAprobador)
+            layout.Controls.Add(_chkHelpdeskCritico)
             layout.Controls.Add(_memoHelpdeskMotivo)
             layout.Controls.Add(_btnHelpdeskRegistrar)
 
@@ -755,6 +839,9 @@ Namespace Forms.Seguridad
             iInfo.TextVisible = False
             iInfo.Padding = New DevExpress.XtraLayout.Utils.Padding(4, 4, 8, 10)
             root.AddItem("Usuario afectado*", _cmbHelpdeskUsuario)
+            root.AddItem("Aprobador 4 ojos", _cmbHelpdeskAprobador)
+            Dim iCritico = root.AddItem(String.Empty, _chkHelpdeskCritico)
+            iCritico.TextVisible = False
             root.AddItem("Motivo*", _memoHelpdeskMotivo)
             Dim iBtn = root.AddItem(String.Empty, _btnHelpdeskRegistrar)
             iBtn.TextVisible = False
@@ -792,14 +879,35 @@ Namespace Forms.Seguridad
             _txtBuscarAuditoria.Width = 360
             _txtBuscarAuditoria.Properties.NullValuePrompt = "Detalle, IP, solicitud..."
             _txtBuscarAuditoria.Properties.NullValuePromptShowForEmptyValue = True
+            Dim lblSimUsuario As New LabelControl() With {.Text = "Usuario simulado:", .Location = New Point(472, 16)}
+            _cmbSimUsuario.Location = New Point(578, 12)
+            _cmbSimUsuario.Width = 210
+            _cmbSimUsuario.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
+            Dim lblSimEmpresa As New LabelControl() With {.Text = "Empresa:", .Location = New Point(800, 16)}
+            _cmbSimEmpresa.Location = New Point(862, 12)
+            _cmbSimEmpresa.Width = 180
+            _cmbSimEmpresa.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
+            _btnSimularScope.Location = New Point(1052, 10)
+            _btnSimularScope.Width = 124
             panelTop.Controls.Add(lblSearch)
             panelTop.Controls.Add(_txtBuscarAuditoria)
+            panelTop.Controls.Add(lblSimUsuario)
+            panelTop.Controls.Add(_cmbSimUsuario)
+            panelTop.Controls.Add(lblSimEmpresa)
+            panelTop.Controls.Add(_cmbSimEmpresa)
+            panelTop.Controls.Add(_btnSimularScope)
             _splitAuditoria.Panel1.Controls.Add(panelTop)
 
             _gridAuditoria.Dock = DockStyle.Fill
             _gridAuditoria.MainView = _viewAuditoria
             ConfigureGridView(_viewAuditoria)
+            _memoSimulador.Dock = DockStyle.Bottom
+            _memoSimulador.Height = 170
+            _memoSimulador.Properties.ReadOnly = True
+            _memoSimulador.Properties.NullValuePrompt = "Ejecuta el simulador para ver permisos y menu efectivos por usuario/empresa."
+            _memoSimulador.Properties.NullValuePromptShowForEmptyValue = True
             _splitAuditoria.Panel2.Controls.Add(_gridAuditoria)
+            _splitAuditoria.Panel2.Controls.Add(_memoSimulador)
             ConfigureAuditoriaColumns()
         End Sub
 
@@ -846,22 +954,25 @@ Namespace Forms.Seguridad
 
         Private Sub ConfigurePermisoColumns()
             _viewPermisos.Columns.Clear()
-            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Codigo), "Codigo").Width = 180
-            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Modulo), "Modulo").Width = 140
-            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Accion), "Accion").Width = 130
-            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Nombre), "Nombre").Width = 260
-            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.EsSensible), "Sensible").Width = 90
-            _viewPermisos.Columns.AddVisible(NameOf(PermisoDto.Activo), "Activo").Width = 80
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoMatrixRow.Asignado), "Asignado").Width = 90
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoMatrixRow.Codigo), "Codigo").Width = 180
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoMatrixRow.Modulo), "Modulo").Width = 140
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoMatrixRow.Accion), "Accion").Width = 130
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoMatrixRow.Nombre), "Nombre").Width = 260
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoMatrixRow.Sensible), "Sensible").Width = 90
+            _viewPermisos.Columns.AddVisible(NameOf(PermisoMatrixRow.Activo), "Activo").Width = 80
         End Sub
 
         Private Sub ConfigureMenuColumns()
             _viewMenu.Columns.Clear()
-            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Codigo), "Codigo").Width = 170
-            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Nombre), "Nombre").Width = 220
-            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Ruta), "Ruta").Width = 220
-            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Componente), "Componente").Width = 180
-            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.EsVisible), "Visible").Width = 90
-            _viewMenu.Columns.AddVisible(NameOf(RecursoUiDto.Activo), "Activo").Width = 80
+            _viewMenu.Columns.AddVisible(NameOf(MenuMatrixRow.Asignado), "Asignado").Width = 90
+            _viewMenu.Columns.AddVisible(NameOf(MenuMatrixRow.Codigo), "Codigo").Width = 170
+            _viewMenu.Columns.AddVisible(NameOf(MenuMatrixRow.Nombre), "Nombre").Width = 220
+            _viewMenu.Columns.AddVisible(NameOf(MenuMatrixRow.Ruta), "Ruta").Width = 220
+            _viewMenu.Columns.AddVisible(NameOf(MenuMatrixRow.Componente), "Componente").Width = 180
+            _viewMenu.Columns.AddVisible(NameOf(MenuMatrixRow.Permisos), "Permisos").Width = 280
+            _viewMenu.Columns.AddVisible(NameOf(MenuMatrixRow.Visible), "Visible").Width = 90
+            _viewMenu.Columns.AddVisible(NameOf(MenuMatrixRow.Activo), "Activo").Width = 80
         End Sub
 
         Private Sub ConfigureSesionColumns()
@@ -924,6 +1035,13 @@ Namespace Forms.Seguridad
             AddHandler _viewUsuarios.FocusedRowChanged, AddressOf OnUsuarioFocusedRowChanged
             AddHandler _viewRoles.FocusedRowChanged, AddressOf OnRolFocusedRowChanged
             AddHandler _viewAsignaciones.FocusedRowChanged, AddressOf OnAsignacionFocusedRowChanged
+            AddHandler _cmbPermisosRol.SelectedIndexChanged, AddressOf OnPermisosRolChanged
+            AddHandler _cmbMenuRol.SelectedIndexChanged, AddressOf OnMenuRolChanged
+            AddHandler _btnPermisoConceder.Click, AddressOf OnPermisoConcederClickAsync
+            AddHandler _btnPermisoRevocar.Click, AddressOf OnPermisoRevocarClickAsync
+            AddHandler _btnMenuConceder.Click, AddressOf OnMenuConcederClickAsync
+            AddHandler _btnMenuRevocar.Click, AddressOf OnMenuRevocarClickAsync
+            AddHandler _btnSimularScope.Click, AddressOf OnSimularScopeClick
             AddHandler _btnHelpdeskRegistrar.Click, AddressOf OnHelpdeskRegistrarClickAsync
         End Sub
 
@@ -971,7 +1089,11 @@ Namespace Forms.Seguridad
                 Await LoadRolesAsync().ConfigureAwait(True)
                 Await LoadAsignacionesAsync().ConfigureAwait(True)
                 Await LoadPermisosAsync().ConfigureAwait(True)
+                Await LoadDeberesAsync().ConfigureAwait(True)
+                Await LoadRolDeberesAsync().ConfigureAwait(True)
                 Await LoadRecursosUiAsync().ConfigureAwait(True)
+                Await LoadRecursoPermisosAsync().ConfigureAwait(True)
+                Await LoadEmpresasAsync().ConfigureAwait(True)
                 Await LoadSesionesAsync().ConfigureAwait(True)
                 Await LoadHelpdeskHistorialAsync().ConfigureAwait(True)
                 Await LoadAuditoriaEventosAsync().ConfigureAwait(True)
@@ -979,6 +1101,8 @@ Namespace Forms.Seguridad
                 ResetRolEditor()
                 ResetAsignacionEditor()
                 ResetHelpdeskEditor()
+                RefreshPermisosMatrix()
+                RefreshMenuMatrix()
                 _statusInfo.Caption = "Centro IAM cargado."
             Catch ex As Exception
                 XtraMessageBox.Show(Me, ex.Message, "Centro IAM", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -1066,7 +1190,26 @@ Namespace Forms.Seguridad
                 ThenBy(Function(x) x.Codigo).
                 ToList()
 
-            _gridPermisos.DataSource = _permisos
+            _gridPermisos.DataSource = BuildPermisoRowsForSelectedRole()
+            SetBusy(False)
+        End Function
+
+        Private Async Function LoadDeberesAsync() As Task
+            SetBusy(True, "Cargando deberes...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of DeberDto))("api/v1/seguridad/deber").ConfigureAwait(True)
+            _deberes = If(list, New List(Of DeberDto)()).
+                Where(Function(x) x IsNot Nothing AndAlso x.IdDeber.HasValue).
+                OrderBy(Function(x) x.Codigo).
+                ToList()
+            SetBusy(False)
+        End Function
+
+        Private Async Function LoadRolDeberesAsync() As Task
+            SetBusy(True, "Cargando matriz rol-deber...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of RolDeberDto))("api/v1/seguridad/rol_deber").ConfigureAwait(True)
+            _rolDeberes = If(list, New List(Of RolDeberDto)()).
+                Where(Function(x) x IsNot Nothing AndAlso x.IdRol.HasValue AndAlso x.IdDeber.HasValue).
+                ToList()
             SetBusy(False)
         End Function
 
@@ -1079,7 +1222,27 @@ Namespace Forms.Seguridad
                 ThenBy(Function(x) x.Nombre).
                 ToList()
 
-            _gridMenu.DataSource = _recursosUi
+            _gridMenu.DataSource = BuildMenuRowsForSelectedRole()
+            SetBusy(False)
+        End Function
+
+        Private Async Function LoadRecursoPermisosAsync() As Task
+            SetBusy(True, "Cargando relacion menu-permisos...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of RecursoUiPermisoDto))("api/v1/seguridad/recurso_ui_permiso").ConfigureAwait(True)
+            _recursoPermisos = If(list, New List(Of RecursoUiPermisoDto)()).
+                Where(Function(x) x IsNot Nothing AndAlso x.IdRecursoUi.HasValue AndAlso x.IdPermiso.HasValue).
+                ToList()
+            SetBusy(False)
+        End Function
+
+        Private Async Function LoadEmpresasAsync() As Task
+            SetBusy(True, "Cargando empresas...")
+            Dim list = Await _apiClient.GetAsync(Of List(Of EmpresaDto))("api/v1/organizacion/empresa").ConfigureAwait(True)
+            _empresas = If(list, New List(Of EmpresaDto)()).
+                Where(Function(x) x IsNot Nothing AndAlso x.IdEmpresa.HasValue AndAlso x.Activo.GetValueOrDefault(True)).
+                OrderBy(Function(x) x.Nombre).
+                ToList()
+            BuildEmpresasCombo()
             SetBusy(False)
         End Function
 
@@ -1122,22 +1285,65 @@ Namespace Forms.Seguridad
 
         Private Sub BuildUsuariosCombo()
             _cmbAsignUsuario.Properties.Items.Clear()
+            _cmbHelpdeskUsuario.Properties.Items.Clear()
+            _cmbHelpdeskAprobador.Properties.Items.Clear()
+            _cmbSimUsuario.Properties.Items.Clear()
             For Each u In _usuarios.Where(Function(x) x.IdUsuario.HasValue)
+                Dim nombre = If(String.IsNullOrWhiteSpace(u.NombreMostrar), u.LoginPrincipal, u.NombreMostrar)
+                Dim combo = New ComboLongItem With {
+                    .Id = u.IdUsuario.Value,
+                    .Nombre = nombre
+                }
                 _cmbAsignUsuario.Properties.Items.Add(New ComboLongItem With {
                     .Id = u.IdUsuario.Value,
-                    .Nombre = If(String.IsNullOrWhiteSpace(u.NombreMostrar), u.LoginPrincipal, u.NombreMostrar)
+                    .Nombre = nombre
                 })
+                If u.Activo.GetValueOrDefault(True) Then
+                    _cmbHelpdeskUsuario.Properties.Items.Add(combo)
+                    _cmbHelpdeskAprobador.Properties.Items.Add(New ComboLongItem With {.Id = combo.Id, .Nombre = combo.Nombre})
+                    _cmbSimUsuario.Properties.Items.Add(New ComboLongItem With {.Id = combo.Id, .Nombre = combo.Nombre})
+                End If
             Next
+
+            If _cmbSimUsuario.Properties.Items.Count > 0 AndAlso _cmbSimUsuario.SelectedItem Is Nothing Then
+                _cmbSimUsuario.SelectedIndex = 0
+            End If
         End Sub
 
         Private Sub BuildRolesCombo()
             _cmbAsignRol.Properties.Items.Clear()
+            _cmbPermisosRol.Properties.Items.Clear()
+            _cmbMenuRol.Properties.Items.Clear()
             For Each r In _roles.Where(Function(x) x.IdRol.HasValue)
-                _cmbAsignRol.Properties.Items.Add(New ComboLongItem With {
+                Dim combo = New ComboLongItem With {
                     .Id = r.IdRol.Value,
                     .Nombre = r.Nombre
+                }
+                _cmbAsignRol.Properties.Items.Add(New ComboLongItem With {.Id = combo.Id, .Nombre = combo.Nombre})
+                _cmbPermisosRol.Properties.Items.Add(New ComboLongItem With {.Id = combo.Id, .Nombre = combo.Nombre})
+                _cmbMenuRol.Properties.Items.Add(New ComboLongItem With {.Id = combo.Id, .Nombre = combo.Nombre})
+            Next
+
+            If _cmbPermisosRol.Properties.Items.Count > 0 AndAlso _cmbPermisosRol.SelectedItem Is Nothing Then
+                _cmbPermisosRol.SelectedIndex = 0
+            End If
+            If _cmbMenuRol.Properties.Items.Count > 0 AndAlso _cmbMenuRol.SelectedItem Is Nothing Then
+                _cmbMenuRol.SelectedIndex = 0
+            End If
+        End Sub
+
+        Private Sub BuildEmpresasCombo()
+            _cmbSimEmpresa.Properties.Items.Clear()
+            For Each item In _empresas.Where(Function(x) x.IdEmpresa.HasValue)
+                _cmbSimEmpresa.Properties.Items.Add(New ComboLongItem With {
+                    .Id = item.IdEmpresa.Value,
+                    .Nombre = $"{item.Codigo} - {item.Nombre}"
                 })
             Next
+
+            If _cmbSimEmpresa.Properties.Items.Count > 0 AndAlso _cmbSimEmpresa.SelectedItem Is Nothing Then
+                _cmbSimEmpresa.SelectedIndex = 0
+            End If
         End Sub
 
         Private Function BuildAsignacionRows(ByVal source As IEnumerable(Of AsignacionRolUsuarioDto)) As List(Of AsignacionGridRow)
@@ -1213,13 +1419,308 @@ Namespace Forms.Seguridad
 
         Private Sub BuildHelpdeskUsuariosCombo()
             _cmbHelpdeskUsuario.Properties.Items.Clear()
+            _cmbHelpdeskAprobador.Properties.Items.Clear()
             For Each u In _usuarios.Where(Function(x) x.IdUsuario.HasValue AndAlso x.Activo.GetValueOrDefault(True)).
                 OrderBy(Function(x) If(String.IsNullOrWhiteSpace(x.NombreMostrar), x.LoginPrincipal, x.NombreMostrar))
+                Dim nombre = If(String.IsNullOrWhiteSpace(u.NombreMostrar), u.LoginPrincipal, u.NombreMostrar)
                 _cmbHelpdeskUsuario.Properties.Items.Add(New ComboLongItem With {
                     .Id = u.IdUsuario.Value,
-                    .Nombre = If(String.IsNullOrWhiteSpace(u.NombreMostrar), u.LoginPrincipal, u.NombreMostrar)
+                    .Nombre = nombre
+                })
+                _cmbHelpdeskAprobador.Properties.Items.Add(New ComboLongItem With {
+                    .Id = u.IdUsuario.Value,
+                    .Nombre = nombre
                 })
             Next
+        End Sub
+
+        Private Function BuildPermisoRowsForSelectedRole() As List(Of PermisoMatrixRow)
+            Dim roleId = GetSelectedLongId(_cmbPermisosRol)
+            Dim deberByCode = _deberes.
+                Where(Function(x) x.IdDeber.HasValue AndAlso Not String.IsNullOrWhiteSpace(x.Codigo)).
+                GroupBy(Function(x) x.Codigo.Trim().ToUpperInvariant()).
+                ToDictionary(Function(g) g.Key, Function(g) g.First())
+
+            Dim assignedDeberes As New HashSet(Of Long)()
+            If roleId.HasValue Then
+                For Each rel In _rolDeberes.Where(Function(x) x.IdRol.HasValue AndAlso x.IdRol.Value = roleId.Value AndAlso x.Activo.GetValueOrDefault(True) AndAlso x.IdDeber.HasValue)
+                    assignedDeberes.Add(rel.IdDeber.Value)
+                Next
+            End If
+
+            Dim rows As New List(Of PermisoMatrixRow)()
+            For Each p In _permisos.Where(Function(x) x.IdPermiso.HasValue)
+                Dim deberId As Long? = Nothing
+                Dim key = If(p.Codigo, String.Empty).Trim().ToUpperInvariant()
+                If deberByCode.ContainsKey(key) Then
+                    deberId = deberByCode(key).IdDeber
+                End If
+
+                rows.Add(New PermisoMatrixRow With {
+                    .IdPermiso = p.IdPermiso.Value,
+                    .IdDeber = deberId,
+                    .Asignado = deberId.HasValue AndAlso assignedDeberes.Contains(deberId.Value),
+                    .Codigo = If(p.Codigo, String.Empty),
+                    .Modulo = If(p.Modulo, String.Empty),
+                    .Accion = If(p.Accion, String.Empty),
+                    .Nombre = If(p.Nombre, String.Empty),
+                    .Sensible = p.EsSensible.GetValueOrDefault(False),
+                    .Activo = p.Activo.GetValueOrDefault(True)
+                })
+            Next
+
+            Return rows
+        End Function
+
+        Private Function BuildMenuRowsForSelectedRole() As List(Of MenuMatrixRow)
+            Dim roleId = GetSelectedLongId(_cmbMenuRol)
+            Dim assignedPermisos As New HashSet(Of Integer)()
+            If roleId.HasValue Then
+                Dim assignedDeberIds = _rolDeberes.
+                    Where(Function(x) x.IdRol.HasValue AndAlso x.IdRol.Value = roleId.Value AndAlso x.Activo.GetValueOrDefault(True) AndAlso x.IdDeber.HasValue).
+                    Select(Function(x) x.IdDeber.Value).
+                    ToHashSet()
+                Dim deberesAsignados = _deberes.Where(Function(d) d.IdDeber.HasValue AndAlso assignedDeberIds.Contains(d.IdDeber.Value)).ToList()
+                For Each deber In deberesAsignados
+                    Dim permiso = _permisos.FirstOrDefault(Function(p) p.IdPermiso.HasValue AndAlso
+                        String.Equals(If(p.Codigo, String.Empty).Trim(), If(deber.Codigo, String.Empty).Trim(), StringComparison.OrdinalIgnoreCase))
+                    If permiso IsNot Nothing AndAlso permiso.IdPermiso.HasValue Then
+                        assignedPermisos.Add(permiso.IdPermiso.Value)
+                    End If
+                Next
+            End If
+
+            Dim linksByRecurso = _recursoPermisos.
+                Where(Function(x) x.IdRecursoUi.HasValue AndAlso x.IdPermiso.HasValue AndAlso x.Activo.GetValueOrDefault(True)).
+                GroupBy(Function(x) x.IdRecursoUi.Value).
+                ToDictionary(Function(g) g.Key, Function(g) g.Select(Function(x) x.IdPermiso.Value).Distinct().ToList())
+
+            Dim rows As New List(Of MenuMatrixRow)()
+            For Each item In _recursosUi.Where(Function(x) x.IdRecursoUi.HasValue)
+                Dim permisosRecurso As List(Of Integer) = Nothing
+                If Not linksByRecurso.TryGetValue(item.IdRecursoUi.Value, permisosRecurso) Then
+                    permisosRecurso = New List(Of Integer)()
+                End If
+
+                Dim asignado = permisosRecurso.Count = 0 OrElse permisosRecurso.All(Function(pid) assignedPermisos.Contains(pid))
+                Dim permisosTexto = String.Join(", ", permisosRecurso.
+                    Select(Function(pid) _permisos.FirstOrDefault(Function(p) p.IdPermiso.HasValue AndAlso p.IdPermiso.Value = pid)).
+                    Where(Function(p) p IsNot Nothing).
+                    Select(Function(p) If(String.IsNullOrWhiteSpace(p.Codigo), p.Nombre, p.Codigo)))
+
+                rows.Add(New MenuMatrixRow With {
+                    .IdRecursoUi = item.IdRecursoUi.Value,
+                    .Asignado = asignado,
+                    .Codigo = If(item.Codigo, String.Empty),
+                    .Nombre = If(item.Nombre, String.Empty),
+                    .Ruta = If(item.Ruta, String.Empty),
+                    .Componente = If(item.Componente, String.Empty),
+                    .Visible = item.EsVisible.GetValueOrDefault(True),
+                    .Activo = item.Activo.GetValueOrDefault(True),
+                    .Permisos = permisosTexto
+                })
+            Next
+
+            Return rows
+        End Function
+
+        Private Sub RefreshPermisosMatrix()
+            _gridPermisos.DataSource = BuildPermisoRowsForSelectedRole()
+        End Sub
+
+        Private Sub RefreshMenuMatrix()
+            _gridMenu.DataSource = BuildMenuRowsForSelectedRole()
+        End Sub
+
+        Private Sub OnPermisosRolChanged(ByVal sender As Object, ByVal e As EventArgs)
+            RefreshPermisosMatrix()
+        End Sub
+
+        Private Sub OnMenuRolChanged(ByVal sender As Object, ByVal e As EventArgs)
+            RefreshMenuMatrix()
+        End Sub
+
+        Private Async Sub OnPermisoConcederClickAsync(ByVal sender As Object, ByVal e As EventArgs)
+            Await ToggleSelectedPermisoAsync(True).ConfigureAwait(True)
+        End Sub
+
+        Private Async Sub OnPermisoRevocarClickAsync(ByVal sender As Object, ByVal e As EventArgs)
+            Await ToggleSelectedPermisoAsync(False).ConfigureAwait(True)
+        End Sub
+
+        Private Async Function ToggleSelectedPermisoAsync(ByVal conceder As Boolean) As Task
+            If _busy Then Return
+            Dim roleId = GetSelectedLongId(_cmbPermisosRol)
+            If Not roleId.HasValue Then
+                XtraMessageBox.Show(Me, "Seleccione un rol para editar la matriz.", "Matriz Roles-Permisos", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Dim row = TryCast(_viewPermisos.GetFocusedRow(), PermisoMatrixRow)
+            If row Is Nothing Then
+                XtraMessageBox.Show(Me, "Seleccione un permiso en la grilla.", "Matriz Roles-Permisos", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Await UpsertRolDeberFromPermisoAsync(roleId.Value, row.IdPermiso, conceder).ConfigureAwait(True)
+            Await LoadRolDeberesAsync().ConfigureAwait(True)
+            RefreshPermisosMatrix()
+            RefreshMenuMatrix()
+            _statusInfo.Caption = If(conceder, "Permiso concedido al rol.", "Permiso revocado del rol.")
+        End Function
+
+        Private Async Sub OnMenuConcederClickAsync(ByVal sender As Object, ByVal e As EventArgs)
+            Await ToggleSelectedMenuAsync(True).ConfigureAwait(True)
+        End Sub
+
+        Private Async Sub OnMenuRevocarClickAsync(ByVal sender As Object, ByVal e As EventArgs)
+            Await ToggleSelectedMenuAsync(False).ConfigureAwait(True)
+        End Sub
+
+        Private Async Function ToggleSelectedMenuAsync(ByVal conceder As Boolean) As Task
+            If _busy Then Return
+            Dim roleId = GetSelectedLongId(_cmbMenuRol)
+            If Not roleId.HasValue Then
+                XtraMessageBox.Show(Me, "Seleccione un rol para asignacion de menu.", "Menu por Rol", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Dim row = TryCast(_viewMenu.GetFocusedRow(), MenuMatrixRow)
+            If row Is Nothing Then
+                XtraMessageBox.Show(Me, "Seleccione un recurso de menu en la grilla.", "Menu por Rol", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Dim permisoIds = _recursoPermisos.
+                Where(Function(x) x.IdRecursoUi.HasValue AndAlso x.IdRecursoUi.Value = row.IdRecursoUi AndAlso x.IdPermiso.HasValue AndAlso x.Activo.GetValueOrDefault(True)).
+                Select(Function(x) x.IdPermiso.Value).
+                Distinct().
+                ToList()
+
+            If permisoIds.Count = 0 Then
+                _statusInfo.Caption = "El menu no tiene permisos vinculados; no requiere ajuste de rol."
+                Return
+            End If
+
+            SetBusy(True, If(conceder, "Concediendo menu al rol...", "Revocando menu al rol..."))
+            Try
+                For Each permisoId In permisoIds
+                    Await UpsertRolDeberFromPermisoAsync(roleId.Value, permisoId, conceder).ConfigureAwait(True)
+                Next
+                Await LoadRolDeberesAsync().ConfigureAwait(True)
+                RefreshPermisosMatrix()
+                RefreshMenuMatrix()
+            Finally
+                SetBusy(False)
+            End Try
+
+            _statusInfo.Caption = If(conceder, "Menu concedido mediante permisos del rol.", "Menu revocado mediante permisos del rol.")
+        End Function
+
+        Private Async Function UpsertRolDeberFromPermisoAsync(ByVal idRol As Long, ByVal idPermiso As Integer, ByVal activo As Boolean) As Task
+            Dim permiso = _permisos.FirstOrDefault(Function(x) x.IdPermiso.HasValue AndAlso x.IdPermiso.Value = idPermiso)
+            If permiso Is Nothing Then Return
+
+            Dim deberId = Await EnsureDeberFromPermisoAsync(permiso).ConfigureAwait(True)
+            If Not deberId.HasValue Then Return
+
+            Dim dto As New RolDeberDto With {
+                .IdRol = idRol,
+                .IdDeber = deberId.Value,
+                .Activo = activo,
+                .CreadoUtc = DateTime.UtcNow,
+                .ActualizadoUtc = DateTime.UtcNow
+            }
+            Await _apiClient.PostAsync(Of RolDeberDto, Dictionary(Of String, Object))("api/v1/seguridad/rol_deber/crear", dto).ConfigureAwait(True)
+        End Function
+
+        Private Async Function EnsureDeberFromPermisoAsync(ByVal permiso As PermisoDto) As Task(Of Long?)
+            Dim codigo = If(permiso.Codigo, String.Empty).Trim()
+            If String.IsNullOrWhiteSpace(codigo) Then Return Nothing
+
+            Dim deber = _deberes.FirstOrDefault(Function(x) String.Equals(If(x.Codigo, String.Empty).Trim(), codigo, StringComparison.OrdinalIgnoreCase))
+            If deber IsNot Nothing AndAlso deber.IdDeber.HasValue Then
+                Return deber.IdDeber.Value
+            End If
+
+            If Not _sessionContext.IdTenant.HasValue Then
+                Throw New InvalidOperationException("No hay id_tenant en sesion para crear deber asociado al permiso.")
+            End If
+
+            Dim dto As New DeberDto With {
+                .IdTenant = _sessionContext.IdTenant,
+                .Codigo = codigo,
+                .Nombre = If(String.IsNullOrWhiteSpace(permiso.Nombre), codigo, permiso.Nombre),
+                .Descripcion = $"Auto creado desde permiso {codigo}",
+                .EsSistema = False,
+                .Activo = True,
+                .CreadoUtc = DateTime.UtcNow,
+                .ActualizadoUtc = DateTime.UtcNow
+            }
+            Await _apiClient.PostAsync(Of DeberDto, Dictionary(Of String, Object))("api/v1/seguridad/deber/crear", dto).ConfigureAwait(True)
+            Await LoadDeberesAsync().ConfigureAwait(True)
+            deber = _deberes.FirstOrDefault(Function(x) String.Equals(If(x.Codigo, String.Empty).Trim(), codigo, StringComparison.OrdinalIgnoreCase))
+            Return If(deber?.IdDeber, Nothing)
+        End Function
+
+        Private Async Sub OnSimularScopeClick(ByVal sender As Object, ByVal e As EventArgs)
+            If _busy Then Return
+            Dim idUsuario = GetSelectedLongId(_cmbSimUsuario)
+            Dim idEmpresa = GetSelectedLongId(_cmbSimEmpresa)
+            If Not idUsuario.HasValue OrElse Not idEmpresa.HasValue Then
+                XtraMessageBox.Show(Me, "Seleccione usuario y empresa para simular alcance.", "Simulador", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            SetBusy(True, "Simulando alcance de datos y permisos...")
+            Try
+                Dim now = DateTime.UtcNow
+                Dim asignaciones = _asignaciones.Where(Function(x) x.IdUsuario.HasValue AndAlso x.IdUsuario.Value = idUsuario.Value AndAlso
+                                                           x.IdEmpresa.HasValue AndAlso x.IdEmpresa.Value = idEmpresa.Value AndAlso
+                                                           x.Activo.GetValueOrDefault(True) AndAlso
+                                                           x.FechaInicioUtc.GetValueOrDefault(DateTime.MinValue) <= now AndAlso
+                                                           (Not x.FechaFinUtc.HasValue OrElse x.FechaFinUtc.Value >= now)).ToList()
+
+                Dim roleIds = asignaciones.Where(Function(x) x.IdRol.HasValue).Select(Function(x) x.IdRol.Value).Distinct().ToHashSet()
+                Dim deberIds = _rolDeberes.Where(Function(x) x.IdRol.HasValue AndAlso roleIds.Contains(x.IdRol.Value) AndAlso x.Activo.GetValueOrDefault(True) AndAlso x.IdDeber.HasValue).
+                    Select(Function(x) x.IdDeber.Value).Distinct().ToHashSet()
+                Dim deberes = _deberes.Where(Function(x) x.IdDeber.HasValue AndAlso deberIds.Contains(x.IdDeber.Value)).ToList()
+
+                Dim permisos = _permisos.Where(Function(p) Not String.IsNullOrWhiteSpace(p.Codigo) AndAlso
+                    deberes.Any(Function(d) String.Equals(If(d.Codigo, String.Empty).Trim(), p.Codigo.Trim(), StringComparison.OrdinalIgnoreCase))).ToList()
+                Dim permisoIds = permisos.Where(Function(p) p.IdPermiso.HasValue).Select(Function(p) p.IdPermiso.Value).ToHashSet()
+
+                Dim menus = _recursosUi.Where(Function(r)
+                                                  If Not r.IdRecursoUi.HasValue Then Return False
+                                                  Dim links = _recursoPermisos.Where(Function(x) x.IdRecursoUi.HasValue AndAlso x.IdRecursoUi.Value = r.IdRecursoUi.Value AndAlso x.IdPermiso.HasValue AndAlso x.Activo.GetValueOrDefault(True)).
+                                                      Select(Function(x) x.IdPermiso.Value).
+                                                      Distinct().
+                                                      ToList()
+                                                  Return links.Count = 0 OrElse links.All(Function(pid) permisoIds.Contains(pid))
+                                              End Function).ToList()
+
+                Dim scopeEmpresa = Await _apiClient.GetAsync(Of List(Of UsuarioScopeEmpresaDto))("api/v1/seguridad/usuario_scope_empresa").ConfigureAwait(True)
+                Dim scopeUnidad = Await _apiClient.GetAsync(Of List(Of UsuarioScopeUnidadDto))("api/v1/seguridad/usuario_scope_unidad").ConfigureAwait(True)
+                Dim scopesEmp = If(scopeEmpresa, New List(Of UsuarioScopeEmpresaDto)()).
+                    Where(Function(x) x.IdUsuario.HasValue AndAlso x.IdUsuario.Value = idUsuario.Value).
+                    ToList()
+                Dim scopesUni = If(scopeUnidad, New List(Of UsuarioScopeUnidadDto)()).
+                    Where(Function(x) x.IdUsuario.HasValue AndAlso x.IdUsuario.Value = idUsuario.Value).
+                    ToList()
+
+                Dim rolesTexto = String.Join(", ", _roles.Where(Function(r) r.IdRol.HasValue AndAlso roleIds.Contains(r.IdRol.Value)).Select(Function(r) r.Nombre))
+                Dim permisosTexto = String.Join(Environment.NewLine, permisos.Select(Function(p) "- " & If(p.Codigo, p.Nombre)))
+                Dim menusTexto = String.Join(Environment.NewLine, menus.Select(Function(m) "- " & If(m.Nombre, m.Codigo)))
+
+                _memoSimulador.Text = $"Usuario: {idUsuario.Value} | Empresa: {idEmpresa.Value}{Environment.NewLine}" &
+                    $"Roles activos: {If(String.IsNullOrWhiteSpace(rolesTexto), "(ninguno)", rolesTexto)}{Environment.NewLine}" &
+                    $"Scope empresa explicito: {scopesEmp.Count}{Environment.NewLine}" &
+                    $"Scope unidad explicito: {scopesUni.Count}{Environment.NewLine}{Environment.NewLine}" &
+                    $"Permisos efectivos ({permisos.Count}):{Environment.NewLine}{If(String.IsNullOrWhiteSpace(permisosTexto), "- ninguno", permisosTexto)}{Environment.NewLine}{Environment.NewLine}" &
+                    $"Menu visible ({menus.Count}):{Environment.NewLine}{If(String.IsNullOrWhiteSpace(menusTexto), "- ninguno", menusTexto)}"
+            Finally
+                SetBusy(False)
+            End Try
         End Sub
         Private Sub OnUsuarioFocusedRowChanged(ByVal sender As Object, ByVal e As DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventArgs)
             If _loadingEditors Then Return
@@ -1358,6 +1859,8 @@ Namespace Forms.Seguridad
                 Else
                     _cmbHelpdeskUsuario.SelectedItem = Nothing
                 End If
+                _cmbHelpdeskAprobador.SelectedItem = Nothing
+                _chkHelpdeskCritico.Checked = False
                 _memoHelpdeskMotivo.Text = String.Empty
             Finally
                 _loadingEditors = False
@@ -1401,12 +1904,25 @@ Namespace Forms.Seguridad
                 Return
             End If
 
+            Dim idAprobador As Long? = GetSelectedLongId(_cmbHelpdeskAprobador)
+            If _chkHelpdeskCritico.Checked Then
+                If Not idAprobador.HasValue Then
+                    XtraMessageBox.Show(Me, "Para operacion critica debe seleccionar aprobador secundario (4 ojos).", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    _cmbHelpdeskAprobador.Focus()
+                    Return
+                End If
+                If idAprobador.Value = _sessionContext.IdUsuario.Value Then
+                    XtraMessageBox.Show(Me, "El aprobador secundario debe ser distinto del administrador operador.", "Validacion", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+            End If
+
             Dim dto As New AuditoriaReinicioMesaAyudaDto With {
                 .IdTenant = _sessionContext.IdTenant.Value,
                 .IdEmpresa = _sessionContext.IdEmpresa,
                 .IdUsuarioAfectado = idUsuarioAfectado.Value,
                 .IdUsuarioAdministrador = _sessionContext.IdUsuario.Value,
-                .Motivo = motivo,
+                .Motivo = If(_chkHelpdeskCritico.Checked, $"{motivo} | 4ojos_aprobador={idAprobador}", motivo),
                 .IpOrigen = "127.0.0.1",
                 .AgenteUsuario = $"Secure.WinForms IAM/{Application.ProductVersion} {Environment.MachineName}",
                 .FechaUtc = DateTime.UtcNow
@@ -1415,6 +1931,20 @@ Namespace Forms.Seguridad
             SetBusy(True, "Registrando override MFA helpdesk...")
             Try
                 Await _apiClient.PostAsync(Of AuditoriaReinicioMesaAyudaDto, Dictionary(Of String, Object))("api/v1/observabilidad/auditoria_reinicio_mesa_ayuda/crear", dto).ConfigureAwait(True)
+                If _chkHelpdeskCritico.Checked Then
+                    Dim evento As New AuditoriaEventoSeguridadDto With {
+                        .FechaUtc = DateTime.UtcNow,
+                        .IdTipoEventoSeguridad = 1,
+                        .IdTenant = _sessionContext.IdTenant,
+                        .IdEmpresa = _sessionContext.IdEmpresa,
+                        .IdUsuario = _sessionContext.IdUsuario,
+                        .Detalle = $"Helpdesk MFA override CRITICO aprobado por usuario {idAprobador}. Usuario afectado: {idUsuarioAfectado}.",
+                        .IpOrigen = "127.0.0.1",
+                        .AgenteUsuario = $"Secure.WinForms IAM/{Application.ProductVersion} {Environment.MachineName}",
+                        .SolicitudId = Guid.NewGuid().ToString("N")
+                    }
+                    Await _apiClient.PostAsync(Of AuditoriaEventoSeguridadDto, Dictionary(Of String, Object))("api/v1/observabilidad/auditoria_evento_seguridad/crear", evento).ConfigureAwait(True)
+                End If
                 Await LoadHelpdeskHistorialAsync().ConfigureAwait(True)
                 Await LoadAuditoriaEventosAsync().ConfigureAwait(True)
                 ResetHelpdeskEditor()
@@ -1476,14 +2006,21 @@ Namespace Forms.Seguridad
                         Await LoadAsignacionesAsync().ConfigureAwait(True)
                     Case 3
                         Await LoadPermisosAsync().ConfigureAwait(True)
+                        Await LoadDeberesAsync().ConfigureAwait(True)
+                        Await LoadRolDeberesAsync().ConfigureAwait(True)
+                        RefreshPermisosMatrix()
                     Case 4
                         Await LoadRecursosUiAsync().ConfigureAwait(True)
+                        Await LoadRecursoPermisosAsync().ConfigureAwait(True)
+                        Await LoadRolDeberesAsync().ConfigureAwait(True)
+                        RefreshMenuMatrix()
                     Case 5
                         Await LoadSesionesAsync().ConfigureAwait(True)
                     Case 6
                         Await LoadHelpdeskHistorialAsync().ConfigureAwait(True)
                     Case Else
                         Await LoadAuditoriaEventosAsync().ConfigureAwait(True)
+                        Await LoadEmpresasAsync().ConfigureAwait(True)
                 End Select
 
                 _statusInfo.Caption = "Datos actualizados."
