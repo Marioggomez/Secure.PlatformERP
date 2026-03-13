@@ -236,7 +236,8 @@ public sealed class UsuarioRepository : IUsuarioRepository
         command.Parameters.Add(CreateParameter("@creado_utc", SqlDbType.DateTime2, dto.CreadoUtc));
         command.Parameters.Add(CreateParameter("@actualizado_por", SqlDbType.BigInt, dto.ActualizadoPor));
         command.Parameters.Add(CreateParameter("@actualizado_utc", SqlDbType.DateTime2, dto.ActualizadoUtc));
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        var affected = result is null or DBNull ? 0 : Convert.ToInt32(result);
         return affected > 0;
     }
 
@@ -249,7 +250,8 @@ public sealed class UsuarioRepository : IUsuarioRepository
         command.CommandText = SpDesactivar;
         command.Parameters.Add(CreateParameter("@id_usuario", SqlDbType.BigInt, idUsuario));
         command.Parameters.Add(CreateParameter("@usuario", SqlDbType.VarChar, usuario, 180));
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        var affected = result is null or DBNull ? 0 : Convert.ToInt32(result);
         return affected > 0;
     }
 
