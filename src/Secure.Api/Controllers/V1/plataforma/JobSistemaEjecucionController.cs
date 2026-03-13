@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Plataforma;
 using Secure.Platform.Data.Repositories.Interfaces.Plataforma;
 
@@ -20,6 +20,7 @@ public sealed class JobSistemaEjecucionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<JobSistemaEjecucionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class JobSistemaEjecucionController : ControllerBase
     }
 
     [HttpGet("{idEjecucion}")]
+    [HttpGet("obtener/{idEjecucion}")]
     public async Task<ActionResult<JobSistemaEjecucionDto>> ObtenerAsync([FromRoute] long idEjecucion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idEjecucion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class JobSistemaEjecucionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] JobSistemaEjecucionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class JobSistemaEjecucionController : ControllerBase
     }
 
     [HttpPut("{idEjecucion}")]
+    [HttpPut("actualizar/{idEjecucion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idEjecucion, [FromBody] JobSistemaEjecucionDto dto, CancellationToken cancellationToken)
     {
         dto.IdEjecucion = idEjecucion;
@@ -49,9 +53,12 @@ public sealed class JobSistemaEjecucionController : ControllerBase
     }
 
     [HttpDelete("{idEjecucion}")]
+    [HttpDelete("desactivar/{idEjecucion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idEjecucion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idEjecucion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -20,6 +20,7 @@ public sealed class LayoutUiController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<ObtenerLayoutUiResponseDto>> ObtenerAsync(
         [FromQuery] long idUsuario,
         [FromQuery] long idTenant,
@@ -32,6 +33,7 @@ public sealed class LayoutUiController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<GuardarLayoutUiResponseDto>> GuardarAsync(
         [FromBody] GuardarLayoutUiRequestDto request,
         CancellationToken cancellationToken)
@@ -40,3 +42,5 @@ public sealed class LayoutUiController : ControllerBase
         return Ok(response);
     }
 }
+
+

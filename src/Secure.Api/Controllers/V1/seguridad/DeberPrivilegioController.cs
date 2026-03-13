@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class DeberPrivilegioController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<DeberPrivilegioDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class DeberPrivilegioController : ControllerBase
     }
 
     [HttpGet("{idDeber}")]
+    [HttpGet("obtener/{idDeber}")]
     public async Task<ActionResult<DeberPrivilegioDto>> ObtenerAsync([FromRoute] long idDeber, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idDeber, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class DeberPrivilegioController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] DeberPrivilegioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class DeberPrivilegioController : ControllerBase
     }
 
     [HttpPut("{idDeber}")]
+    [HttpPut("actualizar/{idDeber}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idDeber, [FromBody] DeberPrivilegioDto dto, CancellationToken cancellationToken)
     {
         dto.IdDeber = idDeber;
@@ -49,9 +53,12 @@ public sealed class DeberPrivilegioController : ControllerBase
     }
 
     [HttpDelete("{idDeber}")]
+    [HttpDelete("desactivar/{idDeber}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idDeber, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idDeber, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Observabilidad;
 using Secure.Platform.Data.Repositories.Interfaces.Observabilidad;
 
@@ -20,6 +20,7 @@ public sealed class AuditoriaReinicioMesaAyudaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<AuditoriaReinicioMesaAyudaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class AuditoriaReinicioMesaAyudaController : ControllerBase
     }
 
     [HttpGet("{idAuditoriaReinicioMesaAyuda}")]
+    [HttpGet("obtener/{idAuditoriaReinicioMesaAyuda}")]
     public async Task<ActionResult<AuditoriaReinicioMesaAyudaDto>> ObtenerAsync([FromRoute] long idAuditoriaReinicioMesaAyuda, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idAuditoriaReinicioMesaAyuda, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class AuditoriaReinicioMesaAyudaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] AuditoriaReinicioMesaAyudaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class AuditoriaReinicioMesaAyudaController : ControllerBase
     }
 
     [HttpPut("{idAuditoriaReinicioMesaAyuda}")]
+    [HttpPut("actualizar/{idAuditoriaReinicioMesaAyuda}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idAuditoriaReinicioMesaAyuda, [FromBody] AuditoriaReinicioMesaAyudaDto dto, CancellationToken cancellationToken)
     {
         dto.IdAuditoriaReinicioMesaAyuda = idAuditoriaReinicioMesaAyuda;
@@ -49,9 +53,12 @@ public sealed class AuditoriaReinicioMesaAyudaController : ControllerBase
     }
 
     [HttpDelete("{idAuditoriaReinicioMesaAyuda}")]
+    [HttpDelete("desactivar/{idAuditoriaReinicioMesaAyuda}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idAuditoriaReinicioMesaAyuda, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idAuditoriaReinicioMesaAyuda, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class TipoVerificacionRestablecimientoController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TipoVerificacionRestablecimientoDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class TipoVerificacionRestablecimientoController : ControllerBase
     }
 
     [HttpGet("{idTipoVerificacionRestablecimiento}")]
+    [HttpGet("obtener/{idTipoVerificacionRestablecimiento}")]
     public async Task<ActionResult<TipoVerificacionRestablecimientoDto>> ObtenerAsync([FromRoute] short idTipoVerificacionRestablecimiento, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTipoVerificacionRestablecimiento, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class TipoVerificacionRestablecimientoController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoVerificacionRestablecimientoDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class TipoVerificacionRestablecimientoController : ControllerBase
     }
 
     [HttpPut("{idTipoVerificacionRestablecimiento}")]
+    [HttpPut("actualizar/{idTipoVerificacionRestablecimiento}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idTipoVerificacionRestablecimiento, [FromBody] TipoVerificacionRestablecimientoDto dto, CancellationToken cancellationToken)
     {
         dto.IdTipoVerificacionRestablecimiento = idTipoVerificacionRestablecimiento;
@@ -49,9 +53,12 @@ public sealed class TipoVerificacionRestablecimientoController : ControllerBase
     }
 
     [HttpDelete("{idTipoVerificacionRestablecimiento}")]
+    [HttpDelete("desactivar/{idTipoVerificacionRestablecimiento}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idTipoVerificacionRestablecimiento, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTipoVerificacionRestablecimiento, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

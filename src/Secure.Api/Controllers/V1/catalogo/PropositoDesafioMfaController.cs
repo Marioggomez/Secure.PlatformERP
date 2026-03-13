@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class PropositoDesafioMfaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<PropositoDesafioMfaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class PropositoDesafioMfaController : ControllerBase
     }
 
     [HttpGet("{idPropositoDesafioMfa}")]
+    [HttpGet("obtener/{idPropositoDesafioMfa}")]
     public async Task<ActionResult<PropositoDesafioMfaDto>> ObtenerAsync([FromRoute] short idPropositoDesafioMfa, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idPropositoDesafioMfa, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class PropositoDesafioMfaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] PropositoDesafioMfaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class PropositoDesafioMfaController : ControllerBase
     }
 
     [HttpPut("{idPropositoDesafioMfa}")]
+    [HttpPut("actualizar/{idPropositoDesafioMfa}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idPropositoDesafioMfa, [FromBody] PropositoDesafioMfaDto dto, CancellationToken cancellationToken)
     {
         dto.IdPropositoDesafioMfa = idPropositoDesafioMfa;
@@ -49,9 +53,12 @@ public sealed class PropositoDesafioMfaController : ControllerBase
     }
 
     [HttpDelete("{idPropositoDesafioMfa}")]
+    [HttpDelete("desactivar/{idPropositoDesafioMfa}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idPropositoDesafioMfa, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idPropositoDesafioMfa, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

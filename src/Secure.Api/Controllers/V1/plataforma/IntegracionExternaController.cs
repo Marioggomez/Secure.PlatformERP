@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Plataforma;
 using Secure.Platform.Data.Repositories.Interfaces.Plataforma;
 
@@ -20,6 +20,7 @@ public sealed class IntegracionExternaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<IntegracionExternaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class IntegracionExternaController : ControllerBase
     }
 
     [HttpGet("{idIntegracion}")]
+    [HttpGet("obtener/{idIntegracion}")]
     public async Task<ActionResult<IntegracionExternaDto>> ObtenerAsync([FromRoute] long idIntegracion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idIntegracion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class IntegracionExternaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] IntegracionExternaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class IntegracionExternaController : ControllerBase
     }
 
     [HttpPut("{idIntegracion}")]
+    [HttpPut("actualizar/{idIntegracion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idIntegracion, [FromBody] IntegracionExternaDto dto, CancellationToken cancellationToken)
     {
         dto.IdIntegracion = idIntegracion;
@@ -49,9 +53,12 @@ public sealed class IntegracionExternaController : ControllerBase
     }
 
     [HttpDelete("{idIntegracion}")]
+    [HttpDelete("desactivar/{idIntegracion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idIntegracion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idIntegracion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

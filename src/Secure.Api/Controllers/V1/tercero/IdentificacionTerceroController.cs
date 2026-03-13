@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Tercero;
 using Secure.Platform.Data.Repositories.Interfaces.Tercero;
 
@@ -20,6 +20,7 @@ public sealed class IdentificacionTerceroController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<IdentificacionTerceroDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class IdentificacionTerceroController : ControllerBase
     }
 
     [HttpGet("{idIdentificacionTercero}")]
+    [HttpGet("obtener/{idIdentificacionTercero}")]
     public async Task<ActionResult<IdentificacionTerceroDto>> ObtenerAsync([FromRoute] long idIdentificacionTercero, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idIdentificacionTercero, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class IdentificacionTerceroController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] IdentificacionTerceroDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class IdentificacionTerceroController : ControllerBase
     }
 
     [HttpPut("{idIdentificacionTercero}")]
+    [HttpPut("actualizar/{idIdentificacionTercero}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idIdentificacionTercero, [FromBody] IdentificacionTerceroDto dto, CancellationToken cancellationToken)
     {
         dto.IdIdentificacionTercero = idIdentificacionTercero;
@@ -49,9 +53,12 @@ public sealed class IdentificacionTerceroController : ControllerBase
     }
 
     [HttpDelete("{idIdentificacionTercero}")]
+    [HttpDelete("desactivar/{idIdentificacionTercero}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idIdentificacionTercero, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idIdentificacionTercero, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

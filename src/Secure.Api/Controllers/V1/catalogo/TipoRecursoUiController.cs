@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class TipoRecursoUiController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TipoRecursoUiDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class TipoRecursoUiController : ControllerBase
     }
 
     [HttpGet("{idTipoRecursoUi}")]
+    [HttpGet("obtener/{idTipoRecursoUi}")]
     public async Task<ActionResult<TipoRecursoUiDto>> ObtenerAsync([FromRoute] short idTipoRecursoUi, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTipoRecursoUi, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class TipoRecursoUiController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoRecursoUiDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class TipoRecursoUiController : ControllerBase
     }
 
     [HttpPut("{idTipoRecursoUi}")]
+    [HttpPut("actualizar/{idTipoRecursoUi}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idTipoRecursoUi, [FromBody] TipoRecursoUiDto dto, CancellationToken cancellationToken)
     {
         dto.IdTipoRecursoUi = idTipoRecursoUi;
@@ -49,9 +53,12 @@ public sealed class TipoRecursoUiController : ControllerBase
     }
 
     [HttpDelete("{idTipoRecursoUi}")]
+    [HttpDelete("desactivar/{idTipoRecursoUi}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idTipoRecursoUi, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTipoRecursoUi, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class SeveridadSodController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<SeveridadSodDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class SeveridadSodController : ControllerBase
     }
 
     [HttpGet("{idSeveridadSod}")]
+    [HttpGet("obtener/{idSeveridadSod}")]
     public async Task<ActionResult<SeveridadSodDto>> ObtenerAsync([FromRoute] short idSeveridadSod, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idSeveridadSod, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class SeveridadSodController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] SeveridadSodDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class SeveridadSodController : ControllerBase
     }
 
     [HttpPut("{idSeveridadSod}")]
+    [HttpPut("actualizar/{idSeveridadSod}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idSeveridadSod, [FromBody] SeveridadSodDto dto, CancellationToken cancellationToken)
     {
         dto.IdSeveridadSod = idSeveridadSod;
@@ -49,9 +53,12 @@ public sealed class SeveridadSodController : ControllerBase
     }
 
     [HttpDelete("{idSeveridadSod}")]
+    [HttpDelete("desactivar/{idSeveridadSod}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idSeveridadSod, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idSeveridadSod, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

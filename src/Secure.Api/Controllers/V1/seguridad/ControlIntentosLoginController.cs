@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class ControlIntentosLoginController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ControlIntentosLoginDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ControlIntentosLoginController : ControllerBase
     }
 
     [HttpGet("{idControlIntento}")]
+    [HttpGet("obtener/{idControlIntento}")]
     public async Task<ActionResult<ControlIntentosLoginDto>> ObtenerAsync([FromRoute] long idControlIntento, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idControlIntento, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ControlIntentosLoginController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ControlIntentosLoginDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ControlIntentosLoginController : ControllerBase
     }
 
     [HttpPut("{idControlIntento}")]
+    [HttpPut("actualizar/{idControlIntento}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idControlIntento, [FromBody] ControlIntentosLoginDto dto, CancellationToken cancellationToken)
     {
         dto.IdControlIntento = idControlIntento;
@@ -49,9 +53,12 @@ public sealed class ControlIntentosLoginController : ControllerBase
     }
 
     [HttpDelete("{idControlIntento}")]
+    [HttpDelete("desactivar/{idControlIntento}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idControlIntento, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idControlIntento, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Plataforma;
 using Secure.Platform.Data.Repositories.Interfaces.Plataforma;
 
@@ -20,6 +20,7 @@ public sealed class JobSistemaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<JobSistemaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class JobSistemaController : ControllerBase
     }
 
     [HttpGet("{idJob}")]
+    [HttpGet("obtener/{idJob}")]
     public async Task<ActionResult<JobSistemaDto>> ObtenerAsync([FromRoute] long idJob, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idJob, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class JobSistemaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] JobSistemaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class JobSistemaController : ControllerBase
     }
 
     [HttpPut("{idJob}")]
+    [HttpPut("actualizar/{idJob}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idJob, [FromBody] JobSistemaDto dto, CancellationToken cancellationToken)
     {
         dto.IdJob = idJob;
@@ -49,9 +53,12 @@ public sealed class JobSistemaController : ControllerBase
     }
 
     [HttpDelete("{idJob}")]
+    [HttpDelete("desactivar/{idJob}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idJob, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idJob, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

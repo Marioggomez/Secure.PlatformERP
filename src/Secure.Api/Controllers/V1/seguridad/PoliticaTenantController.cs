@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class PoliticaTenantController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<PoliticaTenantDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class PoliticaTenantController : ControllerBase
     }
 
     [HttpGet("{idTenant}")]
+    [HttpGet("obtener/{idTenant}")]
     public async Task<ActionResult<PoliticaTenantDto>> ObtenerAsync([FromRoute] long idTenant, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTenant, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class PoliticaTenantController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] PoliticaTenantDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class PoliticaTenantController : ControllerBase
     }
 
     [HttpPut("{idTenant}")]
+    [HttpPut("actualizar/{idTenant}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idTenant, [FromBody] PoliticaTenantDto dto, CancellationToken cancellationToken)
     {
         dto.IdTenant = idTenant;
@@ -49,9 +53,12 @@ public sealed class PoliticaTenantController : ControllerBase
     }
 
     [HttpDelete("{idTenant}")]
+    [HttpDelete("desactivar/{idTenant}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idTenant, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTenant, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

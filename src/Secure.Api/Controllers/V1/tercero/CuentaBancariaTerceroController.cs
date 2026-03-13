@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Tercero;
 using Secure.Platform.Data.Repositories.Interfaces.Tercero;
 
@@ -20,6 +20,7 @@ public sealed class CuentaBancariaTerceroController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<CuentaBancariaTerceroDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class CuentaBancariaTerceroController : ControllerBase
     }
 
     [HttpGet("{idCuentaBancariaTercero}")]
+    [HttpGet("obtener/{idCuentaBancariaTercero}")]
     public async Task<ActionResult<CuentaBancariaTerceroDto>> ObtenerAsync([FromRoute] long idCuentaBancariaTercero, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idCuentaBancariaTercero, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class CuentaBancariaTerceroController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] CuentaBancariaTerceroDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class CuentaBancariaTerceroController : ControllerBase
     }
 
     [HttpPut("{idCuentaBancariaTercero}")]
+    [HttpPut("actualizar/{idCuentaBancariaTercero}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idCuentaBancariaTercero, [FromBody] CuentaBancariaTerceroDto dto, CancellationToken cancellationToken)
     {
         dto.IdCuentaBancariaTercero = idCuentaBancariaTercero;
@@ -49,9 +53,12 @@ public sealed class CuentaBancariaTerceroController : ControllerBase
     }
 
     [HttpDelete("{idCuentaBancariaTercero}")]
+    [HttpDelete("desactivar/{idCuentaBancariaTercero}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idCuentaBancariaTercero, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idCuentaBancariaTercero, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

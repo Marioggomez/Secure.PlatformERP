@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class HistorialClaveUsuarioController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<HistorialClaveUsuarioDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class HistorialClaveUsuarioController : ControllerBase
     }
 
     [HttpGet("{idHistorialClaveUsuario}")]
+    [HttpGet("obtener/{idHistorialClaveUsuario}")]
     public async Task<ActionResult<HistorialClaveUsuarioDto>> ObtenerAsync([FromRoute] long idHistorialClaveUsuario, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idHistorialClaveUsuario, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class HistorialClaveUsuarioController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] HistorialClaveUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class HistorialClaveUsuarioController : ControllerBase
     }
 
     [HttpPut("{idHistorialClaveUsuario}")]
+    [HttpPut("actualizar/{idHistorialClaveUsuario}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idHistorialClaveUsuario, [FromBody] HistorialClaveUsuarioDto dto, CancellationToken cancellationToken)
     {
         dto.IdHistorialClaveUsuario = idHistorialClaveUsuario;
@@ -49,9 +53,12 @@ public sealed class HistorialClaveUsuarioController : ControllerBase
     }
 
     [HttpDelete("{idHistorialClaveUsuario}")]
+    [HttpDelete("desactivar/{idHistorialClaveUsuario}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idHistorialClaveUsuario, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idHistorialClaveUsuario, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

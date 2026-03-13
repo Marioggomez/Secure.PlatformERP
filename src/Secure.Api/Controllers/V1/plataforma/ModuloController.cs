@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Plataforma;
 using Secure.Platform.Data.Repositories.Interfaces.Plataforma;
 
@@ -20,6 +20,7 @@ public sealed class ModuloController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ModuloDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ModuloController : ControllerBase
     }
 
     [HttpGet("{idModulo}")]
+    [HttpGet("obtener/{idModulo}")]
     public async Task<ActionResult<ModuloDto>> ObtenerAsync([FromRoute] int idModulo, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idModulo, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ModuloController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ModuloDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ModuloController : ControllerBase
     }
 
     [HttpPut("{idModulo}")]
+    [HttpPut("actualizar/{idModulo}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] int idModulo, [FromBody] ModuloDto dto, CancellationToken cancellationToken)
     {
         dto.IdModulo = idModulo;
@@ -49,9 +53,12 @@ public sealed class ModuloController : ControllerBase
     }
 
     [HttpDelete("{idModulo}")]
+    [HttpDelete("desactivar/{idModulo}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] int idModulo, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idModulo, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

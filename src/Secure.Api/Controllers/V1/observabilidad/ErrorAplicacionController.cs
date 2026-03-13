@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Observabilidad;
 using Secure.Platform.Data.Repositories.Interfaces.Observabilidad;
 
@@ -20,6 +20,7 @@ public sealed class ErrorAplicacionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ErrorAplicacionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ErrorAplicacionController : ControllerBase
     }
 
     [HttpGet("{idErrorAplicacion}")]
+    [HttpGet("obtener/{idErrorAplicacion}")]
     public async Task<ActionResult<ErrorAplicacionDto>> ObtenerAsync([FromRoute] long idErrorAplicacion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idErrorAplicacion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ErrorAplicacionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ErrorAplicacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ErrorAplicacionController : ControllerBase
     }
 
     [HttpPut("{idErrorAplicacion}")]
+    [HttpPut("actualizar/{idErrorAplicacion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idErrorAplicacion, [FromBody] ErrorAplicacionDto dto, CancellationToken cancellationToken)
     {
         dto.IdErrorAplicacion = idErrorAplicacion;
@@ -49,9 +53,12 @@ public sealed class ErrorAplicacionController : ControllerBase
     }
 
     [HttpDelete("{idErrorAplicacion}")]
+    [HttpDelete("desactivar/{idErrorAplicacion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idErrorAplicacion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idErrorAplicacion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

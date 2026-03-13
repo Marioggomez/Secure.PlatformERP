@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class TokenRestablecimientoClaveController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TokenRestablecimientoClaveDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class TokenRestablecimientoClaveController : ControllerBase
     }
 
     [HttpGet("{idTokenRestablecimientoClave}")]
+    [HttpGet("obtener/{idTokenRestablecimientoClave}")]
     public async Task<ActionResult<TokenRestablecimientoClaveDto>> ObtenerAsync([FromRoute] Guid idTokenRestablecimientoClave, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTokenRestablecimientoClave, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class TokenRestablecimientoClaveController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TokenRestablecimientoClaveDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class TokenRestablecimientoClaveController : ControllerBase
     }
 
     [HttpPut("{idTokenRestablecimientoClave}")]
+    [HttpPut("actualizar/{idTokenRestablecimientoClave}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] Guid idTokenRestablecimientoClave, [FromBody] TokenRestablecimientoClaveDto dto, CancellationToken cancellationToken)
     {
         dto.IdTokenRestablecimientoClave = idTokenRestablecimientoClave;
@@ -49,9 +53,12 @@ public sealed class TokenRestablecimientoClaveController : ControllerBase
     }
 
     [HttpDelete("{idTokenRestablecimientoClave}")]
+    [HttpDelete("desactivar/{idTokenRestablecimientoClave}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] Guid idTokenRestablecimientoClave, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTokenRestablecimientoClave, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

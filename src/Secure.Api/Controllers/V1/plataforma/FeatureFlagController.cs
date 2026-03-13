@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Plataforma;
 using Secure.Platform.Data.Repositories.Interfaces.Plataforma;
 
@@ -20,6 +20,7 @@ public sealed class FeatureFlagController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<FeatureFlagDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class FeatureFlagController : ControllerBase
     }
 
     [HttpGet("{idFeature}")]
+    [HttpGet("obtener/{idFeature}")]
     public async Task<ActionResult<FeatureFlagDto>> ObtenerAsync([FromRoute] long idFeature, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idFeature, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class FeatureFlagController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] FeatureFlagDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class FeatureFlagController : ControllerBase
     }
 
     [HttpPut("{idFeature}")]
+    [HttpPut("actualizar/{idFeature}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idFeature, [FromBody] FeatureFlagDto dto, CancellationToken cancellationToken)
     {
         dto.IdFeature = idFeature;
@@ -49,9 +53,12 @@ public sealed class FeatureFlagController : ControllerBase
     }
 
     [HttpDelete("{idFeature}")]
+    [HttpDelete("desactivar/{idFeature}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idFeature, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idFeature, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

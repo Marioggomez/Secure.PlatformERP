@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class EstadoUsuarioController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<EstadoUsuarioDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class EstadoUsuarioController : ControllerBase
     }
 
     [HttpGet("{idEstadoUsuario}")]
+    [HttpGet("obtener/{idEstadoUsuario}")]
     public async Task<ActionResult<EstadoUsuarioDto>> ObtenerAsync([FromRoute] short idEstadoUsuario, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idEstadoUsuario, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class EstadoUsuarioController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] EstadoUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class EstadoUsuarioController : ControllerBase
     }
 
     [HttpPut("{idEstadoUsuario}")]
+    [HttpPut("actualizar/{idEstadoUsuario}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idEstadoUsuario, [FromBody] EstadoUsuarioDto dto, CancellationToken cancellationToken)
     {
         dto.IdEstadoUsuario = idEstadoUsuario;
@@ -49,9 +53,12 @@ public sealed class EstadoUsuarioController : ControllerBase
     }
 
     [HttpDelete("{idEstadoUsuario}")]
+    [HttpDelete("desactivar/{idEstadoUsuario}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idEstadoUsuario, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idEstadoUsuario, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

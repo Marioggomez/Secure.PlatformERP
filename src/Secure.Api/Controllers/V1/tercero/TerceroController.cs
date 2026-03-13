@@ -21,6 +21,7 @@ public sealed class TerceroController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TerceroDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -28,6 +29,7 @@ public sealed class TerceroController : ControllerBase
     }
 
     [HttpGet("paginado")]
+    [HttpGet("listar/paginado")]
     public async Task<ActionResult<PaginacionResultadoDto<TerceroListadoDto>>> ListarPaginadoAsync([FromQuery] PaginacionRequestDto request, CancellationToken cancellationToken)
     {
         var result = await _repository.ListarPaginadoAsync(request, cancellationToken).ConfigureAwait(false);
@@ -35,6 +37,7 @@ public sealed class TerceroController : ControllerBase
     }
 
     [HttpGet("{idTercero}")]
+    [HttpGet("obtener/{idTercero}")]
     public async Task<ActionResult<TerceroDto>> ObtenerAsync([FromRoute] long idTercero, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTercero, cancellationToken).ConfigureAwait(false);
@@ -42,6 +45,7 @@ public sealed class TerceroController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TerceroDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -49,6 +53,7 @@ public sealed class TerceroController : ControllerBase
     }
 
     [HttpPut("{idTercero}")]
+    [HttpPut("actualizar/{idTercero}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idTercero, [FromBody] TerceroDto dto, CancellationToken cancellationToken)
     {
         dto.IdTercero = idTercero;
@@ -57,9 +62,12 @@ public sealed class TerceroController : ControllerBase
     }
 
     [HttpDelete("{idTercero}")]
+    [HttpDelete("desactivar/{idTercero}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idTercero, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTercero, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

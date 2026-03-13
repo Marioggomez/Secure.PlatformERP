@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class ContadorRateLimitController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ContadorRateLimitDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ContadorRateLimitController : ControllerBase
     }
 
     [HttpGet("{idContadorRateLimit}")]
+    [HttpGet("obtener/{idContadorRateLimit}")]
     public async Task<ActionResult<ContadorRateLimitDto>> ObtenerAsync([FromRoute] long idContadorRateLimit, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idContadorRateLimit, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ContadorRateLimitController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ContadorRateLimitDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ContadorRateLimitController : ControllerBase
     }
 
     [HttpPut("{idContadorRateLimit}")]
+    [HttpPut("actualizar/{idContadorRateLimit}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idContadorRateLimit, [FromBody] ContadorRateLimitDto dto, CancellationToken cancellationToken)
     {
         dto.IdContadorRateLimit = idContadorRateLimit;
@@ -49,9 +53,12 @@ public sealed class ContadorRateLimitController : ControllerBase
     }
 
     [HttpDelete("{idContadorRateLimit}")]
+    [HttpDelete("desactivar/{idContadorRateLimit}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idContadorRateLimit, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idContadorRateLimit, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

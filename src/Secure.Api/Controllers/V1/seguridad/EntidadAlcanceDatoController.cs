@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class EntidadAlcanceDatoController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<EntidadAlcanceDatoDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class EntidadAlcanceDatoController : ControllerBase
     }
 
     [HttpGet("{codigoEntidad}")]
+    [HttpGet("obtener/{codigoEntidad}")]
     public async Task<ActionResult<EntidadAlcanceDatoDto>> ObtenerAsync([FromRoute] string codigoEntidad, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(codigoEntidad, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class EntidadAlcanceDatoController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] EntidadAlcanceDatoDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class EntidadAlcanceDatoController : ControllerBase
     }
 
     [HttpPut("{codigoEntidad}")]
+    [HttpPut("actualizar/{codigoEntidad}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] string codigoEntidad, [FromBody] EntidadAlcanceDatoDto dto, CancellationToken cancellationToken)
     {
         dto.CodigoEntidad = codigoEntidad;
@@ -49,9 +53,12 @@ public sealed class EntidadAlcanceDatoController : ControllerBase
     }
 
     [HttpDelete("{codigoEntidad}")]
+    [HttpDelete("desactivar/{codigoEntidad}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] string codigoEntidad, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(codigoEntidad, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

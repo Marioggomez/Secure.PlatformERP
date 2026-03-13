@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Cumplimiento;
 using Secure.Platform.Data.Repositories.Interfaces.Cumplimiento;
 
@@ -20,6 +20,7 @@ public sealed class PerfilAprobacionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<PerfilAprobacionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class PerfilAprobacionController : ControllerBase
     }
 
     [HttpGet("{idPerfilAprobacion}")]
+    [HttpGet("obtener/{idPerfilAprobacion}")]
     public async Task<ActionResult<PerfilAprobacionDto>> ObtenerAsync([FromRoute] long idPerfilAprobacion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idPerfilAprobacion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class PerfilAprobacionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] PerfilAprobacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class PerfilAprobacionController : ControllerBase
     }
 
     [HttpPut("{idPerfilAprobacion}")]
+    [HttpPut("actualizar/{idPerfilAprobacion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idPerfilAprobacion, [FromBody] PerfilAprobacionDto dto, CancellationToken cancellationToken)
     {
         dto.IdPerfilAprobacion = idPerfilAprobacion;
@@ -49,9 +53,12 @@ public sealed class PerfilAprobacionController : ControllerBase
     }
 
     [HttpDelete("{idPerfilAprobacion}")]
+    [HttpDelete("desactivar/{idPerfilAprobacion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idPerfilAprobacion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idPerfilAprobacion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

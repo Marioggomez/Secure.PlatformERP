@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class ExcepcionPermisoUsuarioController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ExcepcionPermisoUsuarioDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ExcepcionPermisoUsuarioController : ControllerBase
     }
 
     [HttpGet("{idExcepcionPermisoUsuario}")]
+    [HttpGet("obtener/{idExcepcionPermisoUsuario}")]
     public async Task<ActionResult<ExcepcionPermisoUsuarioDto>> ObtenerAsync([FromRoute] long idExcepcionPermisoUsuario, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idExcepcionPermisoUsuario, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ExcepcionPermisoUsuarioController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ExcepcionPermisoUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ExcepcionPermisoUsuarioController : ControllerBase
     }
 
     [HttpPut("{idExcepcionPermisoUsuario}")]
+    [HttpPut("actualizar/{idExcepcionPermisoUsuario}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idExcepcionPermisoUsuario, [FromBody] ExcepcionPermisoUsuarioDto dto, CancellationToken cancellationToken)
     {
         dto.IdExcepcionPermisoUsuario = idExcepcionPermisoUsuario;
@@ -49,9 +53,12 @@ public sealed class ExcepcionPermisoUsuarioController : ControllerBase
     }
 
     [HttpDelete("{idExcepcionPermisoUsuario}")]
+    [HttpDelete("desactivar/{idExcepcionPermisoUsuario}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idExcepcionPermisoUsuario, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idExcepcionPermisoUsuario, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

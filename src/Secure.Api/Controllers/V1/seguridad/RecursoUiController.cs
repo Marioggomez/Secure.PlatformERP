@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class RecursoUiController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<RecursoUiDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class RecursoUiController : ControllerBase
     }
 
     [HttpGet("{idRecursoUi}")]
+    [HttpGet("obtener/{idRecursoUi}")]
     public async Task<ActionResult<RecursoUiDto>> ObtenerAsync([FromRoute] long idRecursoUi, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idRecursoUi, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class RecursoUiController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] RecursoUiDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class RecursoUiController : ControllerBase
     }
 
     [HttpPut("{idRecursoUi}")]
+    [HttpPut("actualizar/{idRecursoUi}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idRecursoUi, [FromBody] RecursoUiDto dto, CancellationToken cancellationToken)
     {
         dto.IdRecursoUi = idRecursoUi;
@@ -49,9 +53,12 @@ public sealed class RecursoUiController : ControllerBase
     }
 
     [HttpDelete("{idRecursoUi}")]
+    [HttpDelete("desactivar/{idRecursoUi}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idRecursoUi, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idRecursoUi, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class TipoOrigenAutenticacionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TipoOrigenAutenticacionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class TipoOrigenAutenticacionController : ControllerBase
     }
 
     [HttpGet("{idTipoOrigenAutenticacion}")]
+    [HttpGet("obtener/{idTipoOrigenAutenticacion}")]
     public async Task<ActionResult<TipoOrigenAutenticacionDto>> ObtenerAsync([FromRoute] short idTipoOrigenAutenticacion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTipoOrigenAutenticacion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class TipoOrigenAutenticacionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoOrigenAutenticacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class TipoOrigenAutenticacionController : ControllerBase
     }
 
     [HttpPut("{idTipoOrigenAutenticacion}")]
+    [HttpPut("actualizar/{idTipoOrigenAutenticacion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idTipoOrigenAutenticacion, [FromBody] TipoOrigenAutenticacionDto dto, CancellationToken cancellationToken)
     {
         dto.IdTipoOrigenAutenticacion = idTipoOrigenAutenticacion;
@@ -49,9 +53,12 @@ public sealed class TipoOrigenAutenticacionController : ControllerBase
     }
 
     [HttpDelete("{idTipoOrigenAutenticacion}")]
+    [HttpDelete("desactivar/{idTipoOrigenAutenticacion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idTipoOrigenAutenticacion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTipoOrigenAutenticacion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

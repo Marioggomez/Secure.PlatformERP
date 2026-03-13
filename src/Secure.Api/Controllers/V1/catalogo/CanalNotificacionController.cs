@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class CanalNotificacionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<CanalNotificacionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class CanalNotificacionController : ControllerBase
     }
 
     [HttpGet("{idCanalNotificacion}")]
+    [HttpGet("obtener/{idCanalNotificacion}")]
     public async Task<ActionResult<CanalNotificacionDto>> ObtenerAsync([FromRoute] short idCanalNotificacion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idCanalNotificacion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class CanalNotificacionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] CanalNotificacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class CanalNotificacionController : ControllerBase
     }
 
     [HttpPut("{idCanalNotificacion}")]
+    [HttpPut("actualizar/{idCanalNotificacion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idCanalNotificacion, [FromBody] CanalNotificacionDto dto, CancellationToken cancellationToken)
     {
         dto.IdCanalNotificacion = idCanalNotificacion;
@@ -49,9 +53,12 @@ public sealed class CanalNotificacionController : ControllerBase
     }
 
     [HttpDelete("{idCanalNotificacion}")]
+    [HttpDelete("desactivar/{idCanalNotificacion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idCanalNotificacion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idCanalNotificacion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

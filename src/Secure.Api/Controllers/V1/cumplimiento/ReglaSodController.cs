@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Cumplimiento;
 using Secure.Platform.Data.Repositories.Interfaces.Cumplimiento;
 
@@ -20,6 +20,7 @@ public sealed class ReglaSodController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ReglaSodDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ReglaSodController : ControllerBase
     }
 
     [HttpGet("{idReglaSod}")]
+    [HttpGet("obtener/{idReglaSod}")]
     public async Task<ActionResult<ReglaSodDto>> ObtenerAsync([FromRoute] long idReglaSod, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idReglaSod, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ReglaSodController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ReglaSodDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ReglaSodController : ControllerBase
     }
 
     [HttpPut("{idReglaSod}")]
+    [HttpPut("actualizar/{idReglaSod}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idReglaSod, [FromBody] ReglaSodDto dto, CancellationToken cancellationToken)
     {
         dto.IdReglaSod = idReglaSod;
@@ -49,9 +53,12 @@ public sealed class ReglaSodController : ControllerBase
     }
 
     [HttpDelete("{idReglaSod}")]
+    [HttpDelete("desactivar/{idReglaSod}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idReglaSod, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idReglaSod, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Organizacion;
 using Secure.Platform.Data.Repositories.Interfaces.Organizacion;
 
@@ -20,6 +20,7 @@ public sealed class GrupoEmpresarialEmpresaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<GrupoEmpresarialEmpresaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class GrupoEmpresarialEmpresaController : ControllerBase
     }
 
     [HttpGet("{idGrupoEmpresarial}")]
+    [HttpGet("obtener/{idGrupoEmpresarial}")]
     public async Task<ActionResult<GrupoEmpresarialEmpresaDto>> ObtenerAsync([FromRoute] long idGrupoEmpresarial, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idGrupoEmpresarial, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class GrupoEmpresarialEmpresaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] GrupoEmpresarialEmpresaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class GrupoEmpresarialEmpresaController : ControllerBase
     }
 
     [HttpPut("{idGrupoEmpresarial}")]
+    [HttpPut("actualizar/{idGrupoEmpresarial}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idGrupoEmpresarial, [FromBody] GrupoEmpresarialEmpresaDto dto, CancellationToken cancellationToken)
     {
         dto.IdGrupoEmpresarial = idGrupoEmpresarial;
@@ -49,9 +53,12 @@ public sealed class GrupoEmpresarialEmpresaController : ControllerBase
     }
 
     [HttpDelete("{idGrupoEmpresarial}")]
+    [HttpDelete("desactivar/{idGrupoEmpresarial}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idGrupoEmpresarial, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idGrupoEmpresarial, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class TipoEventoSeguridadController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TipoEventoSeguridadDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class TipoEventoSeguridadController : ControllerBase
     }
 
     [HttpGet("{idTipoEventoSeguridad}")]
+    [HttpGet("obtener/{idTipoEventoSeguridad}")]
     public async Task<ActionResult<TipoEventoSeguridadDto>> ObtenerAsync([FromRoute] short idTipoEventoSeguridad, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTipoEventoSeguridad, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class TipoEventoSeguridadController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoEventoSeguridadDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class TipoEventoSeguridadController : ControllerBase
     }
 
     [HttpPut("{idTipoEventoSeguridad}")]
+    [HttpPut("actualizar/{idTipoEventoSeguridad}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idTipoEventoSeguridad, [FromBody] TipoEventoSeguridadDto dto, CancellationToken cancellationToken)
     {
         dto.IdTipoEventoSeguridad = idTipoEventoSeguridad;
@@ -49,9 +53,12 @@ public sealed class TipoEventoSeguridadController : ControllerBase
     }
 
     [HttpDelete("{idTipoEventoSeguridad}")]
+    [HttpDelete("desactivar/{idTipoEventoSeguridad}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idTipoEventoSeguridad, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTipoEventoSeguridad, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

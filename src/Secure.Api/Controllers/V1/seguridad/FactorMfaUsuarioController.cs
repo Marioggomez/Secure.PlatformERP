@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class FactorMfaUsuarioController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<FactorMfaUsuarioDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class FactorMfaUsuarioController : ControllerBase
     }
 
     [HttpGet("{idFactorMfaUsuario}")]
+    [HttpGet("obtener/{idFactorMfaUsuario}")]
     public async Task<ActionResult<FactorMfaUsuarioDto>> ObtenerAsync([FromRoute] long idFactorMfaUsuario, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idFactorMfaUsuario, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class FactorMfaUsuarioController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] FactorMfaUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class FactorMfaUsuarioController : ControllerBase
     }
 
     [HttpPut("{idFactorMfaUsuario}")]
+    [HttpPut("actualizar/{idFactorMfaUsuario}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idFactorMfaUsuario, [FromBody] FactorMfaUsuarioDto dto, CancellationToken cancellationToken)
     {
         dto.IdFactorMfaUsuario = idFactorMfaUsuario;
@@ -49,9 +53,12 @@ public sealed class FactorMfaUsuarioController : ControllerBase
     }
 
     [HttpDelete("{idFactorMfaUsuario}")]
+    [HttpDelete("desactivar/{idFactorMfaUsuario}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idFactorMfaUsuario, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idFactorMfaUsuario, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

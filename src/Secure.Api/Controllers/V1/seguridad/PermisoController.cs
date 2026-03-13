@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class PermisoController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<PermisoDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class PermisoController : ControllerBase
     }
 
     [HttpGet("{idPermiso}")]
+    [HttpGet("obtener/{idPermiso}")]
     public async Task<ActionResult<PermisoDto>> ObtenerAsync([FromRoute] int idPermiso, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idPermiso, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class PermisoController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] PermisoDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class PermisoController : ControllerBase
     }
 
     [HttpPut("{idPermiso}")]
+    [HttpPut("actualizar/{idPermiso}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] int idPermiso, [FromBody] PermisoDto dto, CancellationToken cancellationToken)
     {
         dto.IdPermiso = idPermiso;
@@ -49,9 +53,12 @@ public sealed class PermisoController : ControllerBase
     }
 
     [HttpDelete("{idPermiso}")]
+    [HttpDelete("desactivar/{idPermiso}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] int idPermiso, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idPermiso, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

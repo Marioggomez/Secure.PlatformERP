@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Plataforma;
 using Secure.Platform.Data.Repositories.Interfaces.Plataforma;
 
@@ -20,6 +20,7 @@ public sealed class BitacoraInstalacionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<BitacoraInstalacionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class BitacoraInstalacionController : ControllerBase
     }
 
     [HttpGet("{idBitacoraInstalacion}")]
+    [HttpGet("obtener/{idBitacoraInstalacion}")]
     public async Task<ActionResult<BitacoraInstalacionDto>> ObtenerAsync([FromRoute] long idBitacoraInstalacion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idBitacoraInstalacion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class BitacoraInstalacionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] BitacoraInstalacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class BitacoraInstalacionController : ControllerBase
     }
 
     [HttpPut("{idBitacoraInstalacion}")]
+    [HttpPut("actualizar/{idBitacoraInstalacion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idBitacoraInstalacion, [FromBody] BitacoraInstalacionDto dto, CancellationToken cancellationToken)
     {
         dto.IdBitacoraInstalacion = idBitacoraInstalacion;
@@ -49,9 +53,12 @@ public sealed class BitacoraInstalacionController : ControllerBase
     }
 
     [HttpDelete("{idBitacoraInstalacion}")]
+    [HttpDelete("desactivar/{idBitacoraInstalacion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idBitacoraInstalacion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idBitacoraInstalacion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

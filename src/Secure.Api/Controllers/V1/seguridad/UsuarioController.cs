@@ -21,6 +21,7 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<UsuarioDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -28,6 +29,7 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpGet("paginado")]
+    [HttpGet("listar/paginado")]
     public async Task<ActionResult<PaginacionResultadoDto<UsuarioListadoDto>>> ListarPaginadoAsync([FromQuery] PaginacionRequestDto request, CancellationToken cancellationToken)
     {
         var result = await _repository.ListarPaginadoAsync(request, cancellationToken).ConfigureAwait(false);
@@ -35,6 +37,7 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpGet("{idUsuario}")]
+    [HttpGet("obtener/{idUsuario}")]
     public async Task<ActionResult<UsuarioDto>> ObtenerAsync([FromRoute] long idUsuario, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idUsuario, cancellationToken).ConfigureAwait(false);
@@ -42,6 +45,7 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] UsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -49,6 +53,7 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpPut("{idUsuario}")]
+    [HttpPut("actualizar/{idUsuario}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idUsuario, [FromBody] UsuarioDto dto, CancellationToken cancellationToken)
     {
         dto.IdUsuario = idUsuario;
@@ -57,9 +62,12 @@ public sealed class UsuarioController : ControllerBase
     }
 
     [HttpDelete("{idUsuario}")]
+    [HttpDelete("desactivar/{idUsuario}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idUsuario, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idUsuario, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

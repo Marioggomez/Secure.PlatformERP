@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class RolController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<RolDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class RolController : ControllerBase
     }
 
     [HttpGet("{idRol}")]
+    [HttpGet("obtener/{idRol}")]
     public async Task<ActionResult<RolDto>> ObtenerAsync([FromRoute] long idRol, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idRol, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class RolController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] RolDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class RolController : ControllerBase
     }
 
     [HttpPut("{idRol}")]
+    [HttpPut("actualizar/{idRol}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idRol, [FromBody] RolDto dto, CancellationToken cancellationToken)
     {
         dto.IdRol = idRol;
@@ -49,9 +53,12 @@ public sealed class RolController : ControllerBase
     }
 
     [HttpDelete("{idRol}")]
+    [HttpDelete("desactivar/{idRol}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idRol, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idRol, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

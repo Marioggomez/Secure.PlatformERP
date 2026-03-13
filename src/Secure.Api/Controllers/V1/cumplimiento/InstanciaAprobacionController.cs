@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Cumplimiento;
 using Secure.Platform.Data.Repositories.Interfaces.Cumplimiento;
 
@@ -20,6 +20,7 @@ public sealed class InstanciaAprobacionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<InstanciaAprobacionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class InstanciaAprobacionController : ControllerBase
     }
 
     [HttpGet("{idInstanciaAprobacion}")]
+    [HttpGet("obtener/{idInstanciaAprobacion}")]
     public async Task<ActionResult<InstanciaAprobacionDto>> ObtenerAsync([FromRoute] long idInstanciaAprobacion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idInstanciaAprobacion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class InstanciaAprobacionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] InstanciaAprobacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class InstanciaAprobacionController : ControllerBase
     }
 
     [HttpPut("{idInstanciaAprobacion}")]
+    [HttpPut("actualizar/{idInstanciaAprobacion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idInstanciaAprobacion, [FromBody] InstanciaAprobacionDto dto, CancellationToken cancellationToken)
     {
         dto.IdInstanciaAprobacion = idInstanciaAprobacion;
@@ -49,9 +53,12 @@ public sealed class InstanciaAprobacionController : ControllerBase
     }
 
     [HttpDelete("{idInstanciaAprobacion}")]
+    [HttpDelete("desactivar/{idInstanciaAprobacion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idInstanciaAprobacion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idInstanciaAprobacion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

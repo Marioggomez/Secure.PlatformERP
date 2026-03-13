@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Observabilidad;
 using Secure.Platform.Data.Repositories.Interfaces.Observabilidad;
 
@@ -20,6 +20,7 @@ public sealed class OperacionApiLogController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<OperacionApiLogDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class OperacionApiLogController : ControllerBase
     }
 
     [HttpGet("{idOperacionApiLog}")]
+    [HttpGet("obtener/{idOperacionApiLog}")]
     public async Task<ActionResult<OperacionApiLogDto>> ObtenerAsync([FromRoute] long idOperacionApiLog, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idOperacionApiLog, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class OperacionApiLogController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] OperacionApiLogDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class OperacionApiLogController : ControllerBase
     }
 
     [HttpPut("{idOperacionApiLog}")]
+    [HttpPut("actualizar/{idOperacionApiLog}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idOperacionApiLog, [FromBody] OperacionApiLogDto dto, CancellationToken cancellationToken)
     {
         dto.IdOperacionApiLog = idOperacionApiLog;
@@ -49,9 +53,12 @@ public sealed class OperacionApiLogController : ControllerBase
     }
 
     [HttpDelete("{idOperacionApiLog}")]
+    [HttpDelete("desactivar/{idOperacionApiLog}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idOperacionApiLog, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idOperacionApiLog, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

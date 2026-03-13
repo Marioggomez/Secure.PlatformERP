@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class EstadoEmpresaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<EstadoEmpresaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class EstadoEmpresaController : ControllerBase
     }
 
     [HttpGet("{idEstadoEmpresa}")]
+    [HttpGet("obtener/{idEstadoEmpresa}")]
     public async Task<ActionResult<EstadoEmpresaDto>> ObtenerAsync([FromRoute] short idEstadoEmpresa, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idEstadoEmpresa, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class EstadoEmpresaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] EstadoEmpresaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class EstadoEmpresaController : ControllerBase
     }
 
     [HttpPut("{idEstadoEmpresa}")]
+    [HttpPut("actualizar/{idEstadoEmpresa}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idEstadoEmpresa, [FromBody] EstadoEmpresaDto dto, CancellationToken cancellationToken)
     {
         dto.IdEstadoEmpresa = idEstadoEmpresa;
@@ -49,9 +53,12 @@ public sealed class EstadoEmpresaController : ControllerBase
     }
 
     [HttpDelete("{idEstadoEmpresa}")]
+    [HttpDelete("desactivar/{idEstadoEmpresa}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idEstadoEmpresa, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idEstadoEmpresa, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

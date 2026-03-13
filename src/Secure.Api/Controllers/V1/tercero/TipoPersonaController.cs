@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Tercero;
 using Secure.Platform.Data.Repositories.Interfaces.Tercero;
 
@@ -20,6 +20,7 @@ public sealed class TipoPersonaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TipoPersonaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class TipoPersonaController : ControllerBase
     }
 
     [HttpGet("{idTipoPersona}")]
+    [HttpGet("obtener/{idTipoPersona}")]
     public async Task<ActionResult<TipoPersonaDto>> ObtenerAsync([FromRoute] int idTipoPersona, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTipoPersona, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class TipoPersonaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoPersonaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class TipoPersonaController : ControllerBase
     }
 
     [HttpPut("{idTipoPersona}")]
+    [HttpPut("actualizar/{idTipoPersona}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] int idTipoPersona, [FromBody] TipoPersonaDto dto, CancellationToken cancellationToken)
     {
         dto.IdTipoPersona = idTipoPersona;
@@ -49,9 +53,12 @@ public sealed class TipoPersonaController : ControllerBase
     }
 
     [HttpDelete("{idTipoPersona}")]
+    [HttpDelete("desactivar/{idTipoPersona}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] int idTipoPersona, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTipoPersona, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class ModuloPermisoController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ModuloPermisoDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ModuloPermisoController : ControllerBase
     }
 
     [HttpGet("{idModuloPermiso}")]
+    [HttpGet("obtener/{idModuloPermiso}")]
     public async Task<ActionResult<ModuloPermisoDto>> ObtenerAsync([FromRoute] long idModuloPermiso, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idModuloPermiso, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ModuloPermisoController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ModuloPermisoDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ModuloPermisoController : ControllerBase
     }
 
     [HttpPut("{idModuloPermiso}")]
+    [HttpPut("actualizar/{idModuloPermiso}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idModuloPermiso, [FromBody] ModuloPermisoDto dto, CancellationToken cancellationToken)
     {
         dto.IdModuloPermiso = idModuloPermiso;
@@ -49,9 +53,12 @@ public sealed class ModuloPermisoController : ControllerBase
     }
 
     [HttpDelete("{idModuloPermiso}")]
+    [HttpDelete("desactivar/{idModuloPermiso}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idModuloPermiso, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idModuloPermiso, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Organizacion;
 using Secure.Platform.Data.Repositories.Interfaces.Organizacion;
 
@@ -20,6 +20,7 @@ public sealed class UnidadOrganizativaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<UnidadOrganizativaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class UnidadOrganizativaController : ControllerBase
     }
 
     [HttpGet("{idUnidadOrganizativa}")]
+    [HttpGet("obtener/{idUnidadOrganizativa}")]
     public async Task<ActionResult<UnidadOrganizativaDto>> ObtenerAsync([FromRoute] long idUnidadOrganizativa, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idUnidadOrganizativa, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class UnidadOrganizativaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] UnidadOrganizativaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class UnidadOrganizativaController : ControllerBase
     }
 
     [HttpPut("{idUnidadOrganizativa}")]
+    [HttpPut("actualizar/{idUnidadOrganizativa}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idUnidadOrganizativa, [FromBody] UnidadOrganizativaDto dto, CancellationToken cancellationToken)
     {
         dto.IdUnidadOrganizativa = idUnidadOrganizativa;
@@ -49,9 +53,12 @@ public sealed class UnidadOrganizativaController : ControllerBase
     }
 
     [HttpDelete("{idUnidadOrganizativa}")]
+    [HttpDelete("desactivar/{idUnidadOrganizativa}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idUnidadOrganizativa, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idUnidadOrganizativa, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

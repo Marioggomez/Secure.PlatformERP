@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Cumplimiento;
 using Secure.Platform.Data.Repositories.Interfaces.Cumplimiento;
 
@@ -20,6 +20,7 @@ public sealed class ExcepcionSodController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ExcepcionSodDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ExcepcionSodController : ControllerBase
     }
 
     [HttpGet("{idExcepcionSod}")]
+    [HttpGet("obtener/{idExcepcionSod}")]
     public async Task<ActionResult<ExcepcionSodDto>> ObtenerAsync([FromRoute] long idExcepcionSod, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idExcepcionSod, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ExcepcionSodController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ExcepcionSodDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ExcepcionSodController : ControllerBase
     }
 
     [HttpPut("{idExcepcionSod}")]
+    [HttpPut("actualizar/{idExcepcionSod}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idExcepcionSod, [FromBody] ExcepcionSodDto dto, CancellationToken cancellationToken)
     {
         dto.IdExcepcionSod = idExcepcionSod;
@@ -49,9 +53,12 @@ public sealed class ExcepcionSodController : ControllerBase
     }
 
     [HttpDelete("{idExcepcionSod}")]
+    [HttpDelete("desactivar/{idExcepcionSod}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idExcepcionSod, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idExcepcionSod, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

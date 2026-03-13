@@ -56,6 +56,19 @@ public sealed class AutenticacionController : ControllerBase
     }
 
     /// <summary>
+    /// Selecciona la empresa de trabajo para finalizar sesion IAM.
+    /// </summary>
+    [HttpPost("flujo_autenticacion/seleccionar_empresa")]
+    public async Task<ActionResult<SeleccionarEmpresaResponseDto>> SeleccionarEmpresaAsync([FromBody] SeleccionarEmpresaRequestDto request, CancellationToken cancellationToken)
+    {
+        request.IpOrigen ??= HttpContext.Connection.RemoteIpAddress?.ToString();
+        request.AgenteUsuario ??= Request.Headers.UserAgent.ToString();
+
+        var response = await _service.SeleccionarEmpresaAsync(request, cancellationToken).ConfigureAwait(false);
+        return response.SeleccionAplicada ? Ok(response) : BadRequest(response);
+    }
+
+    /// <summary>
     /// Inicia un flujo de recuperacion de contrasena.
     /// </summary>
     [HttpPost("flujo_restablecimiento_clave/iniciar")]

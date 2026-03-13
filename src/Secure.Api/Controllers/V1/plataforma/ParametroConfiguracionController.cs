@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Plataforma;
 using Secure.Platform.Data.Repositories.Interfaces.Plataforma;
 
@@ -20,6 +20,7 @@ public sealed class ParametroConfiguracionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<ParametroConfiguracionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class ParametroConfiguracionController : ControllerBase
     }
 
     [HttpGet("{idParametroConfiguracion}")]
+    [HttpGet("obtener/{idParametroConfiguracion}")]
     public async Task<ActionResult<ParametroConfiguracionDto>> ObtenerAsync([FromRoute] int idParametroConfiguracion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idParametroConfiguracion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class ParametroConfiguracionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] ParametroConfiguracionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class ParametroConfiguracionController : ControllerBase
     }
 
     [HttpPut("{idParametroConfiguracion}")]
+    [HttpPut("actualizar/{idParametroConfiguracion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] int idParametroConfiguracion, [FromBody] ParametroConfiguracionDto dto, CancellationToken cancellationToken)
     {
         dto.IdParametroConfiguracion = idParametroConfiguracion;
@@ -49,9 +53,12 @@ public sealed class ParametroConfiguracionController : ControllerBase
     }
 
     [HttpDelete("{idParametroConfiguracion}")]
+    [HttpDelete("desactivar/{idParametroConfiguracion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] int idParametroConfiguracion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idParametroConfiguracion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

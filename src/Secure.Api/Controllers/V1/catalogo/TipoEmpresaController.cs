@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class TipoEmpresaController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TipoEmpresaDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class TipoEmpresaController : ControllerBase
     }
 
     [HttpGet("{idTipoEmpresa}")]
+    [HttpGet("obtener/{idTipoEmpresa}")]
     public async Task<ActionResult<TipoEmpresaDto>> ObtenerAsync([FromRoute] short idTipoEmpresa, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTipoEmpresa, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class TipoEmpresaController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoEmpresaDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class TipoEmpresaController : ControllerBase
     }
 
     [HttpPut("{idTipoEmpresa}")]
+    [HttpPut("actualizar/{idTipoEmpresa}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idTipoEmpresa, [FromBody] TipoEmpresaDto dto, CancellationToken cancellationToken)
     {
         dto.IdTipoEmpresa = idTipoEmpresa;
@@ -49,9 +53,12 @@ public sealed class TipoEmpresaController : ControllerBase
     }
 
     [HttpDelete("{idTipoEmpresa}")]
+    [HttpDelete("desactivar/{idTipoEmpresa}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idTipoEmpresa, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTipoEmpresa, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

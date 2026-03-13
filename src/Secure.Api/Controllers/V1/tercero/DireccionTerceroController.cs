@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Tercero;
 using Secure.Platform.Data.Repositories.Interfaces.Tercero;
 
@@ -20,6 +20,7 @@ public sealed class DireccionTerceroController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<DireccionTerceroDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class DireccionTerceroController : ControllerBase
     }
 
     [HttpGet("{idDireccionTercero}")]
+    [HttpGet("obtener/{idDireccionTercero}")]
     public async Task<ActionResult<DireccionTerceroDto>> ObtenerAsync([FromRoute] long idDireccionTercero, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idDireccionTercero, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class DireccionTerceroController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] DireccionTerceroDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class DireccionTerceroController : ControllerBase
     }
 
     [HttpPut("{idDireccionTercero}")]
+    [HttpPut("actualizar/{idDireccionTercero}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idDireccionTercero, [FromBody] DireccionTerceroDto dto, CancellationToken cancellationToken)
     {
         dto.IdDireccionTercero = idDireccionTercero;
@@ -49,9 +53,12 @@ public sealed class DireccionTerceroController : ControllerBase
     }
 
     [HttpDelete("{idDireccionTercero}")]
+    [HttpDelete("desactivar/{idDireccionTercero}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idDireccionTercero, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idDireccionTercero, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

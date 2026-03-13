@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class TipoIdentificadorUsuarioController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<TipoIdentificadorUsuarioDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class TipoIdentificadorUsuarioController : ControllerBase
     }
 
     [HttpGet("{idTipoIdentificadorUsuario}")]
+    [HttpGet("obtener/{idTipoIdentificadorUsuario}")]
     public async Task<ActionResult<TipoIdentificadorUsuarioDto>> ObtenerAsync([FromRoute] short idTipoIdentificadorUsuario, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idTipoIdentificadorUsuario, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class TipoIdentificadorUsuarioController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] TipoIdentificadorUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class TipoIdentificadorUsuarioController : ControllerBase
     }
 
     [HttpPut("{idTipoIdentificadorUsuario}")]
+    [HttpPut("actualizar/{idTipoIdentificadorUsuario}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idTipoIdentificadorUsuario, [FromBody] TipoIdentificadorUsuarioDto dto, CancellationToken cancellationToken)
     {
         dto.IdTipoIdentificadorUsuario = idTipoIdentificadorUsuario;
@@ -49,9 +53,12 @@ public sealed class TipoIdentificadorUsuarioController : ControllerBase
     }
 
     [HttpDelete("{idTipoIdentificadorUsuario}")]
+    [HttpDelete("desactivar/{idTipoIdentificadorUsuario}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idTipoIdentificadorUsuario, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idTipoIdentificadorUsuario, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

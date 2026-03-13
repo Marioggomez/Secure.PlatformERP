@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class UsuarioScopeUnidadController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<UsuarioScopeUnidadDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class UsuarioScopeUnidadController : ControllerBase
     }
 
     [HttpGet("{idUsuarioScopeUnidad}")]
+    [HttpGet("obtener/{idUsuarioScopeUnidad}")]
     public async Task<ActionResult<UsuarioScopeUnidadDto>> ObtenerAsync([FromRoute] long idUsuarioScopeUnidad, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idUsuarioScopeUnidad, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class UsuarioScopeUnidadController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] UsuarioScopeUnidadDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class UsuarioScopeUnidadController : ControllerBase
     }
 
     [HttpPut("{idUsuarioScopeUnidad}")]
+    [HttpPut("actualizar/{idUsuarioScopeUnidad}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idUsuarioScopeUnidad, [FromBody] UsuarioScopeUnidadDto dto, CancellationToken cancellationToken)
     {
         dto.IdUsuarioScopeUnidad = idUsuarioScopeUnidad;
@@ -49,9 +53,12 @@ public sealed class UsuarioScopeUnidadController : ControllerBase
     }
 
     [HttpDelete("{idUsuarioScopeUnidad}")]
+    [HttpDelete("desactivar/{idUsuarioScopeUnidad}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idUsuarioScopeUnidad, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idUsuarioScopeUnidad, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

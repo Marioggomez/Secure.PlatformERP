@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Observabilidad;
 using Secure.Platform.Data.Repositories.Interfaces.Observabilidad;
 
@@ -20,6 +20,7 @@ public sealed class AuditoriaAutorizacionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<AuditoriaAutorizacionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class AuditoriaAutorizacionController : ControllerBase
     }
 
     [HttpGet("{idAuditoriaAutorizacion}")]
+    [HttpGet("obtener/{idAuditoriaAutorizacion}")]
     public async Task<ActionResult<AuditoriaAutorizacionDto>> ObtenerAsync([FromRoute] long idAuditoriaAutorizacion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idAuditoriaAutorizacion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class AuditoriaAutorizacionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] AuditoriaAutorizacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class AuditoriaAutorizacionController : ControllerBase
     }
 
     [HttpPut("{idAuditoriaAutorizacion}")]
+    [HttpPut("actualizar/{idAuditoriaAutorizacion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] long idAuditoriaAutorizacion, [FromBody] AuditoriaAutorizacionDto dto, CancellationToken cancellationToken)
     {
         dto.IdAuditoriaAutorizacion = idAuditoriaAutorizacion;
@@ -49,9 +53,12 @@ public sealed class AuditoriaAutorizacionController : ControllerBase
     }
 
     [HttpDelete("{idAuditoriaAutorizacion}")]
+    [HttpDelete("desactivar/{idAuditoriaAutorizacion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] long idAuditoriaAutorizacion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idAuditoriaAutorizacion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

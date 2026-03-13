@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Catalogo;
 using Secure.Platform.Data.Repositories.Interfaces.Catalogo;
 
@@ -20,6 +20,7 @@ public sealed class EstadoRegistroController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<EstadoRegistroDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class EstadoRegistroController : ControllerBase
     }
 
     [HttpGet("{idEstado}")]
+    [HttpGet("obtener/{idEstado}")]
     public async Task<ActionResult<EstadoRegistroDto>> ObtenerAsync([FromRoute] int idEstado, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idEstado, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class EstadoRegistroController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] EstadoRegistroDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class EstadoRegistroController : ControllerBase
     }
 
     [HttpPut("{idEstado}")]
+    [HttpPut("actualizar/{idEstado}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] int idEstado, [FromBody] EstadoRegistroDto dto, CancellationToken cancellationToken)
     {
         dto.IdEstado = idEstado;
@@ -49,9 +53,12 @@ public sealed class EstadoRegistroController : ControllerBase
     }
 
     [HttpDelete("{idEstado}")]
+    [HttpDelete("desactivar/{idEstado}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] int idEstado, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idEstado, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+

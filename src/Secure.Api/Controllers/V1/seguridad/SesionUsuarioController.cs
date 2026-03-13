@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Secure.Platform.Contracts.Dtos.Seguridad;
 using Secure.Platform.Data.Repositories.Interfaces.Seguridad;
 
@@ -20,6 +20,7 @@ public sealed class SesionUsuarioController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<SesionUsuarioDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class SesionUsuarioController : ControllerBase
     }
 
     [HttpGet("{idSesionUsuario}")]
+    [HttpGet("obtener/{idSesionUsuario}")]
     public async Task<ActionResult<SesionUsuarioDto>> ObtenerAsync([FromRoute] Guid idSesionUsuario, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idSesionUsuario, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class SesionUsuarioController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] SesionUsuarioDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class SesionUsuarioController : ControllerBase
     }
 
     [HttpPut("{idSesionUsuario}")]
+    [HttpPut("actualizar/{idSesionUsuario}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] Guid idSesionUsuario, [FromBody] SesionUsuarioDto dto, CancellationToken cancellationToken)
     {
         dto.IdSesionUsuario = idSesionUsuario;
@@ -49,9 +53,12 @@ public sealed class SesionUsuarioController : ControllerBase
     }
 
     [HttpDelete("{idSesionUsuario}")]
+    [HttpDelete("desactivar/{idSesionUsuario}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] Guid idSesionUsuario, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idSesionUsuario, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
         return ok ? Ok() : NotFound();
     }
 }
+
+
