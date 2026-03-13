@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Secure.Platform.Infrastructure.Observability;
 
 namespace Secure.Platform.Api.Middleware;
@@ -10,13 +11,15 @@ namespace Secure.Platform.Api.Middleware;
 public sealed class AuditMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<AuditMiddleware> _logger;
 
     /// <summary>
     /// Crea el middleware de auditoria.
     /// </summary>
-    public AuditMiddleware(RequestDelegate next)
+    public AuditMiddleware(RequestDelegate next, ILogger<AuditMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     /// <summary>
@@ -38,16 +41,30 @@ public sealed class AuditMiddleware
                 ? guid
                 : (Guid?)null;
 
-            await observabilityService.LogOperationAsync(
-                correlationId,
-                context.Request.Path.Value,
-                context.Request.Method,
-                context.User?.Identity?.Name,
-                context.Response.StatusCode,
-                (int)stopwatch.ElapsedMilliseconds,
-                context.Connection.RemoteIpAddress?.ToString(),
-                null,
-                context.RequestAborted).ConfigureAwait(false);
+            try
+            {
+                await observabilityService.LogOperationAsync(
+                    correlationId,
+                    context.Request.Path.Value,
+                    context.Request.Method,
+                    context.User?.Identity?.Name,
+                    context.Response.StatusCode,
+                    (int)stopwatch.ElapsedMilliseconds,
+                    context.Connection.RemoteIpAddress?.ToString(),
+                    ObtenerIdTenant(context.User),
+                    context.RequestAborted).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                // La observabilidad no debe romper el flujo funcional de la API.
+                _logger.LogWarning(exception, "No fue posible registrar auditoria de operacion API.");
+            }
         }
+    }
+
+    private static long? ObtenerIdTenant(ClaimsPrincipal? principal)
+    {
+        var raw = principal?.FindFirst("id_tenant")?.Value;
+        return long.TryParse(raw, out var parsed) ? parsed : null;
     }
 }

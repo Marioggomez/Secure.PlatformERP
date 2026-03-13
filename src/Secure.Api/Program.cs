@@ -61,6 +61,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<SessionContextMiddleware>();
+app.UseMiddleware<ScopeEnforcementMiddleware>();
 app.UseMiddleware<AuditMiddleware>();
 
 app.MapControllers();

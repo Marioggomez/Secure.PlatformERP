@@ -17,6 +17,7 @@ public static class InfrastructureServiceCollectionExtensions
     {
         services.AddScoped<IApiObservabilityService, ApiObservabilityService>();
         services.AddSingleton<ISessionTokenService, SessionTokenService>();
+        services.AddScoped<ISesionContextoService, SesionContextoService>();
         services.AddScoped<IAutenticacionIamService, AutenticacionIamService>();
         return services;
     }
