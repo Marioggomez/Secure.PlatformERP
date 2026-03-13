@@ -18,7 +18,7 @@ Namespace Forms.Shell
     ''' Shell principal ERP con ribbon, menu dinamico y area de trabajo tabulada.
     ''' Autor: Mario Gomez.
     ''' </summary>
-    Public Partial Class FrmMainShell
+    Partial Public Class FrmMainShell
         Inherits RibbonForm
 
         Private ReadOnly _sessionContext As UserSessionContext
@@ -169,14 +169,14 @@ Namespace Forms.Shell
                 _statusModulo
             })
 
-            Dim pageInicio As New RibbonPage("Modulos")
+            Dim pageInicio As New RibbonPage("Inicio")
             Dim pageVista As New RibbonPage("Vista")
             Dim pageSesion As New RibbonPage("Sesion")
             pageInicio.Name = "rpModulos"
             pageVista.Name = "rpVista"
             pageSesion.Name = "rpSesion"
 
-            Dim groupNavegacion As New RibbonPageGroup("Navegacion")
+            Dim groupNavegacion As New RibbonPageGroup("Módulos")
             groupNavegacion.ItemLinks.Add(btnDashboard)
             groupNavegacion.ItemLinks.Add(btnUsuarios)
             groupNavegacion.ItemLinks.Add(btnTerceros)
@@ -221,7 +221,7 @@ Namespace Forms.Shell
         End Sub
 
         Private Sub OnTercerosClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)
-            OpenModule("FrmTercerosBuscar")
+            OpenModule("FrmTercerosCentro")
         End Sub
 
         Private Sub OnEmpresasClick(ByVal sender As Object, ByVal e As ItemClickEventArgs)
@@ -264,7 +264,7 @@ Namespace Forms.Shell
             _statusUsuario.Caption = $"Usuario: {_sessionContext.Usuario}"
             _statusTenant.Caption = $"Tenant: {_tenantCodigo} ({_sessionContext.IdTenant})"
             _statusHora.Caption = $"Hora: {DateTime.Now:HH:mm:ss}"
-            _statusTheme.Caption = $"Tema: {ThemeService.GetCurrentTheme()}"
+            _statusTheme.Caption = $"Tema: {ThemeService.GetCurrentTheme()} / {ThemeService.GetCurrentPalette()}"
             _statusModulo.Caption = "Modulo: Inicio"
 
             _statusBar.ItemLinks.Add(_statusUsuario)
@@ -293,16 +293,13 @@ Namespace Forms.Shell
 
             Dim finalResources = recursos.Where(Function(x) x IsNot Nothing).OrderBy(Function(x) x.OrdenVisual).ToList()
             If finalResources.Count = 0 Then
-                finalResources = GetDefaultResources()
-            Else
-                Dim defaults = GetDefaultResources()
-                For Each item In defaults
-                    If Not finalResources.Any(Function(existing) String.Equals(existing.Codigo, item.Codigo, StringComparison.OrdinalIgnoreCase)) Then
-                        finalResources.Add(item)
-                    End If
-                Next
-
-                finalResources = finalResources.OrderBy(Function(x) x.OrdenVisual).ToList()
+                Dim restrictedItem As New NavBarItem("Acceso restringido") With {
+                    .Enabled = False,
+                    .Hint = "El usuario no posee recursos UI asignados."
+                }
+                restrictedItem.ImageOptions.SvgImage = TryCast(IconService.GetIcon("Actions.Cancel"), SvgImage)
+                groupGeneral.ItemLinks.Add(restrictedItem)
+                Return
             End If
 
             Dim homeItem As New NavBarItem("Inicio") With {
@@ -383,13 +380,6 @@ Namespace Forms.Shell
                 AddResourceTree(moduleGroup, pendingItem, childrenByParent, 0, renderedResourceIds, New HashSet(Of Long)())
             Next
 
-            Dim toolsItem As New NavBarItem("Apariencia y Herramientas") With {
-                .Tag = "FrmAparienciaHerramientas",
-                .Hint = "/herramientas/apariencia"
-            }
-            toolsItem.ImageOptions.SvgImage = TryCast(IconService.GetIcon("Image.ColorBalance"), SvgImage)
-            groupGeneral.ItemLinks.Add(toolsItem)
-            AddHandler toolsItem.LinkClicked, AddressOf OnMenuItemClicked
         End Sub
 
         Private Sub AddResourceTree(
@@ -519,6 +509,11 @@ Namespace Forms.Shell
         End Sub
 
         Private Sub OpenModule(ByVal moduleKey As String)
+            If Not TieneAccesoModulo(moduleKey) Then
+                XtraMessageBox.Show(Me, $"Acceso restringido al modulo: {moduleKey}", "Permisos", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
             Dim moduleForm = CreateModuleForm(moduleKey)
             If moduleForm Is Nothing Then
                 XtraMessageBox.Show(Me, $"No existe una pantalla registrada para: {moduleKey}", "Navegacion", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -529,14 +524,31 @@ Namespace Forms.Shell
             OpenFormInNewTab(moduleForm, tabTitle)
         End Sub
 
+        Private Function TieneAccesoModulo(ByVal moduleKey As String) As Boolean
+            If String.IsNullOrWhiteSpace(moduleKey) Then Return False
+
+            If String.Equals(moduleKey, "Home", StringComparison.OrdinalIgnoreCase) Then
+                Return True
+            End If
+
+            If _recursosUi Is Nothing OrElse _recursosUi.Count = 0 Then
+                Return False
+            End If
+
+            Return _recursosUi.Any(
+                Function(item) item IsNot Nothing AndAlso
+                               Not String.IsNullOrWhiteSpace(item.Componente) AndAlso
+                               String.Equals(item.Componente.Trim(), moduleKey.Trim(), StringComparison.OrdinalIgnoreCase))
+        End Function
+
         Private Function CreateModuleForm(ByVal moduleKey As String) As XtraForm
             Select Case moduleKey
                 Case "FrmIamAdminCenter", "FrmUsuariosBuscar", "FrmRolesBuscar", "FrmAsignacionRolUsuarioBuscar"
                     Return New FrmIamAdminCenter(_apiClient, _sessionContext)
                 Case "FrmUsuarioEdit"
                     Return New FrmUsuarioEdit()
-                Case "FrmTercerosBuscar"
-                    Return New FrmTercerosBuscar(_apiClient, _sessionContext)
+                Case "FrmTercerosBuscar", "FrmTercerosCentro"
+                    Return New FrmTercerosCentro(_apiClient, _sessionContext)
                 Case "FrmTipoPersonaBuscar"
                     Return New FrmTipoPersonaBuscar(_apiClient, _sessionContext)
                 Case "FrmIdentificacionTerceroBuscar"
@@ -567,6 +579,14 @@ Namespace Forms.Shell
 
             If TypeOf child Is BaseEditForm Then
                 DirectCast(child, BaseEditForm).SetRibbonHostMode(True)
+            End If
+
+            If TypeOf child Is FrmTercerosCentro Then
+                DirectCast(child, FrmTercerosCentro).SetRibbonHostMode(True)
+            End If
+
+            If TypeOf child Is FrmIamAdminCenter Then
+                DirectCast(child, FrmIamAdminCenter).SetRibbonHostMode(True)
             End If
 
             child.TopLevel = False
@@ -673,6 +693,10 @@ Namespace Forms.Shell
                 Return DirectCast(form, FrmIamAdminCenter).ModuleTitle
             End If
 
+            If TypeOf form Is FrmTercerosCentro Then
+                Return DirectCast(form, FrmTercerosCentro).ModuleTitle
+            End If
+
             If TypeOf form Is BaseSearchForm Then
                 Return DirectCast(form, BaseSearchForm).ModuleTitle
             End If
@@ -711,13 +735,45 @@ Namespace Forms.Shell
                 activeRibbon = DirectCast(activePage.Tag, BaseEditForm).ModuleRibbon
             ElseIf TypeOf activePage.Tag Is FrmIamAdminCenter Then
                 activeRibbon = DirectCast(activePage.Tag, FrmIamAdminCenter).ModuleRibbon
+            ElseIf TypeOf activePage.Tag Is FrmTercerosCentro Then
+                activeRibbon = DirectCast(activePage.Tag, FrmTercerosCentro).ModuleRibbon
             End If
 
             If activeRibbon IsNot Nothing Then
                 _ribbon.MergeRibbon(activeRibbon)
             End If
 
+            MoveWindowGroupToEnd()
             FocusPrimaryRibbonPage()
+        End Sub
+
+        Private Sub MoveWindowGroupToEnd()
+            Dim targetPage As RibbonPage = Nothing
+            For Each page As RibbonPage In _ribbon.Pages
+                If String.Equals(page.Text, "Inicio", StringComparison.OrdinalIgnoreCase) Then
+                    targetPage = page
+                    Exit For
+                End If
+            Next
+
+            If targetPage Is Nothing Then Return
+
+            Dim windowsGroup As RibbonPageGroup = Nothing
+            For Each group As RibbonPageGroup In targetPage.Groups
+                If String.Equals(group.Text, "Ventanas", StringComparison.OrdinalIgnoreCase) Then
+                    windowsGroup = group
+                    Exit For
+                End If
+            Next
+
+            If windowsGroup Is Nothing Then Return
+
+            windowsGroup.Alignment = RibbonPageGroupAlignment.Near
+            Dim lastIndex = targetPage.Groups.Count - 1
+            If targetPage.Groups.IndexOf(windowsGroup) = lastIndex Then Return
+
+            targetPage.Groups.Remove(windowsGroup)
+            targetPage.Groups.Add(windowsGroup)
         End Sub
 
         Private Sub FocusPrimaryRibbonPage()
@@ -790,7 +846,7 @@ Namespace Forms.Shell
         End Sub
 
         Private Sub OnThemeChanged(ByVal sender As Object, ByVal e As EventArgs)
-            _statusTheme.Caption = $"Tema: {ThemeService.GetCurrentTheme()}"
+            _statusTheme.Caption = $"Tema: {ThemeService.GetCurrentTheme()} / {ThemeService.GetCurrentPalette()}"
         End Sub
 
         Private Sub OnShellResize(ByVal sender As Object, ByVal e As EventArgs)
@@ -811,7 +867,7 @@ Namespace Forms.Shell
                 New RecursoUiAccesoDto With {.IdRecursoUi = 201, .Codigo = "NAV.SEGURIDAD.IAM", .Nombre = "Centro IAM", .Componente = "FrmIamAdminCenter", .Ruta = "/seguridad/iam", .Icono = "BusinessObjects.BOUser", .OrdenVisual = 11, .IdRecursoUiPadre = 200},
                 New RecursoUiAccesoDto With {.IdRecursoUi = 300, .Codigo = "NAV.ORGANIZACION", .Nombre = "Organizacion", .Componente = "FrmEmpresasBuscar", .Ruta = "/organizacion", .Icono = "BusinessObjects.BOOrganization", .OrdenVisual = 20},
                 New RecursoUiAccesoDto With {.IdRecursoUi = 301, .Codigo = "NAV.EMPRESAS", .Nombre = "Empresas", .Componente = "FrmEmpresasBuscar", .Ruta = "/organizacion/empresas", .Icono = "Edit.Edit", .OrdenVisual = 21, .IdRecursoUiPadre = 300},
-                New RecursoUiAccesoDto With {.IdRecursoUi = 400, .Codigo = "NAV.TERCEROS", .Nombre = "Terceros", .Componente = "FrmTercerosBuscar", .Ruta = "/tercero/terceros", .Icono = "BusinessObjects.BOPerson", .OrdenVisual = 30},
+                New RecursoUiAccesoDto With {.IdRecursoUi = 400, .Codigo = "NAV.TERCEROS", .Nombre = "Terceros", .Componente = "FrmTercerosCentro", .Ruta = "/tercero/terceros", .Icono = "BusinessObjects.BOPerson", .OrdenVisual = 30},
                 New RecursoUiAccesoDto With {.IdRecursoUi = 401, .Codigo = "NAV.TIPO_PERSONA", .Nombre = "Tipos Persona", .Componente = "FrmTipoPersonaBuscar", .Ruta = "/tercero/tipo-persona", .Icono = "BusinessObjects.BOContact", .OrdenVisual = 31, .IdRecursoUiPadre = 400},
                 New RecursoUiAccesoDto With {.IdRecursoUi = 402, .Codigo = "NAV.IDENTIFICACION_TERCERO", .Nombre = "Identificaciones", .Componente = "FrmIdentificacionTerceroBuscar", .Ruta = "/tercero/identificaciones", .Icono = "BusinessObjects.BOValidation", .OrdenVisual = 32, .IdRecursoUiPadre = 400},
                 New RecursoUiAccesoDto With {.IdRecursoUi = 403, .Codigo = "NAV.DIRECCION_TERCERO", .Nombre = "Direcciones", .Componente = "FrmDireccionTerceroBuscar", .Ruta = "/tercero/direcciones", .Icono = "BusinessObjects.BOAddress", .OrdenVisual = 33, .IdRecursoUiPadre = 400},

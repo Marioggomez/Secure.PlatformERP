@@ -370,6 +370,15 @@ Namespace Forms.Seguridad
             FormBorderStyle = FormBorderStyle.None
             Name = "FrmIamAdminCenter"
             Text = "Centro IAM"
+
+            ConfigureRibbon()
+            ConfigureBody()
+            ConfigureStatusBar()
+
+            Controls.Add(_mainLayout)
+            Controls.Add(_statusBar)
+            Controls.Add(_ribbon)
+
             ResumeLayout(False)
         End Sub
 
