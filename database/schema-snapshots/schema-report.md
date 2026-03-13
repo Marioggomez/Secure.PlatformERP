@@ -1,12 +1,18 @@
 ﻿# Reporte de Esquema Secure
 
-Generado UTC: 2026-03-11 17:06:24
-Origen: INFORMATION_SCHEMA.TABLES, INFORMATION_SCHEMA.COLUMNS, sys.foreign_keys
+Generado UTC: 2026-03-13 14:54:27
+Origen: sys.tables, INFORMATION_SCHEMA.COLUMNS, sys.foreign_keys
 
-Total tablas: 95
-Total relaciones FK: 153
+Total tablas: 171
+Total relaciones FK: 302
 
 ## Tablas detectadas
+
+### Schema `actividad`
+- actividad.comentario
+- actividad.comentario_archivo
+- actividad.comentario_mencion
+- actividad.tipo_comentario
 
 ### Schema `catalogo`
 - catalogo.accion_aprobacion
@@ -30,6 +36,10 @@ Total relaciones FK: 153
 - catalogo.tipo_unidad_organizativa
 - catalogo.tipo_verificacion_restablecimiento
 
+### Schema `comun`
+- comun.entidad_sistema
+- comun.tipo_documento
+
 ### Schema `cumplimiento`
 - cumplimiento.accion_instancia_aprobacion
 - cumplimiento.auditoria_operacion
@@ -42,6 +52,67 @@ Total relaciones FK: 153
 
 ### Schema `dbo`
 - dbo.sysdiagrams
+
+### Schema `documento`
+- documento.documento
+- documento.documento_entidad
+- documento.documento_etiqueta
+- documento.documento_firma
+- documento.documento_ocr
+- documento.documento_version
+- documento.documento_workflow
+- documento.documento_workflow_paso
+
+### Schema `etiqueta`
+- etiqueta.etiqueta
+- etiqueta.etiqueta_entidad
+
+### Schema `logistica`
+- logistica.contenedor
+- logistica.contrato_tarifario
+- logistica.contrato_tarifario_producto
+- logistica.contrato_tarifario_recargo
+- logistica.contrato_tarifario_tarifa
+- logistica.cotizacion
+- logistica.cotizacion_bulto
+- logistica.cotizacion_item
+- logistica.cotizacion_precio
+- logistica.cotizacion_recargo
+- logistica.cotizacion_tercero
+- logistica.envio
+- logistica.envio_bulto
+- logistica.envio_contenedor
+- logistica.envio_item
+- logistica.envio_precio
+- logistica.envio_recargo
+- logistica.envio_tercero
+- logistica.estado_cotizacion
+- logistica.estado_envio
+- logistica.evento_envio
+- logistica.factor_volumetrico
+- logistica.grupo_producto_logistico
+- logistica.modo_transporte
+- logistica.producto_logistico
+- logistica.recargo
+- logistica.recargo_regla
+- logistica.regla_control_carga
+- logistica.ruta_logistica
+- logistica.ruta_logistica_tramo
+- logistica.tarifa
+- logistica.tarifa_condicion
+- logistica.tarifa_formula
+- logistica.tarifa_rango
+- logistica.tarifa_temporada
+- logistica.temporada_tarifaria
+- logistica.termino_comercial
+- logistica.tipo_bulto
+- logistica.tipo_carga
+- logistica.tipo_contenedor
+- logistica.tipo_evento_envio
+- logistica.tipo_servicio
+- logistica.unidad_medida
+- logistica.zona
+- logistica.zona_localidad
 
 ### Schema `observabilidad`
 - observabilidad.auditoria_autorizacion
@@ -63,6 +134,7 @@ Total relaciones FK: 153
 - plataforma.bitacora_instalacion
 - plataforma.categoria_configuracion
 - plataforma.configuracion_empresa
+- plataforma.db_migration_history
 - plataforma.feature_flag
 - plataforma.integracion_externa
 - plataforma.job_sistema
@@ -117,158 +189,322 @@ Total relaciones FK: 153
 - seguridad.usuario_tenant
 - seguridad.usuario_unidad_organizativa
 
-## Relaciones FK confirmadas
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
-- .. -> .. ()
+### Schema `tercero`
+- tercero.coincidencia_tercero
+- tercero.contacto_tercero
+- tercero.cuenta_bancaria_tercero
+- tercero.direccion_tercero
+- tercero.identificacion_tercero
+- tercero.indice_busqueda_tercero
+- tercero.merge_tercero
+- tercero.nivel_coincidencia
+- tercero.relacion_tercero
+- tercero.rol_tercero
+- tercero.tercero
+- tercero.tercero_empresa
+- tercero.tercero_rol
+- tercero.tipo_persona
 
+## Relaciones FK confirmadas
+- actividad.comentario (id_entidad_sistema) -> comun.entidad_sistema (id_entidad_sistema)
+- actividad.comentario_archivo (id_comentario) -> actividad.comentario (id_comentario)
+- actividad.comentario_archivo (id_documento) -> documento.documento (id_documento)
+- cumplimiento.accion_instancia_aprobacion (id_accion_aprobacion) -> catalogo.accion_aprobacion (id_accion_aprobacion)
+- cumplimiento.accion_instancia_aprobacion (id_instancia_aprobacion) -> cumplimiento.instancia_aprobacion (id_instancia_aprobacion)
+- cumplimiento.accion_instancia_aprobacion (id_paso_instancia_aprobacion) -> cumplimiento.paso_instancia_aprobacion (id_paso_instancia_aprobacion)
+- cumplimiento.accion_instancia_aprobacion (id_empresa) -> organizacion.empresa (id_empresa)
+- cumplimiento.accion_instancia_aprobacion (id_empresa,id_unidad_organizativa) -> organizacion.unidad_organizativa (id_empresa,id_unidad_organizativa)
+- cumplimiento.accion_instancia_aprobacion (id_usuario) -> seguridad.usuario (id_usuario)
+- cumplimiento.excepcion_sod (id_regla_sod) -> cumplimiento.regla_sod (id_regla_sod)
+- cumplimiento.excepcion_sod (id_empresa) -> organizacion.empresa (id_empresa)
+- cumplimiento.excepcion_sod (aprobado_por) -> seguridad.usuario (id_usuario)
+- cumplimiento.excepcion_sod (id_usuario) -> seguridad.usuario (id_usuario)
+- cumplimiento.instancia_aprobacion (id_estado_aprobacion) -> catalogo.estado_aprobacion (id_estado_aprobacion)
+- cumplimiento.instancia_aprobacion (id_perfil_aprobacion) -> cumplimiento.perfil_aprobacion (id_perfil_aprobacion)
+- cumplimiento.instancia_aprobacion (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- cumplimiento.instancia_aprobacion (id_empresa,id_unidad_organizativa) -> organizacion.unidad_organizativa (id_empresa,id_unidad_organizativa)
+- cumplimiento.instancia_aprobacion (codigo_entidad) -> seguridad.entidad_alcance_dato (codigo_entidad)
+- cumplimiento.instancia_aprobacion (solicitado_por) -> seguridad.usuario (id_usuario)
+- cumplimiento.paso_instancia_aprobacion (id_estado_aprobacion) -> catalogo.estado_aprobacion (id_estado_aprobacion)
+- cumplimiento.paso_instancia_aprobacion (id_instancia_aprobacion) -> cumplimiento.instancia_aprobacion (id_instancia_aprobacion)
+- cumplimiento.paso_perfil_aprobacion (id_alcance_asignacion_requerido) -> catalogo.alcance_asignacion (id_alcance_asignacion)
+- cumplimiento.paso_perfil_aprobacion (id_perfil_aprobacion) -> cumplimiento.perfil_aprobacion (id_perfil_aprobacion)
+- cumplimiento.paso_perfil_aprobacion (id_privilegio_requerido) -> seguridad.privilegio (id_privilegio)
+- cumplimiento.paso_perfil_aprobacion (id_rol_requerido) -> seguridad.rol (id_rol)
+- cumplimiento.perfil_aprobacion (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- cumplimiento.perfil_aprobacion (id_empresa) -> organizacion.empresa (id_empresa)
+- cumplimiento.perfil_aprobacion (id_tenant) -> plataforma.tenant (id_tenant)
+- cumplimiento.perfil_aprobacion (codigo_entidad) -> seguridad.entidad_alcance_dato (codigo_entidad)
+- cumplimiento.regla_sod (id_severidad_sod) -> catalogo.severidad_sod (id_severidad_sod)
+- cumplimiento.regla_sod (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- cumplimiento.regla_sod (id_empresa) -> organizacion.empresa (id_empresa)
+- cumplimiento.regla_sod (id_tenant) -> plataforma.tenant (id_tenant)
+- cumplimiento.regla_sod (codigo_entidad) -> seguridad.entidad_alcance_dato (codigo_entidad)
+- cumplimiento.regla_sod (id_permiso_a) -> seguridad.permiso (id_permiso)
+- cumplimiento.regla_sod (id_permiso_b) -> seguridad.permiso (id_permiso)
+- documento.documento (id_tipo_documento) -> comun.tipo_documento (id_tipo_documento)
+- documento.documento_entidad (id_documento) -> documento.documento (id_documento)
+- documento.documento_entidad (id_entidad_sistema) -> comun.entidad_sistema (id_entidad_sistema)
+- documento.documento_etiqueta (id_documento) -> documento.documento (id_documento)
+- documento.documento_firma (id_documento) -> documento.documento (id_documento)
+- documento.documento_ocr (id_documento) -> documento.documento (id_documento)
+- documento.documento_version (id_documento) -> documento.documento (id_documento)
+- documento.documento_workflow_paso (id_documento_workflow) -> documento.documento_workflow (id_documento_workflow)
+- etiqueta.etiqueta_entidad (id_entidad_sistema) -> comun.entidad_sistema (id_entidad_sistema)
+- etiqueta.etiqueta_entidad (id_etiqueta) -> etiqueta.etiqueta (id_etiqueta)
+- logistica.contenedor (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.contenedor (id_tipo_contenedor) -> logistica.tipo_contenedor (id_tipo_contenedor)
+- logistica.contrato_tarifario (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- logistica.contrato_tarifario (id_instancia_aprobacion) -> cumplimiento.instancia_aprobacion (id_instancia_aprobacion)
+- logistica.contrato_tarifario (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.contrato_tarifario (id_tercero) -> tercero.tercero (id_tercero)
+- logistica.contrato_tarifario_producto (id_contrato_tarifario) -> logistica.contrato_tarifario (id_contrato_tarifario)
+- logistica.contrato_tarifario_producto (id_producto_logistico) -> logistica.producto_logistico (id_producto_logistico)
+- logistica.contrato_tarifario_recargo (id_contrato_tarifario) -> logistica.contrato_tarifario (id_contrato_tarifario)
+- logistica.contrato_tarifario_recargo (id_recargo_regla) -> logistica.recargo_regla (id_recargo_regla)
+- logistica.contrato_tarifario_tarifa (id_contrato_tarifario) -> logistica.contrato_tarifario (id_contrato_tarifario)
+- logistica.contrato_tarifario_tarifa (id_tarifa) -> logistica.tarifa (id_tarifa)
+- logistica.cotizacion (id_cliente) -> tercero.tercero (id_tercero)
+- logistica.cotizacion (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- logistica.cotizacion (id_estado_cotizacion) -> logistica.estado_cotizacion (id_estado_cotizacion)
+- logistica.cotizacion (id_modo_transporte) -> logistica.modo_transporte (id_modo_transporte)
+- logistica.cotizacion (id_tipo_servicio) -> logistica.tipo_servicio (id_tipo_servicio)
+- logistica.cotizacion (id_termino_comercial) -> logistica.termino_comercial (id_termino_comercial)
+- logistica.cotizacion (id_tipo_carga) -> logistica.tipo_carga (id_tipo_carga)
+- logistica.cotizacion (id_zona_destino) -> logistica.zona (id_zona)
+- logistica.cotizacion (id_zona_origen) -> logistica.zona (id_zona)
+- logistica.cotizacion_bulto (id_cotizacion) -> logistica.cotizacion (id_cotizacion)
+- logistica.cotizacion_bulto (id_tipo_bulto) -> logistica.tipo_bulto (id_tipo_bulto)
+- logistica.cotizacion_item (id_cotizacion) -> logistica.cotizacion (id_cotizacion)
+- logistica.cotizacion_item (id_producto_logistico) -> logistica.producto_logistico (id_producto_logistico)
+- logistica.cotizacion_precio (id_cotizacion) -> logistica.cotizacion (id_cotizacion)
+- logistica.cotizacion_recargo (id_cotizacion_precio) -> logistica.cotizacion_precio (id_cotizacion_precio)
+- logistica.cotizacion_recargo (id_recargo) -> logistica.recargo (id_recargo)
+- logistica.cotizacion_tercero (id_cotizacion) -> logistica.cotizacion (id_cotizacion)
+- logistica.cotizacion_tercero (id_rol_tercero) -> tercero.rol_tercero (id_rol_tercero)
+- logistica.cotizacion_tercero (id_tercero) -> tercero.tercero (id_tercero)
+- logistica.envio (id_cliente) -> tercero.tercero (id_tercero)
+- logistica.envio (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- logistica.envio (id_estado_envio) -> logistica.estado_envio (id_estado_envio)
+- logistica.envio (id_modo_transporte) -> logistica.modo_transporte (id_modo_transporte)
+- logistica.envio (id_tipo_servicio) -> logistica.tipo_servicio (id_tipo_servicio)
+- logistica.envio (id_termino_comercial) -> logistica.termino_comercial (id_termino_comercial)
+- logistica.envio (id_tipo_carga) -> logistica.tipo_carga (id_tipo_carga)
+- logistica.envio (id_zona_destino) -> logistica.zona (id_zona)
+- logistica.envio (id_zona_origen) -> logistica.zona (id_zona)
+- logistica.envio_bulto (id_envio) -> logistica.envio (id_envio)
+- logistica.envio_bulto (id_tipo_bulto) -> logistica.tipo_bulto (id_tipo_bulto)
+- logistica.envio_contenedor (id_contenedor) -> logistica.contenedor (id_contenedor)
+- logistica.envio_contenedor (id_envio) -> logistica.envio (id_envio)
+- logistica.envio_item (id_envio) -> logistica.envio (id_envio)
+- logistica.envio_item (id_producto_logistico) -> logistica.producto_logistico (id_producto_logistico)
+- logistica.envio_precio (id_envio) -> logistica.envio (id_envio)
+- logistica.envio_recargo (id_envio_precio) -> logistica.envio_precio (id_envio_precio)
+- logistica.envio_recargo (id_recargo) -> logistica.recargo (id_recargo)
+- logistica.envio_tercero (id_envio) -> logistica.envio (id_envio)
+- logistica.envio_tercero (id_rol_tercero) -> tercero.rol_tercero (id_rol_tercero)
+- logistica.envio_tercero (id_tercero) -> tercero.tercero (id_tercero)
+- logistica.evento_envio (id_envio) -> logistica.envio (id_envio)
+- logistica.evento_envio (id_sesion_usuario) -> seguridad.sesion_usuario (id_sesion_usuario)
+- logistica.evento_envio (id_tipo_evento_envio) -> logistica.tipo_evento_envio (id_tipo_evento_envio)
+- logistica.evento_envio (id_usuario) -> seguridad.usuario (id_usuario)
+- logistica.factor_volumetrico (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- logistica.factor_volumetrico (id_modo_transporte) -> logistica.modo_transporte (id_modo_transporte)
+- logistica.factor_volumetrico (id_tipo_servicio) -> logistica.tipo_servicio (id_tipo_servicio)
+- logistica.factor_volumetrico (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.grupo_producto_logistico (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.modo_transporte (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.producto_logistico (id_grupo_producto_logistico) -> logistica.grupo_producto_logistico (id_grupo_producto_logistico)
+- logistica.producto_logistico (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.producto_logistico (id_unidad_medida) -> logistica.unidad_medida (id_unidad_medida)
+- logistica.recargo (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.recargo_regla (id_empresa) -> organizacion.empresa (id_empresa)
+- logistica.recargo_regla (id_modo_transporte) -> logistica.modo_transporte (id_modo_transporte)
+- logistica.recargo_regla (id_recargo) -> logistica.recargo (id_recargo)
+- logistica.recargo_regla (id_tipo_servicio) -> logistica.tipo_servicio (id_tipo_servicio)
+- logistica.recargo_regla (id_tipo_carga) -> logistica.tipo_carga (id_tipo_carga)
+- logistica.recargo_regla (id_zona_destino) -> logistica.zona (id_zona)
+- logistica.recargo_regla (id_zona_origen) -> logistica.zona (id_zona)
+- logistica.regla_control_carga (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- logistica.regla_control_carga (id_empresa) -> organizacion.empresa (id_empresa)
+- logistica.regla_control_carga (id_producto_logistico) -> logistica.producto_logistico (id_producto_logistico)
+- logistica.regla_control_carga (id_recargo) -> logistica.recargo (id_recargo)
+- logistica.regla_control_carga (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.regla_control_carga (id_tipo_carga) -> logistica.tipo_carga (id_tipo_carga)
+- logistica.ruta_logistica (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- logistica.ruta_logistica (id_modo_transporte) -> logistica.modo_transporte (id_modo_transporte)
+- logistica.ruta_logistica (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.ruta_logistica (id_zona_destino) -> logistica.zona (id_zona)
+- logistica.ruta_logistica (id_zona_origen) -> logistica.zona (id_zona)
+- logistica.ruta_logistica_tramo (id_modo_transporte) -> logistica.modo_transporte (id_modo_transporte)
+- logistica.ruta_logistica_tramo (id_ruta_logistica) -> logistica.ruta_logistica (id_ruta_logistica)
+- logistica.ruta_logistica_tramo (id_zona_destino) -> logistica.zona (id_zona)
+- logistica.ruta_logistica_tramo (id_zona_origen) -> logistica.zona (id_zona)
+- logistica.tarifa (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- logistica.tarifa (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.tarifa_condicion (id_cliente) -> tercero.tercero (id_tercero)
+- logistica.tarifa_condicion (id_modo_transporte) -> logistica.modo_transporte (id_modo_transporte)
+- logistica.tarifa_condicion (id_producto_logistico) -> logistica.producto_logistico (id_producto_logistico)
+- logistica.tarifa_condicion (id_tarifa) -> logistica.tarifa (id_tarifa)
+- logistica.tarifa_condicion (id_tipo_carga) -> logistica.tipo_carga (id_tipo_carga)
+- logistica.tarifa_condicion (id_zona_destino) -> logistica.zona (id_zona)
+- logistica.tarifa_condicion (id_zona_origen) -> logistica.zona (id_zona)
+- logistica.tarifa_formula (id_tarifa) -> logistica.tarifa (id_tarifa)
+- logistica.tarifa_rango (id_tarifa_formula) -> logistica.tarifa_formula (id_tarifa_formula)
+- logistica.tarifa_temporada (id_tarifa) -> logistica.tarifa (id_tarifa)
+- logistica.tarifa_temporada (id_temporada_tarifaria) -> logistica.temporada_tarifaria (id_temporada_tarifaria)
+- logistica.temporada_tarifaria (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- logistica.temporada_tarifaria (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.tipo_bulto (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.tipo_carga (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.tipo_contenedor (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.tipo_servicio (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.unidad_medida (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.zona (id_tenant) -> plataforma.tenant (id_tenant)
+- logistica.zona_localidad (id_zona) -> logistica.zona (id_zona)
+- observabilidad.auditoria_autorizacion (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- observabilidad.auditoria_autorizacion (id_empresa) -> organizacion.empresa (id_empresa)
+- observabilidad.auditoria_autorizacion (id_tenant) -> plataforma.tenant (id_tenant)
+- observabilidad.auditoria_autorizacion (id_sesion_usuario) -> seguridad.sesion_usuario (id_sesion_usuario)
+- observabilidad.auditoria_autorizacion (id_usuario) -> seguridad.usuario (id_usuario)
+- observabilidad.auditoria_evento_seguridad (id_tipo_evento_seguridad) -> catalogo.tipo_evento_seguridad (id_tipo_evento_seguridad)
+- observabilidad.auditoria_evento_seguridad (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- observabilidad.auditoria_evento_seguridad (id_empresa) -> organizacion.empresa (id_empresa)
+- observabilidad.auditoria_evento_seguridad (id_tenant) -> plataforma.tenant (id_tenant)
+- observabilidad.auditoria_evento_seguridad (id_sesion_usuario) -> seguridad.sesion_usuario (id_sesion_usuario)
+- observabilidad.auditoria_evento_seguridad (id_usuario) -> seguridad.usuario (id_usuario)
+- observabilidad.auditoria_reinicio_mesa_ayuda (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- observabilidad.auditoria_reinicio_mesa_ayuda (id_empresa) -> organizacion.empresa (id_empresa)
+- observabilidad.auditoria_reinicio_mesa_ayuda (id_tenant) -> plataforma.tenant (id_tenant)
+- observabilidad.auditoria_reinicio_mesa_ayuda (id_usuario_administrador) -> seguridad.usuario (id_usuario)
+- observabilidad.auditoria_reinicio_mesa_ayuda (id_usuario_afectado) -> seguridad.usuario (id_usuario)
+- observabilidad.error_aplicacion (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- observabilidad.error_aplicacion (id_empresa) -> organizacion.empresa (id_empresa)
+- observabilidad.error_aplicacion (id_tenant) -> plataforma.tenant (id_tenant)
+- observabilidad.error_aplicacion (id_sesion_usuario) -> seguridad.sesion_usuario (id_sesion_usuario)
+- observabilidad.error_aplicacion (id_usuario) -> seguridad.usuario (id_usuario)
+- observabilidad.operacion_api_log (id_tenant) -> plataforma.tenant (id_tenant)
+- organizacion.empresa (id_estado_empresa) -> catalogo.estado_empresa (id_estado_empresa)
+- organizacion.empresa (id_tipo_empresa) -> catalogo.tipo_empresa (id_tipo_empresa)
+- organizacion.empresa (id_tenant) -> plataforma.tenant (id_tenant)
+- organizacion.grupo_empresarial (id_tenant) -> plataforma.tenant (id_tenant)
+- organizacion.grupo_empresarial_empresa (id_empresa) -> organizacion.empresa (id_empresa)
+- organizacion.grupo_empresarial_empresa (id_grupo_empresarial) -> organizacion.grupo_empresarial (id_grupo_empresarial)
+- organizacion.relacion_empresa (id_tipo_relacion_empresa) -> catalogo.tipo_relacion_empresa (id_tipo_relacion_empresa)
+- organizacion.relacion_empresa (id_empresa_destino) -> organizacion.empresa (id_empresa)
+- organizacion.relacion_empresa (id_empresa_origen) -> organizacion.empresa (id_empresa)
+- organizacion.relacion_empresa (id_tenant) -> plataforma.tenant (id_tenant)
+- organizacion.unidad_organizativa (id_tipo_unidad_organizativa) -> catalogo.tipo_unidad_organizativa (id_tipo_unidad_organizativa)
+- organizacion.unidad_organizativa (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- organizacion.unidad_organizativa (id_unidad_padre) -> organizacion.unidad_organizativa (id_unidad_organizativa)
+- plataforma.configuracion_empresa (id_empresa) -> organizacion.empresa (id_empresa)
+- plataforma.configuracion_empresa (id_parametro_configuracion) -> plataforma.parametro_configuracion (id_parametro_configuracion)
+- plataforma.tenant_feature (id_feature) -> plataforma.feature_flag (id_feature)
+- plataforma.tenant_feature (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.asignacion_rol_usuario (id_alcance_asignacion) -> catalogo.alcance_asignacion (id_alcance_asignacion)
+- seguridad.asignacion_rol_usuario (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.asignacion_rol_usuario (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.asignacion_rol_usuario (id_grupo_empresarial) -> organizacion.grupo_empresarial (id_grupo_empresarial)
+- seguridad.asignacion_rol_usuario (id_empresa,id_unidad_organizativa) -> organizacion.unidad_organizativa (id_empresa,id_unidad_organizativa)
+- seguridad.asignacion_rol_usuario (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.asignacion_rol_usuario (id_rol) -> seguridad.rol (id_rol)
+- seguridad.asignacion_rol_usuario (concedido_por) -> seguridad.usuario (id_usuario)
+- seguridad.asignacion_rol_usuario (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.configuracion_canal_notificacion (id_canal_notificacion) -> catalogo.canal_notificacion (id_canal_notificacion)
+- seguridad.configuracion_canal_notificacion (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.configuracion_canal_notificacion (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.configuracion_canal_notificacion (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.contador_rate_limit (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.contador_rate_limit (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.contador_rate_limit (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.credencial_local_usuario (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.deber (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.deber_privilegio (id_deber) -> seguridad.deber (id_deber)
+- seguridad.deber_privilegio (id_privilegio) -> seguridad.privilegio (id_privilegio)
+- seguridad.desafio_mfa (id_canal_notificacion) -> catalogo.canal_notificacion (id_canal_notificacion)
+- seguridad.desafio_mfa (id_proposito_desafio_mfa) -> catalogo.proposito_desafio_mfa (id_proposito_desafio_mfa)
+- seguridad.desafio_mfa (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.desafio_mfa (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.desafio_mfa (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.desafio_mfa (id_flujo_autenticacion) -> seguridad.flujo_autenticacion (id_flujo_autenticacion)
+- seguridad.desafio_mfa (id_sesion_usuario) -> seguridad.sesion_usuario (id_sesion_usuario)
+- seguridad.desafio_mfa (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.excepcion_permiso_usuario (id_alcance_asignacion) -> catalogo.alcance_asignacion (id_alcance_asignacion)
+- seguridad.excepcion_permiso_usuario (id_efecto_permiso) -> catalogo.efecto_permiso (id_efecto_permiso)
+- seguridad.excepcion_permiso_usuario (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.excepcion_permiso_usuario (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.excepcion_permiso_usuario (id_grupo_empresarial) -> organizacion.grupo_empresarial (id_grupo_empresarial)
+- seguridad.excepcion_permiso_usuario (id_empresa,id_unidad_organizativa) -> organizacion.unidad_organizativa (id_empresa,id_unidad_organizativa)
+- seguridad.excepcion_permiso_usuario (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.excepcion_permiso_usuario (id_permiso) -> seguridad.permiso (id_permiso)
+- seguridad.excepcion_permiso_usuario (concedido_por) -> seguridad.usuario (id_usuario)
+- seguridad.excepcion_permiso_usuario (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.factor_mfa_usuario (id_tipo_factor_mfa) -> catalogo.tipo_factor_mfa (id_tipo_factor_mfa)
+- seguridad.factor_mfa_usuario (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.filtro_dato_usuario (id_modo_filtro_dato) -> catalogo.modo_filtro_dato (id_modo_filtro_dato)
+- seguridad.filtro_dato_usuario (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.filtro_dato_usuario (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.filtro_dato_usuario (id_empresa,id_unidad_organizativa) -> organizacion.unidad_organizativa (id_empresa,id_unidad_organizativa)
+- seguridad.filtro_dato_usuario (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.filtro_dato_usuario (codigo_entidad) -> seguridad.entidad_alcance_dato (codigo_entidad)
+- seguridad.filtro_dato_usuario (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.flujo_autenticacion (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.flujo_autenticacion (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.flujo_restablecimiento_clave (id_tipo_verificacion_restablecimiento) -> catalogo.tipo_verificacion_restablecimiento (id_tipo_verificacion_restablecimiento)
+- seguridad.flujo_restablecimiento_clave (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.historial_clave_usuario (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.politica_empresa_override (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.politica_ip (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.politica_ip (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.politica_ip (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.politica_operacion_api (codigo_entidad) -> seguridad.entidad_alcance_dato (codigo_entidad)
+- seguridad.politica_operacion_api (id_operacion_api) -> seguridad.operacion_api (id_operacion_api)
+- seguridad.politica_operacion_api (id_permiso) -> seguridad.permiso (id_permiso)
+- seguridad.politica_tenant (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.privilegio (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.privilegio_permiso (id_permiso) -> seguridad.permiso (id_permiso)
+- seguridad.privilegio_permiso (id_privilegio) -> seguridad.privilegio (id_privilegio)
+- seguridad.recurso_ui (id_tipo_recurso_ui) -> catalogo.tipo_recurso_ui (id_tipo_recurso_ui)
+- seguridad.recurso_ui (id_recurso_ui_padre) -> seguridad.recurso_ui (id_recurso_ui)
+- seguridad.recurso_ui_permiso (id_permiso) -> seguridad.permiso (id_permiso)
+- seguridad.recurso_ui_permiso (id_recurso_ui) -> seguridad.recurso_ui (id_recurso_ui)
+- seguridad.rol (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.rol_deber (id_deber) -> seguridad.deber (id_deber)
+- seguridad.rol_deber (id_rol) -> seguridad.rol (id_rol)
+- seguridad.sesion_usuario (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.sesion_usuario (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.sesion_usuario (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.token_restablecimiento_clave (id_flujo_restablecimiento_clave) -> seguridad.flujo_restablecimiento_clave (id_flujo_restablecimiento_clave)
+- seguridad.token_restablecimiento_clave (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.usuario (id_estado_usuario) -> catalogo.estado_usuario (id_estado_usuario)
+- seguridad.usuario (actualizado_por) -> seguridad.usuario (id_usuario)
+- seguridad.usuario (creado_por) -> seguridad.usuario (id_usuario)
+- seguridad.usuario_empresa (id_tenant,id_empresa) -> organizacion.empresa (id_tenant,id_empresa)
+- seguridad.usuario_empresa (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.usuario_identificador (id_tipo_identificador_usuario) -> catalogo.tipo_identificador_usuario (id_tipo_identificador_usuario)
+- seguridad.usuario_identificador (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.usuario_scope_empresa (id_empresa) -> organizacion.empresa (id_empresa)
+- seguridad.usuario_scope_empresa (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.usuario_scope_unidad (id_unidad_organizativa) -> organizacion.unidad_organizativa (id_unidad_organizativa)
+- seguridad.usuario_scope_unidad (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.usuario_tenant (id_tenant) -> plataforma.tenant (id_tenant)
+- seguridad.usuario_tenant (id_usuario) -> seguridad.usuario (id_usuario)
+- seguridad.usuario_unidad_organizativa (id_empresa,id_unidad_organizativa) -> organizacion.unidad_organizativa (id_empresa,id_unidad_organizativa)
+- seguridad.usuario_unidad_organizativa (id_usuario) -> seguridad.usuario (id_usuario)
+- tercero.coincidencia_tercero (id_tercero_origen) -> tercero.tercero (id_tercero)
+- tercero.coincidencia_tercero (id_tercero_posible) -> tercero.tercero (id_tercero)
+- tercero.contacto_tercero (id_tercero) -> tercero.tercero (id_tercero)
+- tercero.cuenta_bancaria_tercero (id_tercero) -> tercero.tercero (id_tercero)
+- tercero.direccion_tercero (id_tercero) -> tercero.tercero (id_tercero)
+- tercero.identificacion_tercero (id_tercero) -> tercero.tercero (id_tercero)
+- tercero.indice_busqueda_tercero (id_tercero) -> tercero.tercero (id_tercero)
+- tercero.merge_tercero (id_tercero_duplicado) -> tercero.tercero (id_tercero)
+- tercero.merge_tercero (id_tercero_principal) -> tercero.tercero (id_tercero)
+- tercero.relacion_tercero (id_tercero_destino) -> tercero.tercero (id_tercero)
+- tercero.relacion_tercero (id_tercero_origen) -> tercero.tercero (id_tercero)
+- tercero.tercero (id_tipo_persona) -> tercero.tipo_persona (id_tipo_persona)
+- tercero.tercero_empresa (id_empresa) -> organizacion.empresa (id_empresa)
+- tercero.tercero_empresa (id_tercero) -> tercero.tercero (id_tercero)
+- tercero.tercero_rol (id_empresa) -> organizacion.empresa (id_empresa)
+- tercero.tercero_rol (id_rol_tercero) -> tercero.rol_tercero (id_rol_tercero)
+- tercero.tercero_rol (id_tercero) -> tercero.tercero (id_tercero)
