@@ -1,3 +1,8 @@
+/*
+  Recreate usuario CRUD stored procedures with ANSI_NULLS/QUOTED_IDENTIFIER ON
+  Required for filtered unique index writes on seguridad.usuario.
+*/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -316,4 +321,5 @@ BEGIN
     OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;
 END
 GO
+
 
