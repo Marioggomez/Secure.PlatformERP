@@ -20,6 +20,7 @@ public sealed class AlcanceAsignacionController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet("listar")]
     public async Task<ActionResult<IReadOnlyList<AlcanceAsignacionDto>>> ListarAsync(CancellationToken cancellationToken)
     {
         var result = await _repository.ListarAsync(cancellationToken).ConfigureAwait(false);
@@ -27,6 +28,7 @@ public sealed class AlcanceAsignacionController : ControllerBase
     }
 
     [HttpGet("{idAlcanceAsignacion}")]
+    [HttpGet("obtener/{idAlcanceAsignacion}")]
     public async Task<ActionResult<AlcanceAsignacionDto>> ObtenerAsync([FromRoute] short idAlcanceAsignacion, CancellationToken cancellationToken)
     {
         var dto = await _repository.ObtenerAsync(idAlcanceAsignacion, cancellationToken).ConfigureAwait(false);
@@ -34,6 +36,7 @@ public sealed class AlcanceAsignacionController : ControllerBase
     }
 
     [HttpPost]
+    [HttpPost("crear")]
     public async Task<ActionResult<object>> CrearAsync([FromBody] AlcanceAsignacionDto dto, CancellationToken cancellationToken)
     {
         var id = await _repository.CrearAsync(dto, cancellationToken).ConfigureAwait(false);
@@ -41,6 +44,7 @@ public sealed class AlcanceAsignacionController : ControllerBase
     }
 
     [HttpPut("{idAlcanceAsignacion}")]
+    [HttpPut("actualizar/{idAlcanceAsignacion}")]
     public async Task<ActionResult> ActualizarAsync([FromRoute] short idAlcanceAsignacion, [FromBody] AlcanceAsignacionDto dto, CancellationToken cancellationToken)
     {
         dto.IdAlcanceAsignacion = idAlcanceAsignacion;
@@ -49,6 +53,7 @@ public sealed class AlcanceAsignacionController : ControllerBase
     }
 
     [HttpDelete("{idAlcanceAsignacion}")]
+    [HttpDelete("desactivar/{idAlcanceAsignacion}")]
     public async Task<ActionResult> DesactivarAsync([FromRoute] short idAlcanceAsignacion, CancellationToken cancellationToken)
     {
         var ok = await _repository.DesactivarAsync(idAlcanceAsignacion, User?.Identity?.Name, cancellationToken).ConfigureAwait(false);
