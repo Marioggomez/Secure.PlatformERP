@@ -24,27 +24,14 @@ builder.Services.AddSwaggerGen(options =>
     options.TagActionsBy(apiDescription =>
     {
         var relativePath = apiDescription.RelativePath ?? string.Empty;
-        var pathSegments = relativePath
-            .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-        if (pathSegments.Length >= 3 &&
-            string.Equals(pathSegments[0], "api", StringComparison.OrdinalIgnoreCase) &&
-            pathSegments[1].StartsWith("v", StringComparison.OrdinalIgnoreCase))
-        {
-            return new[] { BuildModuleTag(pathSegments[2]) };
-        }
-
-        return new[] { "General" };
+        return new[] { BuildSchemaTableTag(relativePath) };
     });
 
     options.OrderActionsBy(apiDescription =>
     {
         var relativePath = apiDescription.RelativePath ?? string.Empty;
-        var pathSegments = relativePath
-            .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-        var module = pathSegments.Length >= 3 ? BuildModuleTag(pathSegments[2]) : "General";
-        return $"{module}_{relativePath}_{apiDescription.HttpMethod}";
+        var schemaTable = BuildSchemaTableTag(relativePath);
+        return $"{schemaTable}_{relativePath}_{apiDescription.HttpMethod}";
     });
 });
 
@@ -69,20 +56,31 @@ app.MapControllers();
 
 app.Run();
 
-static string BuildModuleTag(string rawModule)
+static string BuildSchemaTableTag(string relativePath)
 {
-    var normalized = (rawModule ?? string.Empty).Trim().ToLowerInvariant();
-    return normalized switch
+    var pathOnly = (relativePath ?? string.Empty).Split('?', 2)[0];
+    var pathSegments = pathOnly
+        .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    if (pathSegments.Length >= 4 &&
+        string.Equals(pathSegments[0], "api", StringComparison.OrdinalIgnoreCase) &&
+        pathSegments[1].StartsWith("v", StringComparison.OrdinalIgnoreCase))
     {
-        "seguridad" => "Seguridad",
-        "tercero" => "Tercero",
-        "organizacion" => "Organizacion",
-        "catalogo" => "Catalogo",
-        "plataforma" => "Plataforma",
-        "cumplimiento" => "Cumplimiento",
-        "observabilidad" => "Observabilidad",
-        "dbo" => "Dbo",
-        _ when string.IsNullOrWhiteSpace(normalized) => "General",
-        _ => char.ToUpperInvariant(normalized[0]) + normalized[1..]
-    };
+        var schema = NormalizeSegment(pathSegments[2]);
+        var table = NormalizeSegment(pathSegments[3]);
+        return $"{schema}.{table}";
+    }
+
+    return "general";
+}
+
+static string NormalizeSegment(string? segment)
+{
+    if (string.IsNullOrWhiteSpace(segment))
+    {
+        return "unknown";
+    }
+
+    var normalized = segment.Trim().ToLowerInvariant();
+    return normalized.Replace("{", string.Empty).Replace("}", string.Empty);
 }
