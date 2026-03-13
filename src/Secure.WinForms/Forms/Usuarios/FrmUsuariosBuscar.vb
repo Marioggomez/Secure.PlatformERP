@@ -28,7 +28,7 @@ Namespace Forms.Usuarios
         End Property
 
         Protected Overrides Function BuildEndpoint() As String
-            Return "api/v1/seguridad/usuario"
+            Return "api/v1/seguridad/usuario/listar"
         End Function
 
         Protected Overrides Function BuildFormTitle() As String
@@ -111,7 +111,8 @@ Namespace Forms.Usuarios
                 query.Add($"idTenant={request.IdTenant.Value}")
             End If
 
-            Return $"api/v1/seguridad/usuario/paginado?{String.Join("&", query)}"
+            Return $"api/v1/seguridad/usuario/listar/paginado?{String.Join("&", query)}"
         End Function
     End Class
 End Namespace
+

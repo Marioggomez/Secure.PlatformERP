@@ -1,4 +1,4 @@
-﻿Imports System.Linq
+Imports System.Linq
 Imports System.ComponentModel
 Imports DevExpress.Utils.Svg
 Imports DevExpress.XtraBars
@@ -205,18 +205,17 @@ Namespace Forms.Seguridad
         End Sub
 
         Private Sub InitializeComponent()
-            Text = "Centro IAM"
-            FormBorderStyle = FormBorderStyle.None
-            Dock = DockStyle.Fill
+            SuspendLayout()
+            ' 
+            ' FrmIamAdminCenter
+            ' 
+            AutoScaleDimensions = New SizeF(96F, 96F)
             AutoScaleMode = AutoScaleMode.Dpi
-
-            ConfigureRibbon()
-            ConfigureBody()
-            ConfigureStatusBar()
-
-            Controls.Add(_mainLayout)
-            Controls.Add(_statusBar)
-            Controls.Add(_ribbon)
+            ClientSize = New Size(1256, 859)
+            FormBorderStyle = FormBorderStyle.None
+            Name = "FrmIamAdminCenter"
+            Text = "Centro IAM"
+            ResumeLayout(False)
         End Sub
 
         Private Sub ConfigureRibbon()
@@ -938,21 +937,21 @@ Namespace Forms.Seguridad
                     Case 0
                         If Not _editingUsuarioId.HasValue Then Return
                         SetBusy(True, "Desactivando usuario...")
-                        Await _apiClient.DeleteAsync("api/v1/seguridad/usuario/" & _editingUsuarioId.Value.ToString()).ConfigureAwait(True)
+                        Await _apiClient.DeleteAsync("api/v1/seguridad/usuario/desactivar/" & _editingUsuarioId.Value.ToString()).ConfigureAwait(True)
                         Await LoadUsuariosAsync().ConfigureAwait(True)
                         Await LoadAsignacionesAsync().ConfigureAwait(True)
                         ResetUsuarioEditor()
                     Case 1
                         If Not _editingRolId.HasValue Then Return
                         SetBusy(True, "Desactivando rol...")
-                        Await _apiClient.DeleteAsync("api/v1/seguridad/rol/" & _editingRolId.Value.ToString()).ConfigureAwait(True)
+                        Await _apiClient.DeleteAsync("api/v1/seguridad/rol/desactivar/" & _editingRolId.Value.ToString()).ConfigureAwait(True)
                         Await LoadRolesAsync().ConfigureAwait(True)
                         Await LoadAsignacionesAsync().ConfigureAwait(True)
                         ResetRolEditor()
                     Case Else
                         If Not _editingAsignacionId.HasValue Then Return
                         SetBusy(True, "Desactivando asignacion...")
-                        Await _apiClient.DeleteAsync("api/v1/seguridad/asignacion_rol_usuario/" & _editingAsignacionId.Value.ToString()).ConfigureAwait(True)
+                        Await _apiClient.DeleteAsync("api/v1/seguridad/asignacion_rol_usuario/desactivar/" & _editingAsignacionId.Value.ToString()).ConfigureAwait(True)
                         Await LoadAsignacionesAsync().ConfigureAwait(True)
                         ResetAsignacionEditor()
                 End Select
@@ -1027,7 +1026,7 @@ Namespace Forms.Seguridad
 
             SetBusy(True, "Guardando usuario...")
             If _editingUsuarioId.HasValue Then
-                Await _apiClient.PutAsync("api/v1/seguridad/usuario/" & _editingUsuarioId.Value.ToString(), dto).ConfigureAwait(True)
+                Await _apiClient.PutAsync("api/v1/seguridad/usuario/actualizar/" & _editingUsuarioId.Value.ToString(), dto).ConfigureAwait(True)
             Else
                 Await _apiClient.PostAsync(Of UsuarioDto, Dictionary(Of String, Object))("api/v1/seguridad/usuario", dto).ConfigureAwait(True)
             End If
@@ -1072,7 +1071,7 @@ Namespace Forms.Seguridad
 
             SetBusy(True, "Guardando rol...")
             If _editingRolId.HasValue Then
-                Await _apiClient.PutAsync("api/v1/seguridad/rol/" & _editingRolId.Value.ToString(), dto).ConfigureAwait(True)
+                Await _apiClient.PutAsync("api/v1/seguridad/rol/actualizar/" & _editingRolId.Value.ToString(), dto).ConfigureAwait(True)
             Else
                 Await _apiClient.PostAsync(Of RolDto, Dictionary(Of String, Object))("api/v1/seguridad/rol", dto).ConfigureAwait(True)
             End If
@@ -1138,7 +1137,7 @@ Namespace Forms.Seguridad
 
             SetBusy(True, "Guardando asignacion...")
             If _editingAsignacionId.HasValue Then
-                Await _apiClient.PutAsync("api/v1/seguridad/asignacion_rol_usuario/" & _editingAsignacionId.Value.ToString(), dto).ConfigureAwait(True)
+                Await _apiClient.PutAsync("api/v1/seguridad/asignacion_rol_usuario/actualizar/" & _editingAsignacionId.Value.ToString(), dto).ConfigureAwait(True)
             Else
                 Await _apiClient.PostAsync(Of AsignacionRolUsuarioDto, Dictionary(Of String, Object))("api/v1/seguridad/asignacion_rol_usuario", dto).ConfigureAwait(True)
             End If
@@ -1212,3 +1211,4 @@ Namespace Forms.Seguridad
         End Sub
     End Class
 End Namespace
+

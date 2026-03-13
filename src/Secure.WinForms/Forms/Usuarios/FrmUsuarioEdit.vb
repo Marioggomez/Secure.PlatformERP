@@ -11,7 +11,7 @@ Namespace Forms.Usuarios
         Inherits BaseEditForm
 
         Protected Overrides Function BuildSaveEndpoint() As String
-            Return "api/v1/seguridad/usuario"
+            Return "api/v1/seguridad/usuario/listar"
         End Function
 
         Protected Overrides Function BuildFormTitle() As String
@@ -50,3 +50,4 @@ Namespace Forms.Usuarios
         End Sub
     End Class
 End Namespace
+

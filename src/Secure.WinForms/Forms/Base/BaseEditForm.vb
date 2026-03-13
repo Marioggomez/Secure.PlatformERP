@@ -1,4 +1,4 @@
-﻿Imports DevExpress.XtraBars
+Imports DevExpress.XtraBars
 Imports DevExpress.XtraBars.Ribbon
 Imports DevExpress.XtraEditors
 Imports DevExpress.XtraLayout
@@ -161,7 +161,8 @@ Namespace Forms.Base
         End Sub
 
         Protected Overridable Function BuildSaveEndpoint() As String
-            Return "api/v1/base/edit"
+            Return "api/v1/base/edit/listar"
         End Function
     End Class
 End Namespace
+

@@ -21,7 +21,7 @@ Namespace Forms.Terceros
         End Sub
 
         Protected Overrides Function BuildEndpoint() As String
-            Return "api/v1/tercero/identificacion_tercero"
+            Return "api/v1/tercero/identificacion_tercero/listar"
         End Function
 
         Protected Overrides Function BuildFormTitle() As String
@@ -79,3 +79,4 @@ Namespace Forms.Terceros
         End Function
     End Class
 End Namespace
+

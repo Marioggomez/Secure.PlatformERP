@@ -28,7 +28,7 @@ Namespace Forms.Terceros
         End Property
 
         Protected Overrides Function BuildEndpoint() As String
-            Return "api/v1/tercero/tercero"
+            Return "api/v1/tercero/tercero/listar"
         End Function
 
         Protected Overrides Function BuildFormTitle() As String
@@ -100,7 +100,8 @@ Namespace Forms.Terceros
                 $"filterField={Uri.EscapeDataString(If(request.FilterField, String.Empty))}"
             }
 
-            Return $"api/v1/tercero/tercero/paginado?{String.Join("&", query)}"
+            Return $"api/v1/tercero/tercero/listar/paginado?{String.Join("&", query)}"
         End Function
     End Class
 End Namespace
+

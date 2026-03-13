@@ -11,7 +11,7 @@ Namespace Forms.Empresas
         Inherits BaseEditForm
 
         Protected Overrides Function BuildSaveEndpoint() As String
-            Return "api/v1/organizacion/empresa"
+            Return "api/v1/organizacion/empresa/listar"
         End Function
 
         Protected Overrides Function BuildFormTitle() As String
@@ -50,3 +50,4 @@ Namespace Forms.Empresas
         End Sub
     End Class
 End Namespace
+

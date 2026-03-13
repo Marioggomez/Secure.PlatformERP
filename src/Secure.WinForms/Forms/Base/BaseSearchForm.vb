@@ -26,7 +26,8 @@ Namespace Forms.Base
     ''' Formulario base reutilizable para busqueda/listado con paginacion y filtros.
     ''' Autor: Mario Gomez.
     ''' </summary>
-    Public Class BaseSearchForm
+    <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+    Partial Public Class BaseSearchForm
         Inherits XtraForm
 
         Protected Class SearchPageRequest
@@ -63,31 +64,49 @@ Namespace Forms.Base
             Public Property s As String
         End Class
 
-        Protected ReadOnly Ribbon As RibbonControl
-        Protected ReadOnly Grid As GridControl
-        Protected ReadOnly View As GridView
-        Protected ReadOnly MainLayout As LayoutControl
-        Protected ReadOnly TxtFiltro As TextEdit
-        Protected ReadOnly CmbCampoFiltro As ComboBoxEdit
-        Protected ReadOnly SpnTamanoPagina As SpinEdit
+        Protected Ribbon As RibbonControl
+        Protected Grid As GridControl
+        Protected View As GridView
+        Protected MainLayout As LayoutControl
+        Protected TxtFiltro As TextEdit
+        Protected CmbCampoFiltro As ComboBoxEdit
+        Protected SpnTamanoPagina As SpinEdit
 
-        Private ReadOnly _statusBar As RibbonStatusBar
-        Private ReadOnly _statusInfo As BarStaticItem
-        Private ReadOnly _statusPaginacion As BarStaticItem
+        Private _statusBar As RibbonStatusBar
+        Private _statusInfo As BarStaticItem
+        Private _statusPaginacion As BarStaticItem
         Private ReadOnly _apiClient As ApiClient
         Private ReadOnly _sessionContext As UserSessionContext
-        Private ReadOnly _repoCampoFiltro As RepositoryItemComboBox
-        Private ReadOnly _repoBusqueda As RepositoryItemSearchControl
-        Private ReadOnly _repoTamanoPagina As RepositoryItemSpinEdit
-        Private ReadOnly _barCampoFiltro As BarEditItem
-        Private ReadOnly _barBusqueda As BarEditItem
-        Private ReadOnly _barBuscar As BarButtonItem
-        Private ReadOnly _barLimpiar As BarButtonItem
-        Private ReadOnly _barTamanoPagina As BarEditItem
-        Private ReadOnly _barPaginaAnterior As BarButtonItem
-        Private ReadOnly _barPaginaSiguiente As BarButtonItem
-        Private ReadOnly _barResumenPagina As BarStaticItem
-        Private ReadOnly _searchDebounceTimer As Timer
+        Private _btnNuevo As BarButtonItem
+        Private _btnEditar As BarButtonItem
+        Private _btnRefrescar As BarButtonItem
+        Private _btnPrimero As BarButtonItem
+        Private _btnAnterior As BarButtonItem
+        Private _btnSiguiente As BarButtonItem
+        Private _btnUltimo As BarButtonItem
+        Private _btnGuardarVista As BarButtonItem
+        Private _btnRestaurarVista As BarButtonItem
+        Private _btnExportar As BarButtonItem
+        Private _repoCampoFiltro As RepositoryItemComboBox
+        Private _repoBusqueda As RepositoryItemSearchControl
+        Private _repoTamanoPagina As RepositoryItemSpinEdit
+        Private _barCampoFiltro As BarEditItem
+        Private _barBusqueda As BarEditItem
+        Private _barBuscar As BarButtonItem
+        Private _barLimpiar As BarButtonItem
+        Private _barTamanoPagina As BarEditItem
+        Private _barPaginaAnterior As BarButtonItem
+        Private _barPaginaSiguiente As BarButtonItem
+        Private _barResumenPagina As BarStaticItem
+        Private _rpInicio As RibbonPage
+        Private _rpgOperaciones As RibbonPageGroup
+        Private _rpgBusqueda As RibbonPageGroup
+        Private _rpgPaginacion As RibbonPageGroup
+        Private _rpgNavegacion As RibbonPageGroup
+        Private _rpgVistaReporte As RibbonPageGroup
+        Private _layoutRoot As LayoutControlGroup
+        Private _layoutGridItem As LayoutControlItem
+        Private _searchDebounceTimer As Timer
 
         Private _sourceData As DataTable
         Private _currentPage As Integer
@@ -97,30 +116,15 @@ Namespace Forms.Base
         Private _isFirstLoadDone As Boolean
         Private _isSyncingRibbon As Boolean
 
-        Protected Sub New(Optional ByVal apiClient As ApiClient = Nothing, Optional ByVal sessionContext As UserSessionContext = Nothing)
-            Ribbon = New RibbonControl()
-            Grid = New GridControl()
-            View = New GridView()
-            MainLayout = New LayoutControl()
-            TxtFiltro = New TextEdit()
-            CmbCampoFiltro = New ComboBoxEdit()
-            SpnTamanoPagina = New SpinEdit()
-            _statusBar = New RibbonStatusBar()
-            _statusInfo = New BarStaticItem()
-            _statusPaginacion = New BarStaticItem()
+        Public Sub New()
+            Me.New(Nothing, Nothing)
+        End Sub
+
+        Protected Sub New(ByVal apiClient As ApiClient, ByVal sessionContext As UserSessionContext)
             _apiClient = apiClient
             _sessionContext = If(sessionContext, UserSessionContext.CrearDiseno())
-            _repoCampoFiltro = New RepositoryItemComboBox()
-            _repoBusqueda = New RepositoryItemSearchControl()
-            _repoTamanoPagina = New RepositoryItemSpinEdit()
-            _barCampoFiltro = New BarEditItem()
-            _barBusqueda = New BarEditItem()
-            _barBuscar = New BarButtonItem()
-            _barLimpiar = New BarButtonItem()
-            _barTamanoPagina = New BarEditItem()
-            _barPaginaAnterior = New BarButtonItem()
-            _barPaginaSiguiente = New BarButtonItem()
-            _barResumenPagina = New BarStaticItem()
+
+            InitializeComponent()
             _searchDebounceTimer = New Timer()
             _currentPage = 1
             _totalPages = 1
@@ -128,13 +132,23 @@ Namespace Forms.Base
             _isFirstLoadDone = False
             _isSyncingRibbon = False
 
+            Text = BuildFormTitle()
+            Width = 1220
+            Height = 760
+            StartPosition = FormStartPosition.CenterParent
+            AutoScaleMode = AutoScaleMode.Dpi
+
+            ConfigureGrid()
+            ConfigureRibbon()
+            ConfigureLayout()
+            ConfigureStatus()
+
             SpnTamanoPagina.Properties.IsFloatValue = False
             SpnTamanoPagina.Properties.MinValue = 5
             SpnTamanoPagina.Properties.MaxValue = 500
             SpnTamanoPagina.Properties.Increment = 5
             SpnTamanoPagina.EditValue = 25
 
-            InitializeComponent()
             ConfigureColumns(View)
             PopulateFilterFieldsFromGrid()
             SyncRibbonFromState()
@@ -180,59 +194,17 @@ Namespace Forms.Base
             End Get
         End Property
 
-        Private Sub InitializeComponent()
-            Text = BuildFormTitle()
-            Width = 1220
-            Height = 760
-            StartPosition = FormStartPosition.CenterParent
-            AutoScaleMode = AutoScaleMode.Dpi
-
-            ConfigureGrid()
-            ConfigureRibbon()
-            ConfigureLayout()
-            ConfigureStatus()
-
-            Controls.Add(MainLayout)
-            Controls.Add(_statusBar)
-            Controls.Add(Ribbon)
-        End Sub
-
         Private Sub ConfigureRibbon()
             Ribbon.Dock = DockStyle.Top
             Ribbon.ShowApplicationButton = DevExpress.Utils.DefaultBoolean.False
             Ribbon.ToolbarLocation = RibbonQuickAccessToolbarLocation.Hidden
             Ribbon.MdiMergeStyle = RibbonMdiMergeStyle.Always
 
-            Dim btnNuevo As New BarButtonItem() With {.Caption = "Nuevo"}
-            Dim btnEditar As New BarButtonItem() With {.Caption = "Editar"}
-            Dim btnRefrescar As New BarButtonItem() With {.Caption = "Refrescar"}
-            Dim btnCerrar As New BarButtonItem() With {.Caption = "Cerrar"}
-            Dim btnPrimero As New BarButtonItem() With {.Caption = "Primer registro"}
-            Dim btnAnterior As New BarButtonItem() With {.Caption = "Registro anterior"}
-            Dim btnSiguiente As New BarButtonItem() With {.Caption = "Registro siguiente"}
-            Dim btnUltimo As New BarButtonItem() With {.Caption = "Ultimo registro"}
-            Dim btnGuardarVista As New BarButtonItem() With {.Caption = "Guardar vista"}
-            Dim btnRestaurarVista As New BarButtonItem() With {.Caption = "Restaurar vista"}
-            Dim btnExportar As New BarButtonItem() With {.Caption = "Exportar"}
-
-            _barCampoFiltro.Caption = "Campo"
             _barCampoFiltro.Edit = _repoCampoFiltro
-            _barCampoFiltro.EditWidth = 170
 
-            _barBusqueda.Caption = "Buscar"
             _barBusqueda.Edit = _repoBusqueda
-            _barBusqueda.EditWidth = 280
 
-            _barBuscar.Caption = "Buscar"
-            _barLimpiar.Caption = "Limpiar"
-
-            _barTamanoPagina.Caption = "Tamano"
             _barTamanoPagina.Edit = _repoTamanoPagina
-            _barTamanoPagina.EditWidth = 70
-
-            _barPaginaAnterior.Caption = "Pag. anterior"
-            _barPaginaSiguiente.Caption = "Pag. siguiente"
-            _barResumenPagina.Caption = "Pag 1/1"
 
             _repoCampoFiltro.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
             _repoBusqueda.NullValuePrompt = "Buscar en datos..."
@@ -243,37 +215,42 @@ Namespace Forms.Base
             _repoTamanoPagina.MaxValue = 500
             _repoTamanoPagina.Increment = 5
 
-            Ribbon.RepositoryItems.AddRange(New RepositoryItem() {_repoCampoFiltro, _repoBusqueda, _repoTamanoPagina})
-            AssignIcon(btnNuevo, "Actions.Add")
-            AssignIcon(btnEditar, "Edit.Edit")
-            AssignIcon(btnRefrescar, "Actions.Refresh")
-            AssignIcon(btnCerrar, "Actions.Close|Actions.Cancel")
-            AssignIcon(btnPrimero, "Navigation.First|Arrows.ArrowUp")
-            AssignIcon(btnAnterior, "Navigation.Back|Navigation.Previous|Arrows.ArrowLeft")
-            AssignIcon(btnSiguiente, "Navigation.Forward|Navigation.Next|Arrows.ArrowRight")
-            AssignIcon(btnUltimo, "Navigation.Last|Arrows.ArrowDown")
-            AssignIcon(btnGuardarVista, "Save.Save")
-            AssignIcon(btnRestaurarVista, "Actions.Reset|Actions.Undo")
-            AssignIcon(btnExportar, "Export.ExportToXLSX|Export.ExportTo")
-            AssignIcon(_barCampoFiltro, "Filter.FilterEditor|Filter.Filter")
-            AssignIcon(_barBusqueda, "Find.Find|Actions.Search")
+            If Not Ribbon.RepositoryItems.Contains(_repoCampoFiltro) Then Ribbon.RepositoryItems.Add(_repoCampoFiltro)
+            If Not Ribbon.RepositoryItems.Contains(_repoBusqueda) Then Ribbon.RepositoryItems.Add(_repoBusqueda)
+            If Not Ribbon.RepositoryItems.Contains(_repoTamanoPagina) Then Ribbon.RepositoryItems.Add(_repoTamanoPagina)
+
+            AssignIcon(_btnNuevo, "Actions.Add")
+            AssignIcon(_btnEditar, "Edit.Edit")
+            AssignIcon(_btnRefrescar, "Actions.Refresh")
+            AssignIcon(_btnPrimero, "Navigation.First|Arrows.ArrowUp")
+            AssignIcon(_btnAnterior, "Navigation.Back|Navigation.Previous|Arrows.ArrowLeft")
+            AssignIcon(_btnSiguiente, "Navigation.Forward|Navigation.Next|Arrows.ArrowRight")
+            AssignIcon(_btnUltimo, "Navigation.Last|Arrows.ArrowDown")
+            AssignIcon(_btnGuardarVista, "Save.Save")
+            AssignIcon(_btnRestaurarVista, "Actions.Reset|Actions.Undo")
+            AssignIcon(_btnExportar, "Export.ExportToXLSX|Export.ExportTo")
             AssignIcon(_barBuscar, "Find.Find|Actions.Search")
             AssignIcon(_barLimpiar, "Actions.Clear")
-            AssignIcon(_barTamanoPagina, "Print.PageSetup|Print.Preview")
             AssignIcon(_barPaginaAnterior, "Navigation.Back|Navigation.Previous|Arrows.ArrowLeft")
             AssignIcon(_barPaginaSiguiente, "Navigation.Forward|Navigation.Next|Arrows.ArrowRight")
 
-            ApplyRibbonButtonVisual(btnNuevo)
-            ApplyRibbonButtonVisual(btnEditar)
-            ApplyRibbonButtonVisual(btnRefrescar)
-            ApplyRibbonButtonVisual(btnCerrar)
-            ApplyRibbonButtonVisual(btnPrimero)
-            ApplyRibbonButtonVisual(btnAnterior)
-            ApplyRibbonButtonVisual(btnSiguiente)
-            ApplyRibbonButtonVisual(btnUltimo)
-            ApplyRibbonButtonVisual(btnGuardarVista)
-            ApplyRibbonButtonVisual(btnRestaurarVista)
-            ApplyRibbonButtonVisual(btnExportar)
+            _barCampoFiltro.ImageOptions.Image = Nothing
+            _barCampoFiltro.ImageOptions.SvgImage = Nothing
+            _barBusqueda.ImageOptions.Image = Nothing
+            _barBusqueda.ImageOptions.SvgImage = Nothing
+            _barTamanoPagina.ImageOptions.Image = Nothing
+            _barTamanoPagina.ImageOptions.SvgImage = Nothing
+
+            ApplyRibbonButtonVisual(_btnNuevo)
+            ApplyRibbonButtonVisual(_btnEditar)
+            ApplyRibbonButtonVisual(_btnRefrescar)
+            ApplyRibbonButtonVisual(_btnPrimero)
+            ApplyRibbonButtonVisual(_btnAnterior)
+            ApplyRibbonButtonVisual(_btnSiguiente)
+            ApplyRibbonButtonVisual(_btnUltimo)
+            ApplyRibbonButtonVisual(_btnGuardarVista)
+            ApplyRibbonButtonVisual(_btnRestaurarVista)
+            ApplyRibbonButtonVisual(_btnExportar)
             ApplyRibbonButtonVisual(_barBuscar)
             ApplyRibbonButtonVisual(_barLimpiar)
             ApplyRibbonButtonVisual(_barPaginaAnterior)
@@ -282,64 +259,16 @@ Namespace Forms.Base
             ApplyRibbonEditVisual(_barBusqueda)
             ApplyRibbonEditVisual(_barTamanoPagina)
 
-            Ribbon.Items.AddRange(New BarItem() {
-                btnNuevo, btnEditar, btnRefrescar, btnCerrar,
-                btnPrimero, btnAnterior, btnSiguiente, btnUltimo,
-                btnGuardarVista, btnRestaurarVista, btnExportar,
-                _barCampoFiltro, _barBusqueda, _barBuscar, _barLimpiar,
-                _barTamanoPagina, _barPaginaAnterior, _barPaginaSiguiente, _barResumenPagina,
-                _statusInfo, _statusPaginacion
-            })
-
-            Dim page As New RibbonPage("Inicio")
-            page.Name = "rpInicio"
-            Dim groupOperaciones As New RibbonPageGroup("Operaciones")
-            groupOperaciones.ItemLinks.Add(btnNuevo)
-            groupOperaciones.ItemLinks.Add(btnEditar)
-            groupOperaciones.ItemLinks.Add(btnRefrescar)
-            groupOperaciones.ItemLinks.Add(btnCerrar)
-
-            Dim groupNavegacion As New RibbonPageGroup("Navegacion")
-            groupNavegacion.ItemLinks.Add(btnPrimero)
-            groupNavegacion.ItemLinks.Add(btnAnterior)
-            groupNavegacion.ItemLinks.Add(btnSiguiente)
-            groupNavegacion.ItemLinks.Add(btnUltimo)
-
-            Dim groupVista As New RibbonPageGroup("Vista y Reporte")
-            groupVista.ItemLinks.Add(btnGuardarVista)
-            groupVista.ItemLinks.Add(btnRestaurarVista)
-            groupVista.ItemLinks.Add(btnExportar)
-
-            Dim groupBusqueda As New RibbonPageGroup("Busqueda")
-            groupBusqueda.ItemLinks.Add(_barCampoFiltro)
-            groupBusqueda.ItemLinks.Add(_barBusqueda)
-            groupBusqueda.ItemLinks.Add(_barBuscar)
-            groupBusqueda.ItemLinks.Add(_barLimpiar)
-
-            Dim groupPaginacion As New RibbonPageGroup("Paginacion")
-            groupPaginacion.ItemLinks.Add(_barTamanoPagina)
-            groupPaginacion.ItemLinks.Add(_barPaginaAnterior)
-            groupPaginacion.ItemLinks.Add(_barPaginaSiguiente)
-            groupPaginacion.ItemLinks.Add(_barResumenPagina)
-
-            page.Groups.Add(groupOperaciones)
-            page.Groups.Add(groupBusqueda)
-            page.Groups.Add(groupPaginacion)
-            page.Groups.Add(groupNavegacion)
-            page.Groups.Add(groupVista)
-            Ribbon.Pages.Add(page)
-
-            AddHandler btnNuevo.ItemClick, AddressOf OnNuevoClick
-            AddHandler btnEditar.ItemClick, AddressOf OnEditarClick
-            AddHandler btnRefrescar.ItemClick, AddressOf OnRefrescarClick
-            AddHandler btnCerrar.ItemClick, AddressOf OnCerrarClick
-            AddHandler btnPrimero.ItemClick, AddressOf OnPrimerRegistroClick
-            AddHandler btnAnterior.ItemClick, AddressOf OnRegistroAnteriorClick
-            AddHandler btnSiguiente.ItemClick, AddressOf OnRegistroSiguienteClick
-            AddHandler btnUltimo.ItemClick, AddressOf OnUltimoRegistroClick
-            AddHandler btnGuardarVista.ItemClick, AddressOf OnGuardarVistaClick
-            AddHandler btnRestaurarVista.ItemClick, AddressOf OnRestaurarVistaClick
-            AddHandler btnExportar.ItemClick, AddressOf OnExportarClick
+            AddHandler _btnNuevo.ItemClick, AddressOf OnNuevoClick
+            AddHandler _btnEditar.ItemClick, AddressOf OnEditarClick
+            AddHandler _btnRefrescar.ItemClick, AddressOf OnRefrescarClick
+            AddHandler _btnPrimero.ItemClick, AddressOf OnPrimerRegistroClick
+            AddHandler _btnAnterior.ItemClick, AddressOf OnRegistroAnteriorClick
+            AddHandler _btnSiguiente.ItemClick, AddressOf OnRegistroSiguienteClick
+            AddHandler _btnUltimo.ItemClick, AddressOf OnUltimoRegistroClick
+            AddHandler _btnGuardarVista.ItemClick, AddressOf OnGuardarVistaClick
+            AddHandler _btnRestaurarVista.ItemClick, AddressOf OnRestaurarVistaClick
+            AddHandler _btnExportar.ItemClick, AddressOf OnExportarClick
             AddHandler _barBuscar.ItemClick, AddressOf OnBuscarRibbonClick
             AddHandler _barLimpiar.ItemClick, AddressOf OnLimpiarRibbonClick
             AddHandler _barPaginaAnterior.ItemClick, AddressOf OnPaginaAnteriorRibbonClick
@@ -353,7 +282,7 @@ Namespace Forms.Base
         Private Sub ConfigureGrid()
             Grid.Dock = DockStyle.Fill
             Grid.MainView = View
-            Grid.UseEmbeddedNavigator = True
+            Grid.UseEmbeddedNavigator = False
 
             View.OptionsBehavior.Editable = False
             View.OptionsBehavior.AllowIncrementalSearch = True
@@ -364,7 +293,9 @@ Namespace Forms.Base
             View.FocusRectStyle = DrawFocusRectStyle.RowFocus
             View.OptionsCustomization.AllowSort = True
             View.OptionsCustomization.AllowFilter = True
+            View.OptionsFind.AllowFindPanel = False
             View.OptionsFind.AlwaysVisible = False
+            View.OptionsFind.ShowFindButton = False
             View.OptionsFind.FindNullPrompt = "Buscar en datos..."
 
             AddHandler View.EndSorting, AddressOf OnGridEndSorting
@@ -372,14 +303,22 @@ Namespace Forms.Base
 
         Private Sub ConfigureLayout()
             MainLayout.Dock = DockStyle.Fill
-            MainLayout.Root = New LayoutControlGroup() With {
-                .EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True,
-                .GroupBordersVisible = False
-            }
+            If MainLayout.Root Is Nothing Then
+                MainLayout.Root = New LayoutControlGroup() With {
+                    .EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True,
+                    .GroupBordersVisible = False
+                }
+            End If
 
-            MainLayout.Controls.Add(Grid)
-            Dim item = DirectCast(MainLayout.Root, LayoutControlGroup).AddItem(String.Empty, Grid)
-            item.TextVisible = False
+            If Grid.Parent IsNot MainLayout Then
+                MainLayout.Controls.Add(Grid)
+            End If
+
+            Dim rootGroup = TryCast(MainLayout.Root, LayoutControlGroup)
+            If rootGroup IsNot Nothing AndAlso rootGroup.Items.Count = 0 Then
+                Dim item = rootGroup.AddItem(String.Empty, Grid)
+                item.TextVisible = False
+            End If
         End Sub
 
         Private Sub ConfigureStatus()
@@ -387,6 +326,7 @@ Namespace Forms.Base
             _statusBar.Ribbon = Ribbon
             _statusInfo.Caption = $"Origen: {BuildEndpoint()}"
             _statusPaginacion.Caption = "Registros: 0"
+            _statusBar.ItemLinks.Clear()
             _statusBar.ItemLinks.Add(_statusInfo)
             _statusBar.ItemLinks.Add(_statusPaginacion)
         End Sub
@@ -416,11 +356,15 @@ Namespace Forms.Base
 
             Dim selectedSvg As SvgImage = Nothing
             For Each candidate In iconKeys.Split("|"c, StringSplitOptions.RemoveEmptyEntries)
-                Dim svg = TryCast(IconService.GetIcon(candidate.Trim()), SvgImage)
-                If svg IsNot Nothing Then
-                    selectedSvg = svg
-                    Exit For
-                End If
+                Try
+                    Dim svg = TryCast(IconService.GetIcon(candidate.Trim()), SvgImage)
+                    If svg IsNot Nothing Then
+                        selectedSvg = svg
+                        Exit For
+                    End If
+                Catch
+                    ' En diseno el cache de imagenes puede no resolver algunas claves; usar fallback.
+                End Try
             Next
 
             Dim selectedBitmap As Image = Nothing
@@ -671,7 +615,7 @@ Namespace Forms.Base
         End Sub
 
         Protected Overridable Function BuildEndpoint() As String
-            Return "api/v1/base/search"
+            Return "api/v1/base/search/listar"
         End Function
 
         Private Sub OnFirstShown(ByVal sender As Object, ByVal e As EventArgs)
@@ -1215,7 +1159,7 @@ Namespace Forms.Base
             }
 
             Try
-                _apiClient.PostAsync(Of GuardarLayoutUiRequestDto, GuardarLayoutUiResponseDto)("api/v1/seguridad/layout_ui", request).GetAwaiter().GetResult()
+                _apiClient.PostAsync(Of GuardarLayoutUiRequestDto, GuardarLayoutUiResponseDto)("api/v1/seguridad/layout_ui/crear", request).GetAwaiter().GetResult()
                 If notify Then XtraMessageBox.Show(Me, "Vista guardada correctamente.", "Vista", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Catch
                 If notify Then XtraMessageBox.Show(Me, "No fue posible guardar la vista en la base de datos.", "Vista", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -1418,6 +1362,9 @@ Namespace Forms.Base
         Private Shared Function IsDesignerHosted() As Boolean
             Return LicenseManager.UsageMode = LicenseUsageMode.Designtime
         End Function
+
+
     End Class
 End Namespace
+
 
