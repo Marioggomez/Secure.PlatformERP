@@ -1796,6 +1796,27 @@ Namespace Forms.Seguridad
                 Return False
             End Try
         End Function
+
+        Private Sub TryBuildTab(ByVal tab As TabPage, ByVal builder As Action(Of TabPage))
+            Try
+                builder(tab)
+            Catch
+                If Not IsDesignHost() Then
+                    Throw
+                End If
+
+                tab.Controls.Clear()
+                Dim placeholder As New LabelControl With {
+                    .Text = "Vista previa de diseno: componente cargado con modo seguro.",
+                    .Dock = DockStyle.Fill,
+                    .AutoSizeMode = LabelAutoSizeMode.None
+                }
+                placeholder.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center
+                placeholder.Appearance.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center
+                placeholder.Appearance.ForeColor = Color.DimGray
+                tab.Controls.Add(placeholder)
+            End Try
+        End Sub
     End Class
 End Namespace
 
