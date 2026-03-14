@@ -1768,11 +1768,34 @@ Namespace Forms.Seguridad
         End Function
 
         Private Shared Sub AssignIcon(ByVal item As BarButtonItem, ByVal iconKey As String)
-            Dim svg = TryCast(IconService.GetIcon(iconKey), SvgImage)
-            If svg IsNot Nothing Then
-                item.ImageOptions.SvgImage = svg
+            If IsDesignHost() Then
+                Return
             End If
+
+            Try
+                Dim svg = TryCast(IconService.GetIcon(iconKey), SvgImage)
+                If svg IsNot Nothing Then
+                    item.ImageOptions.SvgImage = svg
+                End If
+            Catch
+                ' En diseñador no bloqueamos la carga visual por iconos.
+            End Try
         End Sub
+
+        Private Shared Function IsDesignHost() As Boolean
+            If LicenseManager.UsageMode = LicenseUsageMode.Designtime Then
+                Return True
+            End If
+
+            Try
+                Dim exePath = Application.ExecutablePath
+                Return Not String.IsNullOrWhiteSpace(exePath) AndAlso
+                    (exePath.IndexOf("devenv", StringComparison.OrdinalIgnoreCase) >= 0 OrElse
+                     exePath.IndexOf("xdesproc", StringComparison.OrdinalIgnoreCase) >= 0)
+            Catch
+                Return False
+            End Try
+        End Function
     End Class
 End Namespace
 

@@ -221,9 +221,24 @@ Namespace Forms.Seguridad
             Name = "FrmIamAdminCenter"
             Text = "Centro IAM"
 
-            ConfigureRibbon()
-            ConfigureBody()
-            ConfigureStatusBar()
+            If IsDesignHost() Then
+                Try
+                    ConfigureRibbon()
+                Catch
+                End Try
+                Try
+                    ConfigureBody()
+                Catch
+                End Try
+                Try
+                    ConfigureStatusBar()
+                Catch
+                End Try
+            Else
+                ConfigureRibbon()
+                ConfigureBody()
+                ConfigureStatusBar()
+            End If
 
             Controls.Add(_mainLayout)
             Controls.Add(_statusBar)
@@ -343,6 +358,7 @@ Namespace Forms.Seguridad
         Private Sub ConfigureStatusBar()
             _statusBar.Dock = DockStyle.Bottom
             _statusBar.Ribbon = _ribbon
+            _ribbon.StatusBar = _statusBar
             _statusInfo.Caption = "Centro IAM listo."
             _statusModulo.Caption = "Seccion: Usuarios"
 
