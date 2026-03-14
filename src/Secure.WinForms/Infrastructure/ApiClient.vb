@@ -5,6 +5,7 @@ Imports System.Net.Http.Json
 Imports System.Linq
 Imports System.Text
 Imports System.Text.Json
+Imports System.Threading
 
 Namespace Infrastructure
     ''' <summary>
@@ -136,25 +137,52 @@ Namespace Infrastructure
         End Function
 
         Private Async Function SendAsync(Of TResponse)(ByVal request As HttpRequestMessage) As Task(Of TResponse)
-            request.Headers.Add("X-Correlation-Id", Guid.NewGuid().ToString())
+            Dim correlationId = Guid.NewGuid().ToString("N")
+            request.Headers.Add("X-Correlation-Id", correlationId)
 
-            Using response = Await _httpClient.SendAsync(request).ConfigureAwait(False)
-                Dim responseText = Await response.Content.ReadAsStringAsync().ConfigureAwait(False)
+            Try
+                Using response = Await _httpClient.SendAsync(request).ConfigureAwait(False)
+                    Dim responseText = Await response.Content.ReadAsStringAsync().ConfigureAwait(False)
 
-                If Not response.IsSuccessStatusCode Then
-                    Throw New ApiClientException(
-                        $"API devolvio {(CInt(response.StatusCode)).ToString()} {response.StatusCode}.",
-                        response.StatusCode,
-                        responseText)
-                End If
+                    If Not response.IsSuccessStatusCode Then
+                        Throw New ApiClientException(
+                            $"API devolvio {(CInt(response.StatusCode)).ToString()} {response.StatusCode}.",
+                            response.StatusCode,
+                            responseText,
+                            request.RequestUri?.PathAndQuery,
+                            request.Method.Method,
+                            correlationId,
+                            False)
+                    End If
 
-                If String.IsNullOrWhiteSpace(responseText) Then
-                    Return Nothing
-                End If
+                    If String.IsNullOrWhiteSpace(responseText) Then
+                        Return Nothing
+                    End If
 
-                Dim result = JsonSerializer.Deserialize(Of TResponse)(responseText, _jsonOptions)
-                Return result
-            End Using
+                    Dim result = JsonSerializer.Deserialize(Of TResponse)(responseText, _jsonOptions)
+                    Return result
+                End Using
+            Catch ex As TaskCanceledException When Not ex.CancellationToken.IsCancellationRequested
+                Throw New ApiClientException(
+                    "Tiempo de espera agotado al consumir la API.",
+                    HttpStatusCode.RequestTimeout,
+                    ex.Message,
+                    request.RequestUri?.PathAndQuery,
+                    request.Method.Method,
+                    correlationId,
+                    True,
+                    ex)
+            Catch ex As HttpRequestException
+                Throw New ApiClientException(
+                    "No fue posible establecer comunicacion con la API.",
+                    HttpStatusCode.ServiceUnavailable,
+                    ex.Message,
+                    request.RequestUri?.PathAndQuery,
+                    request.Method.Method,
+                    correlationId,
+                    True,
+                    ex)
+            End Try
         End Function
     End Class
 
@@ -169,9 +197,35 @@ Namespace Infrastructure
             MyBase.New(message)
             Me.StatusCode = statusCode
             Me.ResponseBody = responseBody
+            Me.Endpoint = String.Empty
+            Me.Method = String.Empty
+            Me.CorrelationId = String.Empty
+            Me.IsConnectivityError = False
+        End Sub
+
+        Public Sub New(
+            ByVal message As String,
+            ByVal statusCode As HttpStatusCode,
+            ByVal responseBody As String,
+            ByVal endpoint As String,
+            ByVal method As String,
+            ByVal correlationId As String,
+            ByVal isConnectivityError As Boolean,
+            Optional ByVal inner As Exception = Nothing)
+            MyBase.New(message, inner)
+            Me.StatusCode = statusCode
+            Me.ResponseBody = responseBody
+            Me.Endpoint = If(endpoint, String.Empty)
+            Me.Method = If(method, String.Empty)
+            Me.CorrelationId = If(correlationId, String.Empty)
+            Me.IsConnectivityError = isConnectivityError
         End Sub
 
         Public ReadOnly Property StatusCode As HttpStatusCode
         Public ReadOnly Property ResponseBody As String
+        Public ReadOnly Property Endpoint As String
+        Public ReadOnly Property Method As String
+        Public ReadOnly Property CorrelationId As String
+        Public ReadOnly Property IsConnectivityError As Boolean
     End Class
 End Namespace

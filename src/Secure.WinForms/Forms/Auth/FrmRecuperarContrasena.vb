@@ -87,10 +87,9 @@ Namespace Forms.Auth
 
                 XtraMessageBox.Show(Me, response.Mensaje, "Recuperacion", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Catch apiEx As ApiClientException
-                Dim detalle = If(String.IsNullOrWhiteSpace(apiEx.ResponseBody), apiEx.Message, apiEx.ResponseBody)
-                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.Show(Me, apiEx, "inicio de recuperacion")
             Catch ex As Exception
-                XtraMessageBox.Show(Me, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.ShowUnexpected(Me, ex, "inicio de recuperacion")
             Finally
                 ToggleUi(True)
             End Try
@@ -148,10 +147,9 @@ Namespace Forms.Auth
                 DialogResult = DialogResult.OK
                 Close()
             Catch apiEx As ApiClientException
-                Dim detalle = If(String.IsNullOrWhiteSpace(apiEx.ResponseBody), apiEx.Message, apiEx.ResponseBody)
-                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.Show(Me, apiEx, "completar recuperacion")
             Catch ex As Exception
-                XtraMessageBox.Show(Me, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.ShowUnexpected(Me, ex, "completar recuperacion")
             Finally
                 ToggleUi(True)
             End Try

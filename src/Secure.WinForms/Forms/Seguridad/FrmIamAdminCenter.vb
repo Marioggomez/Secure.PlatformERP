@@ -1897,10 +1897,9 @@ Namespace Forms.Seguridad
             Try
                 Await RegistrarHelpdeskAsync().ConfigureAwait(True)
             Catch ex As ApiClientException
-                Dim detalle = If(String.IsNullOrWhiteSpace(ex.ResponseBody), ex.Message, ex.ResponseBody)
-                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.Show(Me, ex, "registro Helpdesk MFA")
             Catch ex As Exception
-                XtraMessageBox.Show(Me, ex.Message, "Helpdesk MFA", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.ShowUnexpected(Me, ex, "registro Helpdesk MFA")
             End Try
         End Sub
 
@@ -2012,10 +2011,9 @@ Namespace Forms.Seguridad
                         _statusInfo.Caption = "Esta seccion es de consulta; no requiere guardar."
                 End Select
             Catch ex As ApiClientException
-                Dim detalle = If(String.IsNullOrWhiteSpace(ex.ResponseBody), ex.Message, ex.ResponseBody)
-                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.Show(Me, ex, "guardar en Centro IAM")
             Catch ex As Exception
-                XtraMessageBox.Show(Me, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.ShowUnexpected(Me, ex, "guardar en Centro IAM")
             End Try
         End Sub
 
@@ -2337,10 +2335,9 @@ Namespace Forms.Seguridad
                 _statusInfo.Caption = "Clave temporal aplicada y usuario marcado para cambio obligatorio."
                 XtraMessageBox.Show(Me, $"Clave temporal aplicada: {nuevaClave}", "Reset clave", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Catch ex As ApiClientException
-                Dim detalle = If(String.IsNullOrWhiteSpace(ex.ResponseBody), ex.Message, ex.ResponseBody)
-                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.Show(Me, ex, "reset de clave de usuario")
             Catch ex As Exception
-                XtraMessageBox.Show(Me, ex.Message, "Reset clave", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.ShowUnexpected(Me, ex, "reset de clave de usuario")
             Finally
                 SetBusy(False)
             End Try

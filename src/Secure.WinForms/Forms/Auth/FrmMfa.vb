@@ -64,6 +64,8 @@ Namespace Forms.Auth
             Else
                 _lblCodigoPrueba.Visible = False
             End If
+
+            AdjustDialogToContent()
         End Sub
 
         Private Sub WireEvents()
@@ -71,6 +73,9 @@ Namespace Forms.Auth
             AddHandler _btnReenviar.Click, AddressOf OnReenviarClickAsync
             AddHandler _btnCancelar.Click, AddressOf OnCancelarClick
             AddHandler _txtCodigo.KeyDown, AddressOf OnCodigoKeyDown
+            AddHandler Shown, AddressOf OnFormShown
+            AddHandler FormClosed, AddressOf OnFormClosedCleanup
+            AddHandler DevExpress.LookAndFeel.UserLookAndFeel.Default.StyleChanged, AddressOf OnGlobalStyleChanged
         End Sub
 
         Private Async Sub OnValidarClickAsync(ByVal sender As Object, ByVal e As EventArgs)
@@ -115,10 +120,9 @@ Namespace Forms.Auth
                 DialogResult = DialogResult.OK
                 Close()
             Catch apiEx As ApiClientException
-                Dim detalle = If(String.IsNullOrWhiteSpace(apiEx.ResponseBody), apiEx.Message, apiEx.ResponseBody)
-                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.Show(Me, apiEx, "validacion MFA")
             Catch ex As Exception
-                XtraMessageBox.Show(Me, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.ShowUnexpected(Me, ex, "validacion MFA")
             Finally
                 ToggleUi(True)
             End Try
@@ -151,12 +155,12 @@ Namespace Forms.Auth
                 _idDesafioActual = response.IdDesafioMfa.Value
                 _lblCodigoPrueba.Text = $"Codigo de prueba (QA): {response.CodigoMfaPrueba}"
                 _lblCodigoPrueba.Visible = True
+                AdjustDialogToContent()
                 XtraMessageBox.Show(Me, response.Mensaje, "MFA", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Catch apiEx As ApiClientException
-                Dim detalle = If(String.IsNullOrWhiteSpace(apiEx.ResponseBody), apiEx.Message, apiEx.ResponseBody)
-                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.Show(Me, apiEx, "reenvio MFA")
             Catch ex As Exception
-                XtraMessageBox.Show(Me, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.ShowUnexpected(Me, ex, "reenvio MFA")
             Finally
                 ToggleUi(True)
             End Try
@@ -178,6 +182,56 @@ Namespace Forms.Auth
             If e.KeyCode = Keys.Enter Then
                 OnValidarClickAsync(sender, EventArgs.Empty)
             End If
+        End Sub
+
+        Private Sub OnFormShown(ByVal sender As Object, ByVal e As EventArgs)
+            AdjustDialogToContent()
+        End Sub
+
+        Private Sub OnFormClosedCleanup(ByVal sender As Object, ByVal e As FormClosedEventArgs)
+            RemoveHandler DevExpress.LookAndFeel.UserLookAndFeel.Default.StyleChanged, AddressOf OnGlobalStyleChanged
+        End Sub
+
+        Private Sub OnGlobalStyleChanged(ByVal sender As Object, ByVal e As EventArgs)
+            If IsDisposed Then Return
+
+            If IsHandleCreated Then
+                BeginInvoke(New MethodInvoker(AddressOf AdjustDialogToContent))
+            End If
+        End Sub
+
+        Private Sub AdjustDialogToContent()
+            If IsDisposed Then Return
+            If _layoutMain Is Nothing OrElse _layoutMain.IsDisposed Then Return
+
+            _layoutMain.SuspendLayout()
+            Try
+                _layoutMain.PerformLayout()
+
+                Dim maxRight = 0
+                Dim maxBottom = 0
+                For Each ctl As Control In _layoutMain.Controls
+                    If ctl Is Nothing OrElse Not ctl.Visible Then Continue For
+                    maxRight = Math.Max(maxRight, ctl.Right)
+                    maxBottom = Math.Max(maxBottom, ctl.Bottom)
+                Next
+
+                Const horizontalPadding As Integer = 20
+                Const verticalPadding As Integer = 20
+
+                Dim targetClientWidth = Math.Max(320, maxRight + horizontalPadding)
+                Dim targetClientHeight = Math.Max(240, maxBottom + verticalPadding)
+
+                If ClientSize.Width <> targetClientWidth OrElse ClientSize.Height <> targetClientHeight Then
+                    ClientSize = New Size(targetClientWidth, targetClientHeight)
+                End If
+
+                Dim nonClientWidth = Width - ClientSize.Width
+                Dim nonClientHeight = Height - ClientSize.Height
+                MinimumSize = New Size(targetClientWidth + nonClientWidth, targetClientHeight + nonClientHeight)
+            Finally
+                _layoutMain.ResumeLayout()
+            End Try
         End Sub
     End Class
 End Namespace

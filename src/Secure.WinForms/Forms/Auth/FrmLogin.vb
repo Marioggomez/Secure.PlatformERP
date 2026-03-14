@@ -106,10 +106,9 @@ Namespace Forms.Auth
                 DialogResult = DialogResult.OK
                 Close()
             Catch apiEx As ApiClientException
-                Dim detalle = If(String.IsNullOrWhiteSpace(apiEx.ResponseBody), apiEx.Message, apiEx.ResponseBody)
-                XtraMessageBox.Show(Me, detalle, "Error API", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.Show(Me, apiEx, "inicio de sesion")
             Catch ex As Exception
-                XtraMessageBox.Show(Me, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ApiErrorPresenter.ShowUnexpected(Me, ex, "inicio de sesion")
             Finally
                 ToggleUi(True)
             End Try
