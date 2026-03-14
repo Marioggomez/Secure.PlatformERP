@@ -112,11 +112,109 @@ Namespace Forms.Seguridad
         Private _viewAuditoria As GridView
 
         Private Sub InitializeComponent()
+            _ribbon = New RibbonControl()
+            _statusBar = New RibbonStatusBar()
+            _statusInfo = New BarStaticItem()
+            _statusModulo = New BarStaticItem()
+            _btnTabUsuarios = New BarButtonItem() With {.Caption = "Usuarios"}
+            _btnTabRoles = New BarButtonItem() With {.Caption = "Roles"}
+            _btnTabAsignaciones = New BarButtonItem() With {.Caption = "Asignaciones"}
+            _btnTabPermisos = New BarButtonItem() With {.Caption = "Permisos"}
+            _btnTabMenu = New BarButtonItem() With {.Caption = "Menu UI"}
+            _btnTabSesiones = New BarButtonItem() With {.Caption = "Sesiones"}
+            _btnTabHelpdesk = New BarButtonItem() With {.Caption = "Helpdesk MFA"}
+            _btnTabAuditoria = New BarButtonItem() With {.Caption = "Auditoria"}
+            _btnNuevo = New BarButtonItem() With {.Caption = "Nuevo"}
+            _btnGuardar = New BarButtonItem() With {.Caption = "Guardar"}
+            _btnRefrescar = New BarButtonItem() With {.Caption = "Refrescar"}
+            _btnDesactivar = New BarButtonItem() With {.Caption = "Desactivar"}
+            _btnLimpiar = New BarButtonItem() With {.Caption = "Limpiar editor"}
+            _btnResetClave = New BarButtonItem() With {.Caption = "Reset clave"}
+
+            _mainLayout = New LayoutControl()
+            _tabs = New TabControl()
+
+            _splitUsuarios = New SplitContainerControl()
+            _txtBuscarUsuarios = New TextEdit()
+            _gridUsuarios = New GridControl()
+            _viewUsuarios = New GridView()
+            _txtUsuarioCodigo = New TextEdit()
+            _txtUsuarioLogin = New TextEdit()
+            _txtUsuarioNombre = New TextEdit()
+            _txtUsuarioApellido = New TextEdit()
+            _txtUsuarioNombreMostrar = New TextEdit()
+            _txtUsuarioCorreo = New TextEdit()
+            _cmbUsuarioEstado = New ComboBoxEdit()
+            _chkUsuarioActivo = New CheckEdit()
+            _chkUsuarioMfa = New CheckEdit()
+            _chkUsuarioCambioClave = New CheckEdit()
+
+            _splitRoles = New SplitContainerControl()
+            _txtBuscarRoles = New TextEdit()
+            _gridRoles = New GridControl()
+            _viewRoles = New GridView()
+            _txtRolCodigo = New TextEdit()
+            _txtRolNombre = New TextEdit()
+            _memoRolDescripcion = New MemoEdit()
+            _chkRolActivo = New CheckEdit()
+            _chkRolSistema = New CheckEdit()
+
+            _splitAsignaciones = New SplitContainerControl()
+            _txtBuscarAsignaciones = New TextEdit()
+            _gridAsignaciones = New GridControl()
+            _viewAsignaciones = New GridView()
+            _cmbAsignUsuario = New ComboBoxEdit()
+            _cmbAsignRol = New ComboBoxEdit()
+            _cmbAsignAlcance = New ComboBoxEdit()
+            _dteAsignInicio = New DateEdit()
+            _dteAsignFin = New DateEdit()
+            _chkAsignActivo = New CheckEdit()
+
+            _splitPermisos = New SplitContainerControl()
+            _txtBuscarPermisos = New TextEdit()
+            _cmbPermisosRol = New ComboBoxEdit()
+            _btnPermisoConceder = New SimpleButton() With {.Text = "Conceder permiso"}
+            _btnPermisoRevocar = New SimpleButton() With {.Text = "Revocar permiso"}
+            _gridPermisos = New GridControl()
+            _viewPermisos = New GridView()
+
+            _splitMenu = New SplitContainerControl()
+            _txtBuscarMenu = New TextEdit()
+            _cmbMenuRol = New ComboBoxEdit()
+            _btnMenuConceder = New SimpleButton() With {.Text = "Conceder menu"}
+            _btnMenuRevocar = New SimpleButton() With {.Text = "Revocar menu"}
+            _gridMenu = New GridControl()
+            _viewMenu = New GridView()
+
+            _splitSesiones = New SplitContainerControl()
+            _txtBuscarSesiones = New TextEdit()
+            _gridSesiones = New GridControl()
+            _viewSesiones = New GridView()
+
+            _splitHelpdesk = New SplitContainerControl()
+            _cmbHelpdeskUsuario = New ComboBoxEdit()
+            _cmbHelpdeskAprobador = New ComboBoxEdit()
+            _chkHelpdeskCritico = New CheckEdit() With {.Text = "Operacion critica (requiere 4 ojos)"}
+            _memoHelpdeskMotivo = New MemoEdit()
+            _btnHelpdeskRegistrar = New SimpleButton() With {.Text = "Registrar Reinicio MFA"}
+            _txtBuscarHelpdesk = New TextEdit()
+            _gridHelpdesk = New GridControl()
+            _viewHelpdesk = New GridView()
+
+            _splitAuditoria = New SplitContainerControl()
+            _txtBuscarAuditoria = New TextEdit()
+            _cmbSimUsuario = New ComboBoxEdit()
+            _cmbSimEmpresa = New ComboBoxEdit()
+            _btnSimularScope = New SimpleButton() With {.Text = "Simular alcance"}
+            _memoSimulador = New MemoEdit()
+            _gridAuditoria = New GridControl()
+            _viewAuditoria = New GridView()
+
             SuspendLayout()
             ' 
             ' FrmIamAdminCenter
             ' 
-            AutoScaleDimensions = New SizeF(96F, 96F)
+            AutoScaleDimensions = New SizeF(96.0F, 96.0F)
             AutoScaleMode = AutoScaleMode.Dpi
             ClientSize = New Size(1256, 859)
             FormBorderStyle = FormBorderStyle.None
