@@ -210,6 +210,9 @@ Namespace Forms.Seguridad
             _gridAuditoria = New GridControl()
             _viewAuditoria = New GridView()
 
+            _statusBar.Ribbon = _ribbon
+            _ribbon.StatusBar = _statusBar
+
             SuspendLayout()
             ' 
             ' FrmIamAdminCenter
@@ -237,6 +240,7 @@ Namespace Forms.Seguridad
             _ribbon.ShowApplicationButton = DevExpress.Utils.DefaultBoolean.False
             _ribbon.ToolbarLocation = RibbonQuickAccessToolbarLocation.Hidden
             _ribbon.MdiMergeStyle = RibbonMdiMergeStyle.Always
+            Ribbon = _ribbon
 
             AssignIcon(_btnTabUsuarios, "BusinessObjects.BOUser")
             AssignIcon(_btnTabRoles, "BusinessObjects.BORole")
@@ -344,6 +348,7 @@ Namespace Forms.Seguridad
             _statusBar.Dock = DockStyle.Bottom
             _statusBar.Ribbon = _ribbon
             _ribbon.StatusBar = _statusBar
+            StatusBar = _statusBar
             _statusInfo.Caption = "Centro IAM listo."
             _statusModulo.Caption = "Seccion: Usuarios"
 

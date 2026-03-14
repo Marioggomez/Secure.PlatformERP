@@ -23,7 +23,7 @@ Namespace Forms.Seguridad
     ''' Autor: Mario Gomez.
     ''' </summary>
     Partial Public Class FrmIamAdminCenter
-        Inherits XtraForm
+        Inherits RibbonForm
         Private Const PasswordHashAlgorithm As String = "SHA2_512"
         Private Const PasswordHashIterations As Integer = 100000
         Private Const PasswordUpperChars As String = "ABCDEFGHJKLMNPQRSTUVWXYZ"
