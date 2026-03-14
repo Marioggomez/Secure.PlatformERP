@@ -221,24 +221,9 @@ Namespace Forms.Seguridad
             Name = "FrmIamAdminCenter"
             Text = "Centro IAM"
 
-            If IsDesignHost() Then
-                Try
-                    ConfigureRibbon()
-                Catch
-                End Try
-                Try
-                    ConfigureBody()
-                Catch
-                End Try
-                Try
-                    ConfigureStatusBar()
-                Catch
-                End Try
-            Else
-                ConfigureRibbon()
-                ConfigureBody()
-                ConfigureStatusBar()
-            End If
+            ConfigureRibbon()
+            ConfigureBody()
+            ConfigureStatusBar()
 
             Controls.Add(_mainLayout)
             Controls.Add(_statusBar)
