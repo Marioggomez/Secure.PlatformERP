@@ -95,8 +95,8 @@ public sealed class RecursoUiPermisoRepository : IRecursoUiPermisoRepository
         command.Parameters.Add(CreateParameter("@id_permiso", SqlDbType.Int, dto.IdPermiso));
         command.Parameters.Add(CreateParameter("@activo", SqlDbType.Bit, dto.Activo));
         command.Parameters.Add(CreateParameter("@creado_utc", SqlDbType.DateTime2, dto.CreadoUtc));
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        return affected > 0;
+        var affected = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return HasAffectedRows(affected);
     }
 
     public async Task<bool> DesactivarAsync(long idRecursoUi, string? usuario, CancellationToken cancellationToken)
@@ -108,8 +108,8 @@ public sealed class RecursoUiPermisoRepository : IRecursoUiPermisoRepository
         command.CommandText = SpDesactivar;
         command.Parameters.Add(CreateParameter("@id_recurso_ui", SqlDbType.BigInt, idRecursoUi));
         command.Parameters.Add(CreateParameter("@usuario", SqlDbType.VarChar, usuario, 180));
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        return affected > 0;
+        var affected = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return HasAffectedRows(affected);
     }
 
     private static SqlParameter CreateParameter(string name, SqlDbType type, object? value, int? size = null)
@@ -117,5 +117,20 @@ public sealed class RecursoUiPermisoRepository : IRecursoUiPermisoRepository
         var parameter = size.HasValue ? new SqlParameter(name, type, size.Value) : new SqlParameter(name, type);
         parameter.Value = value ?? DBNull.Value;
         return parameter;
+    }
+
+    private static bool HasAffectedRows(object? result)
+    {
+        if (result is null || result == DBNull.Value)
+        {
+            return false;
+        }
+
+        if (result is int i)
+        {
+            return i > 0;
+        }
+
+        return Convert.ToInt32(result) > 0;
     }
 }
