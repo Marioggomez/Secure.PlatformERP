@@ -23,6 +23,7 @@ public sealed class LoginResponseDto
 {
     public bool Autenticado { get; set; }
     public bool RequiereMfa { get; set; }
+    public bool RequiereSeleccionEmpresa { get; set; }
     public string Mensaje { get; set; } = string.Empty;
     public Guid? IdFlujoAutenticacion { get; set; }
     public Guid? IdDesafioMfa { get; set; }
@@ -33,6 +34,7 @@ public sealed class LoginResponseDto
     public long? IdTenant { get; set; }
     public long? IdEmpresa { get; set; }
     public string? UsuarioMostrar { get; set; }
+    public IReadOnlyList<EmpresaAccesoDto> EmpresasDisponibles { get; set; } = Array.Empty<EmpresaAccesoDto>();
     public IReadOnlyList<string> Permisos { get; set; } = Array.Empty<string>();
     public IReadOnlyList<RecursoUiAccesoDto> RecursosUi { get; set; } = Array.Empty<RecursoUiAccesoDto>();
 }
@@ -59,6 +61,41 @@ public sealed class ValidarMfaRequestDto
 public sealed class ValidarMfaResponseDto
 {
     public bool Validado { get; set; }
+    public bool RequiereSeleccionEmpresa { get; set; }
+    public string Mensaje { get; set; } = string.Empty;
+    public Guid? IdFlujoAutenticacion { get; set; }
+    public string? TokenSesion { get; set; }
+    public DateTime? ExpiraSesionUtc { get; set; }
+    public long? IdUsuario { get; set; }
+    public long? IdTenant { get; set; }
+    public long? IdEmpresa { get; set; }
+    public string? UsuarioMostrar { get; set; }
+    public IReadOnlyList<EmpresaAccesoDto> EmpresasDisponibles { get; set; } = Array.Empty<EmpresaAccesoDto>();
+    public IReadOnlyList<string> Permisos { get; set; } = Array.Empty<string>();
+    public IReadOnlyList<RecursoUiAccesoDto> RecursosUi { get; set; } = Array.Empty<RecursoUiAccesoDto>();
+}
+
+/// <summary>
+/// Solicitud para seleccionar empresa de trabajo tras login/MFA.
+/// Autor: Mario Gomez.
+/// </summary>
+public sealed class SeleccionarEmpresaRequestDto
+{
+    public Guid IdFlujoAutenticacion { get; set; }
+    public long IdEmpresa { get; set; }
+    public string? IpOrigen { get; set; }
+    public string? AgenteUsuario { get; set; }
+    public string? HuellaDispositivo { get; set; }
+    public string? SolicitudId { get; set; }
+}
+
+/// <summary>
+/// Respuesta al confirmar empresa de trabajo.
+/// Autor: Mario Gomez.
+/// </summary>
+public sealed class SeleccionarEmpresaResponseDto
+{
+    public bool SeleccionAplicada { get; set; }
     public string Mensaje { get; set; } = string.Empty;
     public string? TokenSesion { get; set; }
     public DateTime? ExpiraSesionUtc { get; set; }
@@ -157,4 +194,16 @@ public sealed class RecursoUiAccesoDto
     public string? Icono { get; set; }
     public int OrdenVisual { get; set; }
     public long? IdRecursoUiPadre { get; set; }
+}
+
+/// <summary>
+/// Empresa autorizada para operar en el tenant activo.
+/// Autor: Mario Gomez.
+/// </summary>
+public sealed class EmpresaAccesoDto
+{
+    public long IdEmpresa { get; set; }
+    public string CodigoEmpresa { get; set; } = string.Empty;
+    public string NombreEmpresa { get; set; } = string.Empty;
+    public bool EsPredeterminada { get; set; }
 }

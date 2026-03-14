@@ -10,6 +10,8 @@ public interface IIamAuthRepository
 {
     Task<UsuarioAutenticacionData?> ObtenerUsuarioParaAutenticacionAsync(string tenantCodigo, string identificador, CancellationToken cancellationToken);
 
+    Task<IReadOnlyList<EmpresaAccesoData>> ObtenerEmpresasOperablesUsuarioAsync(long idUsuario, long idTenant, CancellationToken cancellationToken);
+
     Task<Guid> CrearFlujoAutenticacionAsync(
         Guid idFlujoAutenticacion,
         long idUsuario,
@@ -24,6 +26,10 @@ public interface IIamAuthRepository
         CancellationToken cancellationToken);
 
     Task<bool> MarcarFlujoAutenticacionUsadoAsync(Guid idFlujoAutenticacion, bool mfaValidado, CancellationToken cancellationToken);
+
+    Task<bool> MarcarFlujoAutenticacionMfaValidadoAsync(Guid idFlujoAutenticacion, CancellationToken cancellationToken);
+
+    Task<FlujoAutenticacionData?> ObtenerFlujoAutenticacionAsync(Guid idFlujoAutenticacion, CancellationToken cancellationToken);
 
     Task<Guid> CrearDesafioMfaAsync(
         Guid idDesafioMfa,
@@ -63,9 +69,11 @@ public interface IIamAuthRepository
         string? huellaDispositivo,
         CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<string>> ObtenerPermisosUsuarioAsync(long idUsuario, long idTenant, CancellationToken cancellationToken);
+    Task<IReadOnlyList<string>> ObtenerPermisosUsuarioAsync(long idUsuario, long idTenant, long idEmpresa, CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<RecursoUiAccesoData>> ObtenerRecursosUiUsuarioAsync(long idUsuario, long idTenant, CancellationToken cancellationToken);
+    Task<IReadOnlyList<RecursoUiAccesoData>> ObtenerRecursosUiUsuarioAsync(long idUsuario, long idTenant, long idEmpresa, CancellationToken cancellationToken);
+
+    Task<SesionTokenData?> ObtenerSesionPorTokenHashAsync(byte[] tokenHash, bool actualizarActividadUtc, CancellationToken cancellationToken);
 
     Task<Guid> CrearFlujoRestablecimientoClaveAsync(
         Guid idFlujoRestablecimientoClave,

@@ -13,13 +13,17 @@ namespace Secure.Platform.Data.Repositories.Seguridad;
 public sealed class IamAuthRepository : IIamAuthRepository
 {
     private const string SpObtenerUsuario = "seguridad.usp_auth_obtener_usuario_para_autenticacion";
+    private const string SpObtenerEmpresasOperables = "seguridad.usp_auth_obtener_empresas_usuario_operables";
     private const string SpCrearFlujo = "seguridad.usp_auth_crear_flujo_autenticacion";
+    private const string SpObtenerFlujo = "seguridad.usp_auth_obtener_flujo_autenticacion";
     private const string SpMarcarFlujoUsado = "seguridad.usp_auth_marcar_flujo_autenticacion_usado";
+    private const string SpMarcarFlujoMfaValidado = "seguridad.usp_auth_marcar_flujo_autenticacion_mfa_validado";
     private const string SpCrearDesafioMfa = "seguridad.usp_auth_crear_desafio_mfa";
     private const string SpObtenerDesafioMfa = "seguridad.usp_auth_obtener_desafio_mfa";
     private const string SpIncrementarIntentoMfa = "seguridad.usp_auth_incrementar_intento_desafio_mfa";
     private const string SpMarcarDesafioMfaValidado = "seguridad.usp_auth_marcar_desafio_mfa_validado";
     private const string SpCrearSesion = "seguridad.usp_auth_crear_sesion_usuario";
+    private const string SpObtenerSesionPorTokenHash = "seguridad.usp_auth_obtener_sesion_por_token_hash";
     private const string SpObtenerPermisos = "seguridad.usp_auth_obtener_permisos_usuario";
     private const string SpObtenerRecursosUi = "seguridad.usp_auth_obtener_recursos_ui_usuario";
     private const string SpCrearFlujoRestablecimiento = "seguridad.usp_auth_crear_flujo_restablecimiento_clave";
@@ -73,6 +77,37 @@ public sealed class IamAuthRepository : IIamAuthRepository
         };
     }
 
+    public async Task<IReadOnlyList<EmpresaAccesoData>> ObtenerEmpresasOperablesUsuarioAsync(long idUsuario, long idTenant, CancellationToken cancellationToken)
+    {
+        var result = new List<EmpresaAccesoData>();
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+        using var command = connection.CreateCommand();
+        command.CommandType = CommandType.StoredProcedure;
+        command.CommandText = SpObtenerEmpresasOperables;
+        command.Parameters.Add(CreateParameter("@id_usuario", SqlDbType.BigInt, idUsuario));
+        command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, idTenant));
+
+        using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            result.Add(new EmpresaAccesoData
+            {
+                IdEmpresa = reader.GetInt64(reader.GetOrdinal("id_empresa")),
+                CodigoEmpresa = reader.IsDBNull(reader.GetOrdinal("codigo_empresa"))
+                    ? string.Empty
+                    : reader.GetString(reader.GetOrdinal("codigo_empresa")),
+                NombreEmpresa = reader.IsDBNull(reader.GetOrdinal("nombre_empresa"))
+                    ? string.Empty
+                    : reader.GetString(reader.GetOrdinal("nombre_empresa")),
+                EsPredeterminada = reader.GetBoolean(reader.GetOrdinal("es_predeterminada"))
+            });
+        }
+
+        return result;
+    }
+
     public async Task<Guid> CrearFlujoAutenticacionAsync(
         Guid idFlujoAutenticacion,
         long idUsuario,
@@ -120,6 +155,48 @@ public sealed class IamAuthRepository : IIamAuthRepository
 
         var scalar = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
         return ParseInt(scalar) > 0;
+    }
+
+    public async Task<bool> MarcarFlujoAutenticacionMfaValidadoAsync(Guid idFlujoAutenticacion, CancellationToken cancellationToken)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+        using var command = connection.CreateCommand();
+        command.CommandType = CommandType.StoredProcedure;
+        command.CommandText = SpMarcarFlujoMfaValidado;
+        command.Parameters.Add(CreateParameter("@id_flujo_autenticacion", SqlDbType.UniqueIdentifier, idFlujoAutenticacion));
+
+        var scalar = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return ParseInt(scalar) > 0;
+    }
+
+    public async Task<FlujoAutenticacionData?> ObtenerFlujoAutenticacionAsync(Guid idFlujoAutenticacion, CancellationToken cancellationToken)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+        using var command = connection.CreateCommand();
+        command.CommandType = CommandType.StoredProcedure;
+        command.CommandText = SpObtenerFlujo;
+        command.Parameters.Add(CreateParameter("@id_flujo_autenticacion", SqlDbType.UniqueIdentifier, idFlujoAutenticacion));
+
+        using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            return null;
+        }
+
+        return new FlujoAutenticacionData
+        {
+            IdFlujoAutenticacion = reader.GetGuid(reader.GetOrdinal("id_flujo_autenticacion")),
+            IdUsuario = reader.GetInt64(reader.GetOrdinal("id_usuario")),
+            IdTenant = reader.GetInt64(reader.GetOrdinal("id_tenant")),
+            MfaRequerido = reader.GetBoolean(reader.GetOrdinal("mfa_requerido")),
+            MfaValidado = reader.GetBoolean(reader.GetOrdinal("mfa_validado")),
+            Usado = reader.GetBoolean(reader.GetOrdinal("usado")),
+            ExpiraEnUtc = reader.GetDateTime(reader.GetOrdinal("expira_en_utc"))
+        };
     }
 
     public async Task<Guid> CrearDesafioMfaAsync(
@@ -262,7 +339,7 @@ public sealed class IamAuthRepository : IIamAuthRepository
         return ParseGuid(scalar, idSesionUsuario);
     }
 
-    public async Task<IReadOnlyList<string>> ObtenerPermisosUsuarioAsync(long idUsuario, long idTenant, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<string>> ObtenerPermisosUsuarioAsync(long idUsuario, long idTenant, long idEmpresa, CancellationToken cancellationToken)
     {
         var result = new List<string>();
 
@@ -274,6 +351,7 @@ public sealed class IamAuthRepository : IIamAuthRepository
         command.CommandText = SpObtenerPermisos;
         command.Parameters.Add(CreateParameter("@id_usuario", SqlDbType.BigInt, idUsuario));
         command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, idTenant));
+        command.Parameters.Add(CreateParameter("@id_empresa", SqlDbType.BigInt, idEmpresa));
 
         using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
@@ -287,7 +365,7 @@ public sealed class IamAuthRepository : IIamAuthRepository
         return result;
     }
 
-    public async Task<IReadOnlyList<RecursoUiAccesoData>> ObtenerRecursosUiUsuarioAsync(long idUsuario, long idTenant, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<RecursoUiAccesoData>> ObtenerRecursosUiUsuarioAsync(long idUsuario, long idTenant, long idEmpresa, CancellationToken cancellationToken)
     {
         var result = new List<RecursoUiAccesoData>();
 
@@ -299,6 +377,7 @@ public sealed class IamAuthRepository : IIamAuthRepository
         command.CommandText = SpObtenerRecursosUi;
         command.Parameters.Add(CreateParameter("@id_usuario", SqlDbType.BigInt, idUsuario));
         command.Parameters.Add(CreateParameter("@id_tenant", SqlDbType.BigInt, idTenant));
+        command.Parameters.Add(CreateParameter("@id_empresa", SqlDbType.BigInt, idEmpresa));
 
         using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
@@ -317,6 +396,39 @@ public sealed class IamAuthRepository : IIamAuthRepository
         }
 
         return result;
+    }
+
+    public async Task<SesionTokenData?> ObtenerSesionPorTokenHashAsync(byte[] tokenHash, bool actualizarActividadUtc, CancellationToken cancellationToken)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+        using var command = connection.CreateCommand();
+        command.CommandType = CommandType.StoredProcedure;
+        command.CommandText = SpObtenerSesionPorTokenHash;
+        command.Parameters.Add(CreateParameter("@token_hash", SqlDbType.Binary, tokenHash, 32));
+        command.Parameters.Add(CreateParameter("@actualizar_actividad_utc", SqlDbType.Bit, actualizarActividadUtc));
+
+        using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            return null;
+        }
+
+        return new SesionTokenData
+        {
+            IdSesionUsuario = reader.GetGuid(reader.GetOrdinal("id_sesion_usuario")),
+            IdUsuario = reader.GetInt64(reader.GetOrdinal("id_usuario")),
+            IdTenant = reader.GetInt64(reader.GetOrdinal("id_tenant")),
+            IdEmpresa = reader.GetInt64(reader.GetOrdinal("id_empresa")),
+            MfaValidado = reader.GetBoolean(reader.GetOrdinal("mfa_validado")),
+            Activo = reader.GetBoolean(reader.GetOrdinal("activo")),
+            ExpiraAbsolutaUtc = reader.GetDateTime(reader.GetOrdinal("expira_absoluta_utc")),
+            UltimaActividadUtc = reader.GetDateTime(reader.GetOrdinal("ultima_actividad_utc")),
+            UsuarioMostrar = reader.IsDBNull(reader.GetOrdinal("usuario_mostrar"))
+                ? null
+                : reader.GetString(reader.GetOrdinal("usuario_mostrar"))
+        };
     }
 
     public async Task<Guid> CrearFlujoRestablecimientoClaveAsync(

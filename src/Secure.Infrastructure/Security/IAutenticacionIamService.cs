@@ -14,6 +14,8 @@ public interface IAutenticacionIamService
 
     Task<ReenviarMfaResponseDto> ReenviarMfaAsync(ReenviarMfaRequestDto request, CancellationToken cancellationToken);
 
+    Task<SeleccionarEmpresaResponseDto> SeleccionarEmpresaAsync(SeleccionarEmpresaRequestDto request, CancellationToken cancellationToken);
+
     Task<IniciarRestablecimientoClaveResponseDto> IniciarRestablecimientoAsync(IniciarRestablecimientoClaveRequestDto request, CancellationToken cancellationToken);
 
     Task<CompletarRestablecimientoClaveResponseDto> CompletarRestablecimientoAsync(CompletarRestablecimientoClaveRequestDto request, CancellationToken cancellationToken);

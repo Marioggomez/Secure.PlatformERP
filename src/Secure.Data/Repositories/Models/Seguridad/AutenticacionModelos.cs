@@ -25,6 +25,33 @@ public sealed class UsuarioAutenticacionData
 }
 
 /// <summary>
+/// Empresa operable para el usuario en el tenant.
+/// Autor: Mario Gomez.
+/// </summary>
+public sealed class EmpresaAccesoData
+{
+    public long IdEmpresa { get; set; }
+    public string CodigoEmpresa { get; set; } = string.Empty;
+    public string NombreEmpresa { get; set; } = string.Empty;
+    public bool EsPredeterminada { get; set; }
+}
+
+/// <summary>
+/// Estado actual del flujo de autenticacion IAM.
+/// Autor: Mario Gomez.
+/// </summary>
+public sealed class FlujoAutenticacionData
+{
+    public Guid IdFlujoAutenticacion { get; set; }
+    public long IdUsuario { get; set; }
+    public long IdTenant { get; set; }
+    public bool MfaRequerido { get; set; }
+    public bool MfaValidado { get; set; }
+    public bool Usado { get; set; }
+    public DateTime ExpiraEnUtc { get; set; }
+}
+
+/// <summary>
 /// Contexto de desafio MFA.
 /// Autor: Mario Gomez.
 /// </summary>
@@ -71,4 +98,21 @@ public sealed class RecursoUiAccesoData
     public string? Icono { get; set; }
     public int OrdenVisual { get; set; }
     public long? IdRecursoUiPadre { get; set; }
+}
+
+/// <summary>
+/// Datos de sesion obtenidos por token hash.
+/// Autor: Mario Gomez.
+/// </summary>
+public sealed class SesionTokenData
+{
+    public Guid IdSesionUsuario { get; set; }
+    public long IdUsuario { get; set; }
+    public long IdTenant { get; set; }
+    public long IdEmpresa { get; set; }
+    public bool MfaValidado { get; set; }
+    public bool Activo { get; set; }
+    public DateTime ExpiraAbsolutaUtc { get; set; }
+    public DateTime UltimaActividadUtc { get; set; }
+    public string? UsuarioMostrar { get; set; }
 }

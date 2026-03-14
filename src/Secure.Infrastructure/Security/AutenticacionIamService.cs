@@ -61,7 +61,12 @@ public sealed class AutenticacionIamService : IAutenticacionIamService
             return LoginFallido();
         }
 
-        if (!usuario.IdEmpresa.HasValue)
+        var empresas = await _repository.ObtenerEmpresasOperablesUsuarioAsync(
+            usuario.IdUsuario,
+            usuario.IdTenant,
+            cancellationToken).ConfigureAwait(false);
+
+        if (empresas.Count == 0)
         {
             return new LoginResponseDto
             {
@@ -70,6 +75,11 @@ public sealed class AutenticacionIamService : IAutenticacionIamService
                 Mensaje = "El usuario no tiene empresa activa asignada para operar en el ERP."
             };
         }
+
+        var empresaSeleccionInicial = empresas
+            .OrderByDescending(item => item.EsPredeterminada)
+            .ThenBy(item => item.IdEmpresa)
+            .First();
 
         var idFlujoAutenticacion = Guid.NewGuid();
         await _repository.CrearFlujoAutenticacionAsync(
@@ -96,7 +106,7 @@ public sealed class AutenticacionIamService : IAutenticacionIamService
                 idDesafioMfa,
                 usuario.IdUsuario,
                 usuario.IdTenant,
-                usuario.IdEmpresa,
+                empresaSeleccionInicial.IdEmpresa,
                 idFlujoAutenticacion,
                 PropositoMfaLogin,
                 CanalNotificacionCorreo,
@@ -111,44 +121,73 @@ public sealed class AutenticacionIamService : IAutenticacionIamService
             {
                 Autenticado = true,
                 RequiereMfa = true,
+                RequiereSeleccionEmpresa = empresas.Count > 1,
                 Mensaje = "Credenciales validadas. Se requiere MFA para completar la autenticacion.",
                 IdFlujoAutenticacion = idFlujoAutenticacion,
                 IdDesafioMfa = idDesafioMfa,
                 CodigoMfaPrueba = codigoOtp,
                 IdUsuario = usuario.IdUsuario,
                 IdTenant = usuario.IdTenant,
-                IdEmpresa = usuario.IdEmpresa,
-                UsuarioMostrar = usuario.NombreMostrar
+                IdEmpresa = empresaSeleccionInicial.IdEmpresa,
+                UsuarioMostrar = usuario.NombreMostrar,
+                EmpresasDisponibles = empresas.Select(MapearEmpresaAcceso).ToList()
+            };
+        }
+
+        if (empresas.Count > 1)
+        {
+            return new LoginResponseDto
+            {
+                Autenticado = true,
+                RequiereMfa = false,
+                RequiereSeleccionEmpresa = true,
+                Mensaje = "Seleccione la empresa para iniciar la sesion.",
+                IdFlujoAutenticacion = idFlujoAutenticacion,
+                IdUsuario = usuario.IdUsuario,
+                IdTenant = usuario.IdTenant,
+                IdEmpresa = empresaSeleccionInicial.IdEmpresa,
+                UsuarioMostrar = usuario.NombreMostrar,
+                EmpresasDisponibles = empresas.Select(MapearEmpresaAcceso).ToList()
             };
         }
 
         var sesion = await CrearSesionAsync(
             usuario.IdUsuario,
             usuario.IdTenant,
-            usuario.IdEmpresa.Value,
+            empresaSeleccionInicial.IdEmpresa,
             request.IpOrigen,
             request.AgenteUsuario,
             request.HuellaDispositivo,
-            false,
+            true,
             cancellationToken).ConfigureAwait(false);
 
         await _repository.MarcarFlujoAutenticacionUsadoAsync(idFlujoAutenticacion, false, cancellationToken).ConfigureAwait(false);
 
-        var permisos = await _repository.ObtenerPermisosUsuarioAsync(usuario.IdUsuario, usuario.IdTenant, cancellationToken).ConfigureAwait(false);
-        var recursos = await _repository.ObtenerRecursosUiUsuarioAsync(usuario.IdUsuario, usuario.IdTenant, cancellationToken).ConfigureAwait(false);
+        var permisos = await _repository.ObtenerPermisosUsuarioAsync(
+            usuario.IdUsuario,
+            usuario.IdTenant,
+            empresaSeleccionInicial.IdEmpresa,
+            cancellationToken).ConfigureAwait(false);
+        var recursos = await _repository.ObtenerRecursosUiUsuarioAsync(
+            usuario.IdUsuario,
+            usuario.IdTenant,
+            empresaSeleccionInicial.IdEmpresa,
+            cancellationToken).ConfigureAwait(false);
 
         return new LoginResponseDto
         {
             Autenticado = true,
             RequiereMfa = false,
+            RequiereSeleccionEmpresa = false,
             Mensaje = "Autenticacion exitosa.",
             IdFlujoAutenticacion = idFlujoAutenticacion,
             TokenSesion = sesion.TokenPlano,
             ExpiraSesionUtc = sesion.ExpiraEnUtc,
             IdUsuario = usuario.IdUsuario,
             IdTenant = usuario.IdTenant,
-            IdEmpresa = usuario.IdEmpresa,
+            IdEmpresa = empresaSeleccionInicial.IdEmpresa,
             UsuarioMostrar = usuario.NombreMostrar,
+            EmpresasDisponibles = empresas.Select(MapearEmpresaAcceso).ToList(),
             Permisos = permisos,
             RecursosUi = recursos.Select(MapearRecursoUi).ToList()
         };
@@ -213,7 +252,12 @@ public sealed class AutenticacionIamService : IAutenticacionIamService
             };
         }
 
-        if (!desafio.IdEmpresa.HasValue)
+        var empresas = await _repository.ObtenerEmpresasOperablesUsuarioAsync(
+            desafio.IdUsuario,
+            desafio.IdTenant,
+            cancellationToken).ConfigureAwait(false);
+
+        if (empresas.Count == 0)
         {
             return new ValidarMfaResponseDto
             {
@@ -222,32 +266,65 @@ public sealed class AutenticacionIamService : IAutenticacionIamService
             };
         }
 
+        var empresaSeleccionInicial = empresas
+            .OrderByDescending(item => item.EsPredeterminada)
+            .ThenBy(item => item.IdEmpresa)
+            .First();
+
         await _repository.MarcarDesafioMfaValidadoAsync(request.IdDesafioMfa, cancellationToken).ConfigureAwait(false);
-        await _repository.MarcarFlujoAutenticacionUsadoAsync(request.IdFlujoAutenticacion, true, cancellationToken).ConfigureAwait(false);
+        await _repository.MarcarFlujoAutenticacionMfaValidadoAsync(request.IdFlujoAutenticacion, cancellationToken).ConfigureAwait(false);
+
+        if (empresas.Count > 1)
+        {
+            return new ValidarMfaResponseDto
+            {
+                Validado = true,
+                RequiereSeleccionEmpresa = true,
+                Mensaje = "MFA validado. Seleccione la empresa para completar la sesion.",
+                IdFlujoAutenticacion = request.IdFlujoAutenticacion,
+                IdUsuario = desafio.IdUsuario,
+                IdTenant = desafio.IdTenant,
+                IdEmpresa = empresaSeleccionInicial.IdEmpresa,
+                EmpresasDisponibles = empresas.Select(MapearEmpresaAcceso).ToList()
+            };
+        }
 
         var sesion = await CrearSesionAsync(
             desafio.IdUsuario,
             desafio.IdTenant,
-            desafio.IdEmpresa.Value,
+            empresaSeleccionInicial.IdEmpresa,
             request.IpOrigen,
             request.AgenteUsuario,
             request.HuellaDispositivo,
             true,
             cancellationToken).ConfigureAwait(false);
 
-        var permisos = await _repository.ObtenerPermisosUsuarioAsync(desafio.IdUsuario, desafio.IdTenant, cancellationToken).ConfigureAwait(false);
-        var recursos = await _repository.ObtenerRecursosUiUsuarioAsync(desafio.IdUsuario, desafio.IdTenant, cancellationToken).ConfigureAwait(false);
+        await _repository.MarcarFlujoAutenticacionUsadoAsync(request.IdFlujoAutenticacion, true, cancellationToken).ConfigureAwait(false);
+
+        var permisos = await _repository.ObtenerPermisosUsuarioAsync(
+            desafio.IdUsuario,
+            desafio.IdTenant,
+            empresaSeleccionInicial.IdEmpresa,
+            cancellationToken).ConfigureAwait(false);
+        var recursos = await _repository.ObtenerRecursosUiUsuarioAsync(
+            desafio.IdUsuario,
+            desafio.IdTenant,
+            empresaSeleccionInicial.IdEmpresa,
+            cancellationToken).ConfigureAwait(false);
 
         return new ValidarMfaResponseDto
         {
             Validado = true,
+            RequiereSeleccionEmpresa = false,
             Mensaje = "MFA validado correctamente.",
+            IdFlujoAutenticacion = request.IdFlujoAutenticacion,
             TokenSesion = sesion.TokenPlano,
             ExpiraSesionUtc = sesion.ExpiraEnUtc,
             IdUsuario = desafio.IdUsuario,
             IdTenant = desafio.IdTenant,
-            IdEmpresa = desafio.IdEmpresa,
+            IdEmpresa = empresaSeleccionInicial.IdEmpresa,
             UsuarioMostrar = null,
+            EmpresasDisponibles = empresas.Select(MapearEmpresaAcceso).ToList(),
             Permisos = permisos,
             RecursosUi = recursos.Select(MapearRecursoUi).ToList()
         };
@@ -301,6 +378,113 @@ public sealed class AutenticacionIamService : IAutenticacionIamService
             IdDesafioMfa = nuevoDesafioId,
             ExpiraEnUtc = DateTime.UtcNow.AddMinutes(MinutosExpiracionOtp),
             CodigoMfaPrueba = codigoOtp
+        };
+    }
+
+    public async Task<SeleccionarEmpresaResponseDto> SeleccionarEmpresaAsync(SeleccionarEmpresaRequestDto request, CancellationToken cancellationToken)
+    {
+        if (request.IdFlujoAutenticacion == Guid.Empty || request.IdEmpresa <= 0)
+        {
+            return new SeleccionarEmpresaResponseDto
+            {
+                SeleccionAplicada = false,
+                Mensaje = "Debe indicar un flujo de autenticacion y una empresa valida."
+            };
+        }
+
+        var flujo = await _repository.ObtenerFlujoAutenticacionAsync(
+            request.IdFlujoAutenticacion,
+            cancellationToken).ConfigureAwait(false);
+
+        if (flujo is null)
+        {
+            return new SeleccionarEmpresaResponseDto
+            {
+                SeleccionAplicada = false,
+                Mensaje = "El flujo de autenticacion no existe."
+            };
+        }
+
+        if (flujo.Usado)
+        {
+            return new SeleccionarEmpresaResponseDto
+            {
+                SeleccionAplicada = false,
+                Mensaje = "El flujo de autenticacion ya fue utilizado."
+            };
+        }
+
+        if (DateTime.UtcNow > flujo.ExpiraEnUtc)
+        {
+            return new SeleccionarEmpresaResponseDto
+            {
+                SeleccionAplicada = false,
+                Mensaje = "El flujo de autenticacion expiro. Inicie sesion nuevamente."
+            };
+        }
+
+        if (flujo.MfaRequerido && !flujo.MfaValidado)
+        {
+            return new SeleccionarEmpresaResponseDto
+            {
+                SeleccionAplicada = false,
+                Mensaje = "Debe validar MFA antes de seleccionar empresa."
+            };
+        }
+
+        var empresas = await _repository.ObtenerEmpresasOperablesUsuarioAsync(
+            flujo.IdUsuario,
+            flujo.IdTenant,
+            cancellationToken).ConfigureAwait(false);
+
+        var empresaSeleccionada = empresas.FirstOrDefault(item => item.IdEmpresa == request.IdEmpresa);
+        if (empresaSeleccionada is null)
+        {
+            return new SeleccionarEmpresaResponseDto
+            {
+                SeleccionAplicada = false,
+                Mensaje = "La empresa seleccionada no pertenece al alcance del usuario."
+            };
+        }
+
+        var mfaCumplido = !flujo.MfaRequerido || flujo.MfaValidado;
+        var sesion = await CrearSesionAsync(
+            flujo.IdUsuario,
+            flujo.IdTenant,
+            empresaSeleccionada.IdEmpresa,
+            request.IpOrigen,
+            request.AgenteUsuario,
+            request.HuellaDispositivo,
+            mfaCumplido,
+            cancellationToken).ConfigureAwait(false);
+
+        await _repository.MarcarFlujoAutenticacionUsadoAsync(
+            request.IdFlujoAutenticacion,
+            flujo.MfaValidado,
+            cancellationToken).ConfigureAwait(false);
+
+        var permisos = await _repository.ObtenerPermisosUsuarioAsync(
+            flujo.IdUsuario,
+            flujo.IdTenant,
+            empresaSeleccionada.IdEmpresa,
+            cancellationToken).ConfigureAwait(false);
+        var recursos = await _repository.ObtenerRecursosUiUsuarioAsync(
+            flujo.IdUsuario,
+            flujo.IdTenant,
+            empresaSeleccionada.IdEmpresa,
+            cancellationToken).ConfigureAwait(false);
+
+        return new SeleccionarEmpresaResponseDto
+        {
+            SeleccionAplicada = true,
+            Mensaje = "Empresa seleccionada correctamente.",
+            TokenSesion = sesion.TokenPlano,
+            ExpiraSesionUtc = sesion.ExpiraEnUtc,
+            IdUsuario = flujo.IdUsuario,
+            IdTenant = flujo.IdTenant,
+            IdEmpresa = empresaSeleccionada.IdEmpresa,
+            Permisos = permisos,
+            RecursosUi = recursos.Select(MapearRecursoUi).ToList()
         };
     }
 
@@ -580,6 +764,17 @@ public sealed class AutenticacionIamService : IAutenticacionIamService
             Icono = model.Icono,
             OrdenVisual = model.OrdenVisual,
             IdRecursoUiPadre = model.IdRecursoUiPadre
+        };
+    }
+
+    private static EmpresaAccesoDto MapearEmpresaAcceso(EmpresaAccesoData model)
+    {
+        return new EmpresaAccesoDto
+        {
+            IdEmpresa = model.IdEmpresa,
+            CodigoEmpresa = model.CodigoEmpresa,
+            NombreEmpresa = model.NombreEmpresa,
+            EsPredeterminada = model.EsPredeterminada
         };
     }
 }

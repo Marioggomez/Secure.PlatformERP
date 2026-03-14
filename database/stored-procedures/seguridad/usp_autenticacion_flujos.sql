@@ -66,6 +66,31 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE seguridad.usp_auth_obtener_empresas_usuario_operables
+    @id_usuario BIGINT,
+    @id_tenant BIGINT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        ue.id_empresa,
+        COALESCE(e.codigo, CONVERT(VARCHAR(30), ue.id_empresa)) AS codigo_empresa,
+        COALESCE(e.nombre, e.nombre_legal, CONCAT('Empresa ', ue.id_empresa)) AS nombre_empresa,
+        ue.es_empresa_predeterminada AS es_predeterminada
+    FROM seguridad.usuario_empresa ue
+    LEFT JOIN organizacion.empresa e
+        ON e.id_empresa = ue.id_empresa
+    WHERE ue.id_usuario = @id_usuario
+      AND ue.id_tenant = @id_tenant
+      AND ue.activo = 1
+      AND ue.puede_operar = 1
+      AND ue.fecha_inicio_utc <= SYSUTCDATETIME()
+      AND (ue.fecha_fin_utc IS NULL OR ue.fecha_fin_utc >= SYSUTCDATETIME())
+      AND (e.id_empresa IS NULL OR e.activo = 1);
+END
+GO
+
 CREATE OR ALTER PROCEDURE seguridad.usp_auth_crear_flujo_autenticacion
     @id_flujo_autenticacion UNIQUEIDENTIFIER,
     @id_usuario BIGINT,
@@ -116,6 +141,25 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE seguridad.usp_auth_obtener_flujo_autenticacion
+    @id_flujo_autenticacion UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT TOP (1)
+        id_flujo_autenticacion,
+        id_usuario,
+        id_tenant,
+        mfa_requerido,
+        mfa_validado,
+        usado,
+        expira_en_utc
+    FROM seguridad.flujo_autenticacion
+    WHERE id_flujo_autenticacion = @id_flujo_autenticacion;
+END
+GO
+
 CREATE OR ALTER PROCEDURE seguridad.usp_auth_marcar_flujo_autenticacion_usado
     @id_flujo_autenticacion UNIQUEIDENTIFIER,
     @mfa_validado BIT
@@ -127,6 +171,22 @@ BEGIN
     SET
         usado = 1,
         mfa_validado = @mfa_validado
+    WHERE id_flujo_autenticacion = @id_flujo_autenticacion
+      AND usado = 0;
+
+    SELECT @@ROWCOUNT AS filas_afectadas;
+END
+GO
+
+CREATE OR ALTER PROCEDURE seguridad.usp_auth_marcar_flujo_autenticacion_mfa_validado
+    @id_flujo_autenticacion UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE seguridad.flujo_autenticacion
+    SET
+        mfa_validado = 1
     WHERE id_flujo_autenticacion = @id_flujo_autenticacion
       AND usado = 0;
 
@@ -316,12 +376,102 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE seguridad.usp_auth_obtener_permisos_usuario
-    @id_usuario BIGINT,
-    @id_tenant BIGINT
+CREATE OR ALTER PROCEDURE seguridad.usp_auth_obtener_sesion_por_token_hash
+    @token_hash BINARY(32),
+    @actualizar_actividad_utc BIT = 1
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    IF @actualizar_actividad_utc = 1
+    BEGIN
+        UPDATE seguridad.sesion_usuario
+        SET ultima_actividad_utc = SYSUTCDATETIME()
+        WHERE token_hash = @token_hash
+          AND activo = 1
+          AND revocada_utc IS NULL
+          AND expira_absoluta_utc >= SYSUTCDATETIME();
+    END
+
+    SELECT TOP (1)
+        s.id_sesion_usuario,
+        s.id_usuario,
+        s.id_tenant,
+        s.id_empresa,
+        s.mfa_validado,
+        s.activo,
+        s.expira_absoluta_utc,
+        s.ultima_actividad_utc,
+        u.nombre_mostrar AS usuario_mostrar
+    FROM seguridad.sesion_usuario s
+    INNER JOIN seguridad.usuario u
+        ON u.id_usuario = s.id_usuario
+    WHERE s.token_hash = @token_hash
+      AND s.activo = 1
+      AND s.revocada_utc IS NULL;
+END
+GO
+
+CREATE OR ALTER PROCEDURE seguridad.usp_auth_obtener_permisos_usuario
+    @id_usuario BIGINT,
+    @id_tenant BIGINT,
+    @id_empresa BIGINT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @es_admin_tenant BIT = 0;
+
+    IF EXISTS
+    (
+        SELECT 1
+        FROM seguridad.usuario_tenant ut
+        WHERE ut.id_usuario = @id_usuario
+          AND ut.id_tenant = @id_tenant
+          AND ut.activo = 1
+          AND ut.es_administrador_tenant = 1
+    )
+    AND EXISTS
+    (
+        SELECT 1
+        FROM seguridad.usuario_empresa ue
+        WHERE ue.id_usuario = @id_usuario
+          AND ue.id_tenant = @id_tenant
+          AND ue.id_empresa = @id_empresa
+          AND ue.activo = 1
+          AND ue.puede_operar = 1
+          AND ue.fecha_inicio_utc <= SYSUTCDATETIME()
+          AND (ue.fecha_fin_utc IS NULL OR ue.fecha_fin_utc >= SYSUTCDATETIME())
+    )
+    AND
+    (
+        NOT EXISTS
+        (
+            SELECT 1
+            FROM seguridad.usuario_scope_empresa usem
+            WHERE usem.id_usuario = @id_usuario
+        )
+        OR EXISTS
+        (
+            SELECT 1
+            FROM seguridad.usuario_scope_empresa usem
+            WHERE usem.id_usuario = @id_usuario
+              AND usem.id_empresa = @id_empresa
+        )
+    )
+    BEGIN
+        SET @es_admin_tenant = 1;
+    END;
+
+    IF @es_admin_tenant = 1
+    BEGIN
+        SELECT
+            p.codigo
+        FROM seguridad.permiso p
+        WHERE p.activo = 1
+        ORDER BY p.codigo;
+        RETURN;
+    END;
 
     ;WITH permisos_rol AS
     (
@@ -341,37 +491,112 @@ BEGIN
           AND aru.activo = 1
           AND aru.fecha_inicio_utc <= SYSUTCDATETIME()
           AND (aru.fecha_fin_utc IS NULL OR aru.fecha_fin_utc >= SYSUTCDATETIME())
-    ),
-    permisos_base AS
-    (
-        SELECT p.id_permiso, p.codigo
-        FROM seguridad.permiso p
-        INNER JOIN permisos_rol pr
-            ON pr.id_permiso = p.id_permiso
-        WHERE p.activo = 1
-
-        UNION
-
-        SELECT p.id_permiso, p.codigo
-        FROM seguridad.permiso p
-        INNER JOIN seguridad.recurso_ui_permiso rup
-            ON rup.id_permiso = p.id_permiso
-           AND rup.activo = 1
-        WHERE p.activo = 1
-          AND NOT EXISTS (SELECT 1 FROM permisos_rol)
+          AND EXISTS
+          (
+              SELECT 1
+              FROM seguridad.usuario_empresa ue
+              WHERE ue.id_usuario = aru.id_usuario
+                AND ue.id_tenant = aru.id_tenant
+                AND ue.id_empresa = @id_empresa
+                AND ue.activo = 1
+                AND ue.puede_operar = 1
+                AND ue.fecha_inicio_utc <= SYSUTCDATETIME()
+                AND (ue.fecha_fin_utc IS NULL OR ue.fecha_fin_utc >= SYSUTCDATETIME())
+          )
+          AND
+          (
+              NOT EXISTS
+              (
+                  SELECT 1
+                  FROM seguridad.usuario_scope_empresa usem
+                  WHERE usem.id_usuario = aru.id_usuario
+              )
+              OR EXISTS
+              (
+                  SELECT 1
+                  FROM seguridad.usuario_scope_empresa usem
+                  WHERE usem.id_usuario = aru.id_usuario
+                    AND usem.id_empresa = @id_empresa
+              )
+          )
     )
     SELECT DISTINCT codigo
-    FROM permisos_base
+    FROM seguridad.permiso p
+    INNER JOIN permisos_rol pr
+        ON pr.id_permiso = p.id_permiso
+    WHERE p.activo = 1
     ORDER BY codigo;
 END
 GO
 
 CREATE OR ALTER PROCEDURE seguridad.usp_auth_obtener_recursos_ui_usuario
     @id_usuario BIGINT,
-    @id_tenant BIGINT
+    @id_tenant BIGINT,
+    @id_empresa BIGINT
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    DECLARE @es_admin_tenant BIT = 0;
+
+    IF EXISTS
+    (
+        SELECT 1
+        FROM seguridad.usuario_tenant ut
+        WHERE ut.id_usuario = @id_usuario
+          AND ut.id_tenant = @id_tenant
+          AND ut.activo = 1
+          AND ut.es_administrador_tenant = 1
+    )
+    AND EXISTS
+    (
+        SELECT 1
+        FROM seguridad.usuario_empresa ue
+        WHERE ue.id_usuario = @id_usuario
+          AND ue.id_tenant = @id_tenant
+          AND ue.id_empresa = @id_empresa
+          AND ue.activo = 1
+          AND ue.puede_operar = 1
+          AND ue.fecha_inicio_utc <= SYSUTCDATETIME()
+          AND (ue.fecha_fin_utc IS NULL OR ue.fecha_fin_utc >= SYSUTCDATETIME())
+    )
+    AND
+    (
+        NOT EXISTS
+        (
+            SELECT 1
+            FROM seguridad.usuario_scope_empresa usem
+            WHERE usem.id_usuario = @id_usuario
+        )
+        OR EXISTS
+        (
+            SELECT 1
+            FROM seguridad.usuario_scope_empresa usem
+            WHERE usem.id_usuario = @id_usuario
+              AND usem.id_empresa = @id_empresa
+        )
+    )
+    BEGIN
+        SET @es_admin_tenant = 1;
+    END;
+
+    IF @es_admin_tenant = 1
+    BEGIN
+        SELECT
+            r.id_recurso_ui,
+            r.codigo,
+            r.nombre,
+            r.ruta,
+            r.componente,
+            r.icono,
+            r.orden_visual,
+            r.id_recurso_ui_padre
+        FROM seguridad.recurso_ui r
+        WHERE r.activo = 1
+          AND r.es_visible = 1
+        ORDER BY r.orden_visual, r.nombre;
+        RETURN;
+    END;
 
     ;WITH permisos_rol AS
     (
@@ -391,8 +616,36 @@ BEGIN
           AND aru.activo = 1
           AND aru.fecha_inicio_utc <= SYSUTCDATETIME()
           AND (aru.fecha_fin_utc IS NULL OR aru.fecha_fin_utc >= SYSUTCDATETIME())
+          AND EXISTS
+          (
+              SELECT 1
+              FROM seguridad.usuario_empresa ue
+              WHERE ue.id_usuario = aru.id_usuario
+                AND ue.id_tenant = aru.id_tenant
+                AND ue.id_empresa = @id_empresa
+                AND ue.activo = 1
+                AND ue.puede_operar = 1
+                AND ue.fecha_inicio_utc <= SYSUTCDATETIME()
+                AND (ue.fecha_fin_utc IS NULL OR ue.fecha_fin_utc >= SYSUTCDATETIME())
+          )
+          AND
+          (
+              NOT EXISTS
+              (
+                  SELECT 1
+                  FROM seguridad.usuario_scope_empresa usem
+                  WHERE usem.id_usuario = aru.id_usuario
+              )
+              OR EXISTS
+              (
+                  SELECT 1
+                  FROM seguridad.usuario_scope_empresa usem
+                  WHERE usem.id_usuario = aru.id_usuario
+                    AND usem.id_empresa = @id_empresa
+              )
+          )
     ),
-    recursos_por_permiso AS
+    recursos_base AS
     (
         SELECT DISTINCT r.id_recurso_ui
         FROM seguridad.recurso_ui r
@@ -404,31 +657,21 @@ BEGIN
         WHERE r.activo = 1
           AND r.es_visible = 1
     ),
-    recursos_sin_permiso AS
+    recursos_con_padres AS
     (
-        SELECT r.id_recurso_ui
-        FROM seguridad.recurso_ui r
-        WHERE r.activo = 1
-          AND r.es_visible = 1
-          AND NOT EXISTS
-            (
-                SELECT 1
-                FROM seguridad.recurso_ui_permiso rup
-                WHERE rup.id_recurso_ui = r.id_recurso_ui
-                  AND rup.activo = 1
-            )
-    ),
-    recursos_finales AS
-    (
-        SELECT id_recurso_ui FROM recursos_por_permiso
-        UNION
-        SELECT id_recurso_ui FROM recursos_sin_permiso
-        UNION
-        SELECT r.id_recurso_ui
-        FROM seguridad.recurso_ui r
-        WHERE r.activo = 1
-          AND r.es_visible = 1
-          AND NOT EXISTS (SELECT 1 FROM permisos_rol)
+        SELECT id_recurso_ui
+        FROM recursos_base
+
+        UNION ALL
+
+        SELECT parent.id_recurso_ui
+        FROM seguridad.recurso_ui current_node
+        INNER JOIN recursos_con_padres child
+            ON child.id_recurso_ui = current_node.id_recurso_ui
+        INNER JOIN seguridad.recurso_ui parent
+            ON parent.id_recurso_ui = current_node.id_recurso_ui_padre
+        WHERE parent.activo = 1
+          AND parent.es_visible = 1
     )
     SELECT DISTINCT
         r.id_recurso_ui,
@@ -440,11 +683,12 @@ BEGIN
         r.orden_visual,
         r.id_recurso_ui_padre
     FROM seguridad.recurso_ui r
-    INNER JOIN recursos_finales rf
+    INNER JOIN recursos_con_padres rf
         ON rf.id_recurso_ui = r.id_recurso_ui
     WHERE r.activo = 1
       AND r.es_visible = 1
-    ORDER BY r.orden_visual, r.nombre;
+    ORDER BY r.orden_visual, r.nombre
+    OPTION (MAXRECURSION 64);
 END
 GO
 

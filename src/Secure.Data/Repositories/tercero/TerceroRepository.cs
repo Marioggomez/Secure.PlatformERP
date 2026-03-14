@@ -167,8 +167,8 @@ public sealed class TerceroRepository : ITerceroRepository
         command.Parameters.Add(CreateParameter("@activo", SqlDbType.Bit, dto.Activo));
         command.Parameters.Add(CreateParameter("@creado_por", SqlDbType.Int, dto.CreadoPor));
         command.Parameters.Add(CreateParameter("@creado_utc", SqlDbType.DateTime2, dto.CreadoUtc));
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        return affected > 0;
+        var affected = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return affected is not null && affected != DBNull.Value && Convert.ToInt64(affected) > 0;
     }
 
     public async Task<bool> DesactivarAsync(long idTercero, string? usuario, CancellationToken cancellationToken)
@@ -180,8 +180,8 @@ public sealed class TerceroRepository : ITerceroRepository
         command.CommandText = SpDesactivar;
         command.Parameters.Add(CreateParameter("@id_tercero", SqlDbType.BigInt, idTercero));
         command.Parameters.Add(CreateParameter("@usuario", SqlDbType.VarChar, usuario, 180));
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        return affected > 0;
+        var affected = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return affected is not null && affected != DBNull.Value && Convert.ToInt64(affected) > 0;
     }
 
     private static TerceroDto MapTercero(SqlDataReader reader)
@@ -234,3 +234,4 @@ public sealed class TerceroRepository : ITerceroRepository
         return parameter;
     }
 }
+

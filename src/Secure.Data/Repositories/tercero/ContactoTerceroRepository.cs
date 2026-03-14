@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.Data.SqlClient;
 using Secure.Platform.Contracts.Dtos.Tercero;
 using Secure.Platform.Data.Repositories.Interfaces.Tercero;
@@ -98,8 +98,8 @@ public sealed class ContactoTerceroRepository : IContactoTerceroRepository
         command.Parameters.Add(CreateParameter("@id_tipo_contacto", SqlDbType.Int, dto.IdTipoContacto));
         command.Parameters.Add(CreateParameter("@valor", SqlDbType.NVarChar, dto.Valor, 300));
         command.Parameters.Add(CreateParameter("@principal", SqlDbType.Bit, dto.Principal));
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        return affected > 0;
+        var affected = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return affected is not null && affected != DBNull.Value && Convert.ToInt64(affected) > 0;
     }
 
     public async Task<bool> DesactivarAsync(long idContactoTercero, string? usuario, CancellationToken cancellationToken)
@@ -111,8 +111,8 @@ public sealed class ContactoTerceroRepository : IContactoTerceroRepository
         command.CommandText = SpDesactivar;
         command.Parameters.Add(CreateParameter("@id_contacto_tercero", SqlDbType.BigInt, idContactoTercero));
         command.Parameters.Add(CreateParameter("@usuario", SqlDbType.VarChar, usuario, 180));
-        var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        return affected > 0;
+        var affected = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return affected is not null && affected != DBNull.Value && Convert.ToInt64(affected) > 0;
     }
 
     private static SqlParameter CreateParameter(string name, SqlDbType type, object? value, int? size = null)
@@ -122,3 +122,4 @@ public sealed class ContactoTerceroRepository : IContactoTerceroRepository
         return parameter;
     }
 }
+

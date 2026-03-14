@@ -1,4 +1,6 @@
 Imports DevExpress.XtraEditors
+Imports DevExpress.Skins
+Imports DevExpress.UserSkins
 Imports Secure.Platform.Contracts.Dtos.Seguridad
 Imports Secure.Platform.WinForms.Forms.Auth
 Imports Secure.Platform.WinForms.Forms.Shell
@@ -16,6 +18,10 @@ Module Program
     Sub Main()
         Application.EnableVisualStyles()
         Application.SetCompatibleTextRenderingDefault(False)
+
+        BonusSkins.Register()
+        SkinManager.EnableFormSkins()
+        SkinManager.EnableMdiFormSkins()
 
         Dim apiClient As ApiClient = Nothing
 
@@ -59,6 +65,7 @@ Module Program
 
         Dim loginResult As LoginResponseDto = Nothing
         Dim mfaResult As ValidarMfaResponseDto = Nothing
+        Dim seleccionEmpresaResult As SeleccionarEmpresaResponseDto = Nothing
 
         Using login As New FrmLogin(apiClient)
             If login.ShowDialog() <> DialogResult.OK OrElse login.LoginResponse Is Nothing Then
@@ -77,7 +84,41 @@ Module Program
                 End Using
             End If
 
-            Dim tokenSesion As String = If(loginResult.RequiereMfa, mfaResult.TokenSesion, loginResult.TokenSesion)
+            Dim requiereSeleccionEmpresa As Boolean = False
+            Dim idFlujoSeleccion As Guid = Guid.Empty
+            Dim empresasSeleccion As IReadOnlyList(Of EmpresaAccesoDto) = Array.Empty(Of EmpresaAccesoDto)()
+
+            If loginResult.RequiereMfa Then
+                requiereSeleccionEmpresa = mfaResult IsNot Nothing AndAlso mfaResult.RequiereSeleccionEmpresa
+                idFlujoSeleccion = If(mfaResult IsNot Nothing AndAlso mfaResult.IdFlujoAutenticacion.HasValue, mfaResult.IdFlujoAutenticacion.Value, Guid.Empty)
+                empresasSeleccion = If(mfaResult IsNot Nothing, mfaResult.EmpresasDisponibles, Array.Empty(Of EmpresaAccesoDto)())
+            Else
+                requiereSeleccionEmpresa = loginResult.RequiereSeleccionEmpresa
+                idFlujoSeleccion = If(loginResult.IdFlujoAutenticacion.HasValue, loginResult.IdFlujoAutenticacion.Value, Guid.Empty)
+                empresasSeleccion = loginResult.EmpresasDisponibles
+            End If
+
+            If requiereSeleccionEmpresa Then
+                If idFlujoSeleccion = Guid.Empty OrElse empresasSeleccion Is Nothing OrElse empresasSeleccion.Count = 0 Then
+                    XtraMessageBox.Show("No fue posible resolver empresas disponibles para el usuario.", "Autenticacion", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
+                End If
+
+                Dim usuarioSeleccion = If(Not String.IsNullOrWhiteSpace(loginResult.UsuarioMostrar), loginResult.UsuarioMostrar, login.UserName)
+                Using frmSeleccionEmpresa As New FrmSeleccionEmpresa(apiClient, idFlujoSeleccion, empresasSeleccion, login.TenantCode, usuarioSeleccion)
+                    If frmSeleccionEmpresa.ShowDialog() <> DialogResult.OK OrElse frmSeleccionEmpresa.SeleccionResponse Is Nothing Then
+                        Return
+                    End If
+
+                    seleccionEmpresaResult = frmSeleccionEmpresa.SeleccionResponse
+                End Using
+            End If
+
+            Dim tokenSesion As String =
+                If(seleccionEmpresaResult IsNot Nothing,
+                   seleccionEmpresaResult.TokenSesion,
+                   If(loginResult.RequiereMfa, mfaResult.TokenSesion, loginResult.TokenSesion))
+
             If String.IsNullOrWhiteSpace(tokenSesion) Then
                 XtraMessageBox.Show("No se recibio token de sesion desde la API.", "Autenticacion", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Return
@@ -86,10 +127,10 @@ Module Program
             apiClient.SetBearerToken(tokenSesion)
 
             Dim usuarioMostrar = If(Not String.IsNullOrWhiteSpace(loginResult.UsuarioMostrar), loginResult.UsuarioMostrar, login.UserName)
-            Dim idTenant = If(loginResult.RequiereMfa, mfaResult.IdTenant, loginResult.IdTenant)
-            Dim recursos = If(loginResult.RequiereMfa, mfaResult.RecursosUi, loginResult.RecursosUi)
-            Dim idUsuario = If(loginResult.RequiereMfa, mfaResult.IdUsuario, loginResult.IdUsuario)
-            Dim idEmpresa = If(loginResult.RequiereMfa, mfaResult.IdEmpresa, loginResult.IdEmpresa)
+            Dim idTenant = If(seleccionEmpresaResult IsNot Nothing, seleccionEmpresaResult.IdTenant, If(loginResult.RequiereMfa, mfaResult.IdTenant, loginResult.IdTenant))
+            Dim recursos = If(seleccionEmpresaResult IsNot Nothing, seleccionEmpresaResult.RecursosUi, If(loginResult.RequiereMfa, mfaResult.RecursosUi, loginResult.RecursosUi))
+            Dim idUsuario = If(seleccionEmpresaResult IsNot Nothing, seleccionEmpresaResult.IdUsuario, If(loginResult.RequiereMfa, mfaResult.IdUsuario, loginResult.IdUsuario))
+            Dim idEmpresa = If(seleccionEmpresaResult IsNot Nothing, seleccionEmpresaResult.IdEmpresa, If(loginResult.RequiereMfa, mfaResult.IdEmpresa, loginResult.IdEmpresa))
 
             Dim sessionContext As New UserSessionContext With {
                 .Usuario = usuarioMostrar,
