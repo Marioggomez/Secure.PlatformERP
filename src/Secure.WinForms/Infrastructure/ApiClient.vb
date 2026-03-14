@@ -38,8 +38,25 @@ Namespace Infrastructure
 
         Public Async Function GetAsync(Of TResponse)(ByVal endpoint As String) As Task(Of TResponse)
             Dim normalizedEndpoint = NormalizeEndpoint(endpoint, HttpMethod.Get)
-            Dim request = New HttpRequestMessage(HttpMethod.Get, normalizedEndpoint)
-            Return Await SendAsync(Of TResponse)(request).ConfigureAwait(False)
+            Dim needRetry As Boolean = False
+            Dim notFoundException As ApiClientException = Nothing
+            Try
+                Dim request = New HttpRequestMessage(HttpMethod.Get, normalizedEndpoint)
+                Return Await SendAsync(Of TResponse)(request).ConfigureAwait(False)
+            Catch ex As ApiClientException When ex.StatusCode = HttpStatusCode.NotFound
+                needRetry = True
+                notFoundException = ex
+            End Try
+
+            If needRetry Then
+                Dim alternateEndpoint = BuildAlternateCrudEndpoint(normalizedEndpoint, HttpMethod.Get)
+                If Not String.IsNullOrWhiteSpace(alternateEndpoint) AndAlso Not String.Equals(alternateEndpoint, normalizedEndpoint, StringComparison.OrdinalIgnoreCase) Then
+                    Dim retry = New HttpRequestMessage(HttpMethod.Get, alternateEndpoint)
+                    Return Await SendAsync(Of TResponse)(retry).ConfigureAwait(False)
+                End If
+            End If
+
+            Throw notFoundException
         End Function
 
         Public Async Function PostAsync(Of TRequest, TResponse)(ByVal endpoint As String, ByVal payload As TRequest) As Task(Of TResponse)
@@ -52,16 +69,54 @@ Namespace Infrastructure
 
         Public Async Function PutAsync(Of TRequest)(ByVal endpoint As String, ByVal payload As TRequest) As Task
             Dim normalizedEndpoint = NormalizeEndpoint(endpoint, HttpMethod.Put)
-            Dim request = New HttpRequestMessage(HttpMethod.Put, normalizedEndpoint) With {
-                .Content = JsonContent.Create(payload)
-            }
-            Await SendAsync(Of Object)(request).ConfigureAwait(False)
+            Dim needRetry As Boolean = False
+            Dim notFoundException As ApiClientException = Nothing
+            Try
+                Dim request = New HttpRequestMessage(HttpMethod.Put, normalizedEndpoint) With {
+                    .Content = JsonContent.Create(payload)
+                }
+                Await SendAsync(Of Object)(request).ConfigureAwait(False)
+            Catch ex As ApiClientException When ex.StatusCode = HttpStatusCode.NotFound
+                needRetry = True
+                notFoundException = ex
+            End Try
+
+            If needRetry Then
+                Dim alternateEndpoint = BuildAlternateCrudEndpoint(normalizedEndpoint, HttpMethod.Put)
+                If Not String.IsNullOrWhiteSpace(alternateEndpoint) AndAlso Not String.Equals(alternateEndpoint, normalizedEndpoint, StringComparison.OrdinalIgnoreCase) Then
+                    Dim retry = New HttpRequestMessage(HttpMethod.Put, alternateEndpoint) With {
+                        .Content = JsonContent.Create(payload)
+                    }
+                    Await SendAsync(Of Object)(retry).ConfigureAwait(False)
+                    Return
+                End If
+
+                Throw notFoundException
+            End If
         End Function
 
         Public Async Function DeleteAsync(ByVal endpoint As String) As Task
             Dim normalizedEndpoint = NormalizeEndpoint(endpoint, HttpMethod.Delete)
-            Dim request = New HttpRequestMessage(HttpMethod.Delete, normalizedEndpoint)
-            Await SendAsync(Of Object)(request).ConfigureAwait(False)
+            Dim needRetry As Boolean = False
+            Dim notFoundException As ApiClientException = Nothing
+            Try
+                Dim request = New HttpRequestMessage(HttpMethod.Delete, normalizedEndpoint)
+                Await SendAsync(Of Object)(request).ConfigureAwait(False)
+            Catch ex As ApiClientException When ex.StatusCode = HttpStatusCode.NotFound
+                needRetry = True
+                notFoundException = ex
+            End Try
+
+            If needRetry Then
+                Dim alternateEndpoint = BuildAlternateCrudEndpoint(normalizedEndpoint, HttpMethod.Delete)
+                If Not String.IsNullOrWhiteSpace(alternateEndpoint) AndAlso Not String.Equals(alternateEndpoint, normalizedEndpoint, StringComparison.OrdinalIgnoreCase) Then
+                    Dim retry = New HttpRequestMessage(HttpMethod.Delete, alternateEndpoint)
+                    Await SendAsync(Of Object)(retry).ConfigureAwait(False)
+                    Return
+                End If
+
+                Throw notFoundException
+            End If
         End Function
 
         Private Shared Function NormalizeEndpoint(ByVal endpoint As String, ByVal method As HttpMethod) As String
@@ -158,6 +213,48 @@ Namespace Infrastructure
                 String.Equals(segment, "crear", StringComparison.OrdinalIgnoreCase) OrElse
                 String.Equals(segment, "actualizar", StringComparison.OrdinalIgnoreCase) OrElse
                 String.Equals(segment, "desactivar", StringComparison.OrdinalIgnoreCase)
+        End Function
+
+        Private Shared Function BuildAlternateCrudEndpoint(ByVal endpoint As String, ByVal method As HttpMethod) As String
+            If String.IsNullOrWhiteSpace(endpoint) Then Return endpoint
+            If endpoint.StartsWith("http://", StringComparison.OrdinalIgnoreCase) OrElse endpoint.StartsWith("https://", StringComparison.OrdinalIgnoreCase) Then
+                Return endpoint
+            End If
+
+            Dim raw = endpoint.Trim()
+            Dim queryStart = raw.IndexOf("?"c)
+            Dim pathPart = If(queryStart >= 0, raw.Substring(0, queryStart), raw)
+            Dim queryPart = If(queryStart >= 0, raw.Substring(queryStart), String.Empty)
+
+            Dim segments = pathPart.TrimStart("/"c).Split("/"c, StringSplitOptions.RemoveEmptyEntries)
+            If segments.Length < 4 Then
+                Return endpoint
+            End If
+
+            If method Is HttpMethod.Put Then
+                If segments.Length = 5 Then
+                    Return String.Join("/", segments.Take(4)) & "/actualizar/" & segments(4) & queryPart
+                End If
+                If segments.Length = 6 AndAlso String.Equals(segments(4), "actualizar", StringComparison.OrdinalIgnoreCase) Then
+                    Return String.Join("/", segments.Take(4)) & "/" & segments(5) & queryPart
+                End If
+            ElseIf method Is HttpMethod.Delete Then
+                If segments.Length = 5 Then
+                    Return String.Join("/", segments.Take(4)) & "/desactivar/" & segments(4) & queryPart
+                End If
+                If segments.Length = 6 AndAlso String.Equals(segments(4), "desactivar", StringComparison.OrdinalIgnoreCase) Then
+                    Return String.Join("/", segments.Take(4)) & "/" & segments(5) & queryPart
+                End If
+            ElseIf method Is HttpMethod.Get Then
+                If segments.Length = 5 Then
+                    Return String.Join("/", segments.Take(4)) & "/obtener/" & segments(4) & queryPart
+                End If
+                If segments.Length = 6 AndAlso String.Equals(segments(4), "obtener", StringComparison.OrdinalIgnoreCase) Then
+                    Return String.Join("/", segments.Take(4)) & "/" & segments(5) & queryPart
+                End If
+            End If
+
+            Return endpoint
         End Function
 
         Private Async Function SendAsync(Of TResponse)(ByVal request As HttpRequestMessage) As Task(Of TResponse)
