@@ -89,6 +89,30 @@ Namespace Infrastructure
 
             Dim actionSegment As String = If(segments.Length >= 5, segments(4), String.Empty)
             If IsExplicitAction(actionSegment) Then
+                If method Is HttpMethod.Put AndAlso
+                   String.Equals(actionSegment, "actualizar", StringComparison.OrdinalIgnoreCase) AndAlso
+                   segments.Length = 6 Then
+                    Return String.Join("/", segments.Take(4)) & "/" & segments(5) & queryPart
+                End If
+
+                If method Is HttpMethod.Delete AndAlso
+                   String.Equals(actionSegment, "desactivar", StringComparison.OrdinalIgnoreCase) AndAlso
+                   segments.Length = 6 Then
+                    Return String.Join("/", segments.Take(4)) & "/" & segments(5) & queryPart
+                End If
+
+                If method Is HttpMethod.Get AndAlso
+                   String.Equals(actionSegment, "obtener", StringComparison.OrdinalIgnoreCase) AndAlso
+                   segments.Length = 6 Then
+                    Return String.Join("/", segments.Take(4)) & "/" & segments(5) & queryPart
+                End If
+
+                If method Is HttpMethod.Post AndAlso
+                   String.Equals(actionSegment, "crear", StringComparison.OrdinalIgnoreCase) AndAlso
+                   segments.Length = 5 Then
+                    Return String.Join("/", segments.Take(4)) & queryPart
+                End If
+
                 Return raw
             End If
 
